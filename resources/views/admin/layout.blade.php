@@ -574,19 +574,7 @@
                 </a>
             </li>
 
-            <li>
-                <a class="nav-item {{ request()->routeIs('admin.news-notices*') ? 'active' : '' }}"
-                    href="{{ route('admin.news-notices') }}">
-                    <i class="bi bi-megaphone nav-ico"></i> News &amp; Notices
-                </a>
-            </li>
-
-            <li>
-                <a class="nav-item {{ request()->routeIs('admin.events*') ? 'active' : '' }}"
-                    href="{{ route('admin.events') }}">
-                    <i class="bi bi-calendar-event nav-ico"></i> Upcoming Events
-                </a>
-            </li>
+          
         </ul>
     </div>
 
@@ -598,6 +586,21 @@
             Staff
         </a>
     </div>
+
+
+     <div class="nav-group">
+                <a class="nav-item {{ request()->routeIs('admin.news-notices*') ? 'active' : '' }}"
+                    href="{{ route('admin.news-notices') }}">
+                    <i class="bi bi-megaphone nav-ico"></i> News &amp; Notices
+                </a>
+   
+</div>
+           <div class="nav-group">
+                <a class="nav-item {{ request()->routeIs('admin.events*') ? 'active' : '' }}"
+                    href="{{ route('admin.events') }}">
+                    <i class="bi bi-calendar-event nav-ico"></i> Upcoming Events
+                </a>
+        </div>
 
     {{-- About --}}
     <div class="nav-group">

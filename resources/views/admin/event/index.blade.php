@@ -113,7 +113,7 @@
                         <th>{!! $sortLink('title', 'Title') !!}</th>
                         <th>{!! $sortLink('event_date', 'Date Time') !!}</th>
                         <th>{!! $sortLink('venue', 'Venue') !!}</th>
-                        <th>{!! $sortLink('is_active', 'Active') !!}</th>
+         
                         <th style="width:130px;text-align:right;">Actions</th>
                     </tr>
                 </thead>
@@ -140,13 +140,7 @@
                                 @endif
                             </td>
                             <td>{{ $event->venue ?: '—' }}</td>
-                            <td>
-                                @if ($event->is_active)
-                                    <span class="badge-active"><i class="bi bi-check-circle-fill"></i> Active</span>
-                                @else
-                                    <span class="badge-muted">Inactive</span>
-                                @endif
-                            </td>
+                          
                             <td style="text-align:right;">
                                 <a href="{{ route('admin.events.edit', $event) }}" class="icon-btn" title="Edit">
                                     <i class="bi bi-pencil"></i>
