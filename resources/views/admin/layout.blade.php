@@ -598,7 +598,7 @@
            <div class="nav-group">
                 <a class="nav-item {{ request()->routeIs('admin.events*') ? 'active' : '' }}"
                     href="{{ route('admin.events') }}">
-                    <i class="bi bi-calendar-event nav-ico"></i> Upcoming Events
+                    <i class="bi bi-calendar-event nav-ico"></i> Events
                 </a>
         </div>
 
