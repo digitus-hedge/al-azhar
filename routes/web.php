@@ -9,11 +9,13 @@ use App\Http\Controllers\Admin\NewsNoticeController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\AboutController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\web\HomeController;
+ 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/about-us', function () {
+    return view('web.about');
 });
-
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Guest routes (login)
