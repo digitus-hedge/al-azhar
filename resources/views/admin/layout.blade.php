@@ -29,7 +29,7 @@
             --orange: #002F5F;
             --orange-deep: #DA6A20;
             --orange-tint: #E7ECF1;
-            --orange-tint-strong: #FFE9D8;
+            --orange-tint-strong: #E7ECF1;
             --orange-border:##E7ECF1;
             --canvas: #F6F7FB;
             --ink: #171B2C;
@@ -260,7 +260,7 @@
         }
 
         .submenu .nav-item.active {
-            background: rgba(239, 123, 46, 0.1);
+            background: rgb(220 224 227);
             box-shadow: none;
         }
 

@@ -16,7 +16,7 @@ class PrincipalDesk extends Model
         'photo',
         'avatar_initial',
         'excerpt',
-        'message',
+        // 'message',
         'is_active',
         'sort_order',
     ];
