@@ -8,6 +8,10 @@ use App\Http\Controllers\Admin\StatController;
 use App\Http\Controllers\Admin\NewsNoticeController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\AboutController;
+use App\Http\Controllers\Admin\PrincipalDeskController;
+use App\Http\Controllers\Admin\ClassController;
+use App\Http\Controllers\Admin\GalleryController;
+use App\Http\Controllers\Admin\DepartmentController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -56,6 +60,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('events/{event}/edit', [EventController::class, 'edit'])->name('events.edit');
         Route::put('events/{event}', [EventController::class, 'update'])->name('events.update');
         Route::delete('events/{event}', [EventController::class, 'destroy'])->name('events.destroy');
+
+        Route::get('principal-desk/create', [PrincipalDeskController::class, 'create'])->name('principal-desk.create');
+        Route::post('principal-desk', [PrincipalDeskController::class, 'store'])->name('principal-desk.store');
+        Route::get('principal-desk/{principal_desk}/edit', [PrincipalDeskController::class, 'edit'])->name('principal-desk.edit');
+        Route::put('principal-desk/{principal_desk}', [PrincipalDeskController::class, 'update'])->name('principal-desk.update');
+
+
+        Route::get('departments', [DepartmentController::class, 'index'])->name('departments');
+        Route::get('departments/create', [DepartmentController::class, 'create'])->name('departments.create');
+        Route::post('departments', [DepartmentController::class, 'store'])->name('departments.store');
+        Route::get('departments/{department}/edit', [DepartmentController::class, 'edit'])->name('departments.edit');
+        Route::put('departments/{department}', [DepartmentController::class, 'update'])->name('departments.update');
+        Route::delete('departments/{department}', [DepartmentController::class, 'destroy'])->name('departments.destroy');
+
+        Route::get('classes', [ClassController::class, 'index'])->name('classes');
+        Route::get('classes/create', [ClassController::class, 'create'])->name('classes.create');
+        Route::post('classes', [ClassController::class, 'store'])->name('classes.store');
+        Route::get('classes/{class}/edit', [ClassController::class, 'edit'])->name('classes.edit');
+        Route::put('classes/{class}', [ClassController::class, 'update'])->name('classes.update');
+        Route::delete('classes/{class}', [ClassController::class, 'destroy'])->name('classes.destroy');
+
+
+        Route::get('gallery', [GalleryController::class, 'index'])->name('gallery');
+        Route::get('gallery/create', [GalleryController::class, 'create'])->name('gallery.create');
+        Route::post('gallery', [GalleryController::class, 'store'])->name('gallery.store');
+        Route::get('gallery/{gallery}/edit', [GalleryController::class, 'edit'])->name('gallery.edit');
+        Route::put('gallery/{gallery}', [GalleryController::class, 'update'])->name('gallery.update');
+        Route::delete('gallery/{gallery}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
 
 
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');

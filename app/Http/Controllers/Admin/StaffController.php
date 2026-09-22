@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreStaffRequest;
-use App\Http\Requests\UpdateStaffRequest;
+use App\Http\Requests\StaffRequest;
+use App\Models\Department;
+use App\Models\SchoolClass;
 use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
 class StaffController extends Controller
@@ -15,7 +18,7 @@ class StaffController extends Controller
      * Columns that are allowed to be sorted on from the URL.
      */
     protected array $sortable = [
-        'name', 'designation', 'department', 'is_head_of_staff', 'created_at',
+        'name', 'designation', 'department_id', 'is_head_of_staff', 'created_at',
     ];
 
     /**
@@ -41,13 +44,15 @@ class StaffController extends Controller
             $perPage = 5;
         }
 
-        $query = Staff::query();
+        $query = Staff::query()->with('department');
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('designation', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%");
+                  ->orWhereHas('department', function ($dq) use ($search) {
+                      $dq->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -74,14 +79,16 @@ class StaffController extends Controller
     public function create()
     {
         $staffMember = new Staff();
+        $departments = Department::active()->get();
+        $classes     = SchoolClass::active()->get();
 
-        return view('admin.staff.form', compact('staffMember'));
+        return view('admin.staff.form', compact('staffMember', 'departments', 'classes'));
     }
 
     /**
      * Store a newly created staff member.
      */
-    public function store(StoreStaffRequest $request)
+    public function store(StaffRequest $request)
     {
         $validated = $request->validated();
 
@@ -90,8 +97,16 @@ class StaffController extends Controller
         }
 
         $validated['is_head_of_staff'] = $request->boolean('is_head_of_staff');
+        $validated['show_on_home']     = $request->boolean('show_on_home');
+        $validated['has_login']        = $request->boolean('has_login');
+
+        $loginEmail    = $validated['login_email'] ?? null;
+        $loginPassword = $validated['login_password'] ?? null;
+        unset($validated['login_email'], $validated['login_password']);
 
         $staff = Staff::create($validated);
+
+        $this->syncLoginAccount($staff, $validated['has_login'], $loginEmail, $loginPassword);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -110,13 +125,16 @@ class StaffController extends Controller
      */
     public function edit(Staff $staffMember)
     {
-        return view('admin.staff.form', compact('staffMember'));
+        $departments = Department::active()->get();
+        $classes     = SchoolClass::active()->get();
+
+        return view('admin.staff.form', compact('staffMember', 'departments', 'classes'));
     }
 
     /**
      * Update an existing staff member.
      */
-    public function update(UpdateStaffRequest $request, Staff $staffMember)
+    public function update(StaffRequest $request, Staff $staffMember)
     {
         $validated = $request->validated();
 
@@ -133,8 +151,16 @@ class StaffController extends Controller
         }
 
         $validated['is_head_of_staff'] = $request->boolean('is_head_of_staff');
+        $validated['show_on_home']     = $request->boolean('show_on_home');
+        $validated['has_login']        = $request->boolean('has_login');
+
+        $loginEmail    = $validated['login_email'] ?? null;
+        $loginPassword = $validated['login_password'] ?? null;
+        unset($validated['login_email'], $validated['login_password']);
 
         $staffMember->update($validated);
+
+        $this->syncLoginAccount($staffMember, $validated['has_login'], $loginEmail, $loginPassword);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -162,5 +188,43 @@ class StaffController extends Controller
         return redirect()
             ->route('admin.staff')
             ->with('success', 'Staff member removed successfully.');
+    }
+
+    /**
+     * Create, update, or remove the login (users table) account tied to a
+     * staff member, based on the "Login Access" toggle in the form.
+     *
+     * - Toggle ON, no account yet  -> create a new User (name = staff name).
+     * - Toggle ON, account exists  -> keep name/email in sync, update the
+     *                                 password only if a new one was typed.
+     * - Toggle OFF, account exists -> unlink and delete the User account.
+     */
+    protected function syncLoginAccount(Staff $staff, bool $hasLogin, ?string $email, ?string $password): void
+    {
+        if ($hasLogin) {
+            if ($staff->user_id) {
+                $user = User::find($staff->user_id);
+                if ($user) {
+                    $user->name  = $staff->name;
+                    $user->email = $email;
+                    if ($password) {
+                        $user->password = Hash::make($password);
+                    }
+                    $user->save();
+                }
+            } else {
+                $user = User::create([
+                    'name'     => $staff->name,
+                    'email'    => $email,
+                    'password' => Hash::make($password),
+                ]);
+
+                $staff->update(['user_id' => $user->id]);
+            }
+        } elseif ($staff->user_id) {
+            $userId = $staff->user_id;
+            $staff->update(['user_id' => null]);
+            User::whereKey($userId)->delete();
+        }
     }
 }

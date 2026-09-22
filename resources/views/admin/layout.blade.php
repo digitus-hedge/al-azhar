@@ -7,9 +7,9 @@
     <title>Al Azhar Admin Panel - @yield('title')</title>
 
     {{-- Favicon --}}
-    <link rel="icon" type="image/webp" href="{{ asset('images/logo.webp') }}">
-    <link rel="shortcut icon" type="image/webp" href="{{ asset('images/logo.webp') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.webp') }}">
+    <link rel="icon" type="image/webp" href="{{ asset('images/logo1.png') }}">
+    <link rel="shortcut icon" type="image/webp" href="{{ asset('images/logo1.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo1.png') }}">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -104,7 +104,7 @@
             width: 42px;
             height: 42px;
             border-radius: 12px;
-            background: linear-gradient(135deg, #F2924B, #BF0001);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -113,7 +113,7 @@
             color: #fff;
             letter-spacing: -0.02em;
             flex-shrink: 0;
-            box-shadow: 0 6px 16px -4px rgba(239, 123, 46, 0.55);
+            box-shadow: 0 6px 16px -4px transparent;
             overflow: hidden;
         }
 
@@ -533,7 +533,7 @@
    <aside class="sidebar" id="sidebar">
         <div class="brand">
             <div class="brand-mark">
-                <img src="{{ asset('images/logo.webp') }}" alt="Al-Azhar Logo">
+                <img src="{{ asset('images/logo2.png') }}" alt="Al-Azhar Logo">
             </div>
             <div class="brand-text">
                 <span class="name">Al-Azhar Admin</span>
@@ -610,6 +610,41 @@
             About
         </a>
     </div>
+
+      <div class="nav-group">
+       <a class="nav-item {{ request()->routeIs('admin.principal-desk*') ? 'active' : '' }}"
+    href="{{ route('admin.principal-desk.create') }}">
+            <i class="bi bi-info-circle nav-ico"></i>
+            Principle Message
+        </a>
+    </div>
+
+
+    <div class="nav-group">
+    <a class="nav-item {{ request()->routeIs('admin.departments*') ? 'active' : '' }}"
+        href="{{ route('admin.departments') }}">
+        <i class="bi bi-diagram-3 nav-ico"></i>
+        Departments
+    </a>
+</div>
+
+<div class="nav-group">
+    <a class="nav-item {{ request()->routeIs('admin.classes*') ? 'active' : '' }}"
+        href="{{ route('admin.classes') }}">
+        <i class="bi bi-collection nav-ico"></i>
+        Sections
+    </a>
+</div>
+
+
+<div class="nav-group">
+    <a class="nav-item {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}"
+        href="{{ route('admin.gallery') }}">
+        <i class="bi bi-images nav-ico"></i>
+        Gallery
+    </a>
+</div>
+
 
 </nav>
     </aside>
