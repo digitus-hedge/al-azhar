@@ -261,7 +261,7 @@ function submitAboutForm() {
             icon: 'success',
             title: 'Saved!',
             text: data && data.message ? data.message : 'About section updated successfully.',
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2000,
             timerProgressBar: true
         }).then(() => {
@@ -273,7 +273,7 @@ function submitAboutForm() {
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#BF0001'
+            confirmButtonColor: '#002F5F'
         });
     })
     .finally(() => {

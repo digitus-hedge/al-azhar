@@ -18,7 +18,7 @@
             icon: 'success',
             title: 'Saved!',
             text: @json(session('success')),
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2500,
             timerProgressBar: true
         });
@@ -182,6 +182,7 @@
         .stats-row{ grid-template-columns:1fr; }
         .input-group-cell::before{ content: attr(data-label); font-size:11px; font-weight:600; color: var(--faint,#9AA1B2); margin-bottom:4px; }
     }
+        .req { color: #BF0001; }
    
 </style>
 

@@ -222,7 +222,7 @@ function submitNoticeForm() {
             icon: 'success',
             title: 'Saved!',
             text: data && data.message ? data.message : 'Notice saved successfully.',
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2000,
             timerProgressBar: true
         }).then(() => {
@@ -234,7 +234,7 @@ function submitNoticeForm() {
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#BF0001'
+            confirmButtonColor: '#002F5F'
         });
     })
     .finally(() => {
@@ -275,7 +275,7 @@ function showValidationErrors(errors) {
 </script>
 
 <style>
-    .req { color: var(--orange, #BF0001); }
+ 
 
     .crumbs{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--faint,#9AA1B2); margin-bottom:10px; }
     .crumbs b{ color: var(--ink,#171B2C); font-weight:600; }

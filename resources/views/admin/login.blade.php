@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>EGTS - Admin Login</title>
+    <title>Al-Azhar - Admin Login</title>
        {{-- Favicon --}}
-    <link rel="icon" type="image/webp" href="{{ asset('images/logo.webp') }}">
-    <link rel="shortcut icon" type="image/webp" href="{{ asset('images/logo.webp') }}">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.webp') }}">
+    <link rel="icon" type="image/webp" href="{{ asset('images/logo1.png') }}">
+    <link rel="shortcut icon" type="image/webp" href="{{ asset('images/logo1.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo1.png') }}">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <style>
@@ -292,8 +292,8 @@
     <div class="login-box">
 
         <div class="brand-header">
-            <img src="{{ asset('images/logo.webp') }}" alt="EGTS Logo">
-            <div class="brand-name">EGTS Admin</div>
+            <img src="{{ asset('images/logo1.png') }}" alt="Al-Azhar Logo">
+            <div class="brand-name">Al-Azhar Admin</div>
             <!-- <div class="brand-tagline">Control Panel</div> -->
         </div>
 

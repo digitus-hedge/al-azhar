@@ -73,17 +73,51 @@
             </div>
 
             <div class="field">
-                <input type="text" name="department" value="{{ old('department', $staffMember->department) }}"
-                       class="{{ $errors->has('department') ? 'input-error' : '' }}"
-                       placeholder="e.g. Science, Administration, Sports">
-                @error('department')
+                <select name="department_id" id="department_id"
+                        class="{{ $errors->has('department_id') ? 'input-error' : '' }}">
+                    <option value="">— Select Department —</option>
+                    @foreach($departments as $department)
+                        <option value="{{ $department->id }}"
+                            {{ (int) old('department_id', $staffMember->department_id) === $department->id ? 'selected' : '' }}>
+                            {{ $department->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('department_id')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                 @enderror
+                @if($departments->isEmpty())
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> No departments exist yet — add one first.</span>
+                @endif
+            </div>
+        </div>
+
+        {{-- Class --}}
+        <div class="card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-collection"></i></span> Section</h2>
+            </div>
+
+            <div class="field">
+                <select name="class_id" id="class_id"
+                        class="{{ $errors->has('class_id') ? 'input-error' : '' }}">
+                    <option value="">— Not linked to a class —</option>
+                    @foreach($classes as $class)
+                        <option value="{{ $class->id }}"
+                            {{ (int) old('class_id', $staffMember->class_id) === $class->id ? 'selected' : '' }}>
+                            {{ $class->name }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('class_id')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+                <span class="field-hint" style="display:block;margin-top:6px;">Optional — link this staff member to a staff</span>
             </div>
         </div>
 
         {{-- Head of Staff --}}
-        <div class="card">
+        <div class="card" id="head-of-staff-card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-star"></i></span> Head of Staff</h2>
             </div>
@@ -94,6 +128,79 @@
                 <span class="toggle-switch"></span>
                 <span class="toggle-label">Mark this person as Head of Staff</span>
             </label>
+            <p class="section-sub" style="margin:8px 0 0;">
+                Only one Head of Staff is allowed per department. To reassign it, first
+                remove this toggle from the current head of staff, then enable it here.
+            </p>
+            @error('is_head_of_staff')
+                <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+            @enderror
+        </div>
+
+        {{-- Show on Home Page --}}
+        <div class="card" id="show-on-home-card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-house"></i></span> Home Page</h2>
+            </div>
+            <label class="toggle-row">
+                <input type="hidden" name="show_on_home" value="0">
+                <input type="checkbox" name="show_on_home" id="show_on_home" value="1"
+                       {{ old('show_on_home', $staffMember->show_on_home) ? 'checked' : '' }}>
+                <span class="toggle-switch"></span>
+                <span class="toggle-label">Show this staff member on the Home Page</span>
+            </label>
+            <p class="section-sub" style="margin:8px 0 0;">
+                Turn this on to feature this staff member in the staff section of your site's home page.
+            </p>
+            @error('show_on_home')
+                <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+            @enderror
+        </div>
+
+        {{-- Login Access --}}
+        <div class="card" id="login-access-card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-shield-lock"></i></span> Login Access</h2>
+            </div>
+            <label class="toggle-row">
+                <input type="hidden" name="has_login" value="0">
+                <input type="checkbox" name="has_login" id="has_login" value="1"
+                       {{ old('has_login', $staffMember->has_login) ? 'checked' : '' }}>
+                <span class="toggle-switch"></span>
+                <span class="toggle-label">Give this staff member a login to the site</span>
+            </label>
+            <p class="section-sub" style="margin:8px 0 0;">
+                Turning this on creates a user account for this staff member (using
+                the name above), so they can sign in with the email and password
+                you set here.
+            </p>
+            @error('has_login')
+                <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+            @enderror
+
+            <div id="login-fields"
+                 style="margin-top:16px; {{ old('has_login', $staffMember->has_login) ? '' : 'display:none;' }}">
+                <div class="field" style="margin-bottom:14px;">
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">Email</label>
+                    <input type="email" name="login_email"
+                           value="{{ old('login_email', $staffMember->user->email ?? '') }}"
+                           class="{{ $errors->has('login_email') ? 'input-error' : '' }}"
+                           placeholder="staff@example.com">
+                    @error('login_email')
+                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="field">
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">Password</label>
+                    <input type="password" name="login_password" autocomplete="new-password"
+                           class="{{ $errors->has('login_password') ? 'input-error' : '' }}"
+                           placeholder="{{ $staffMember->user_id ? 'Leave blank to keep current password' : 'Set a password' }}">
+                    @error('login_password')
+                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                    @enderror
+                    <span class="field-hint" style="display:block;margin-top:6px;">Minimum 8 characters.</span>
+                </div>
+            </div>
         </div>
 
         {{-- Photo --}}
@@ -139,7 +246,7 @@
         </div>
 
         {{-- Description --}}
-        <div class="card">
+        <!-- <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-code-slash"></i></span> Description</h2>
                 <span class="section-sub" id="char-count-msg" style="margin:0;">
@@ -154,7 +261,7 @@
             @error('description')
                 <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
             @enderror
-        </div>
+        </div> -->
 
         <div class="savebar">
             <div class="savebar-inner">
@@ -334,6 +441,14 @@
         } else if (firstErrorMsg) {
             firstErrorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+
+        const hasLoginToggle = document.getElementById('has_login');
+        const loginFields = document.getElementById('login-fields');
+        if (hasLoginToggle && loginFields) {
+            hasLoginToggle.addEventListener('change', function () {
+                loginFields.style.display = this.checked ? 'block' : 'none';
+            });
+        }
     });
 </script>
 
@@ -380,7 +495,7 @@ function submitStaffForm() {
             icon: 'success',
             title: 'Saved!',
             text: data && data.message ? data.message : 'Staff member saved successfully.',
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2000,
             timerProgressBar: true
         }).then(() => {
@@ -392,7 +507,7 @@ function submitStaffForm() {
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#BF0001'
+            confirmButtonColor: '#002F5F'
         });
     })
     .finally(() => {
@@ -407,17 +522,33 @@ function showStaffValidationErrors(errors) {
     const fieldMap = {
         name: f => f.querySelector('[name="name"]'),
         designation: f => f.querySelector('[name="designation"]'),
-        department: f => f.querySelector('[name="department"]'),
+        department_id: f => f.querySelector('[name="department_id"]'),
+        class_id: f => f.querySelector('[name="class_id"]'),
         photo: f => document.getElementById('drop-photo'),
         description: f => f.querySelector('[name="description"]'),
+        is_head_of_staff: f => document.getElementById('head-of-staff-card'),
+        show_on_home: f => document.getElementById('show-on-home-card'),
+        has_login: f => document.getElementById('login-access-card'),
+        login_email: f => f.querySelector('[name="login_email"]'),
+        login_password: f => f.querySelector('[name="login_password"]'),
     };
+
+    const noBorderFields = ['is_head_of_staff', 'show_on_home', 'has_login'];
 
     Object.keys(errors).forEach(field => {
         const message = errors[field][0];
         const target = fieldMap[field] ? fieldMap[field](form) : null;
         if (!target) return;
 
-        target.classList.add('input-error');
+        if (!noBorderFields.includes(field)) {
+            target.classList.add('input-error');
+        }
+
+        // Make sure the Login Access fields are visible before showing an error on them.
+        if ((field === 'login_email' || field === 'login_password')) {
+            const loginFields = document.getElementById('login-fields');
+            if (loginFields) loginFields.style.display = 'block';
+        }
 
         const errorEl = document.createElement('span');
         errorEl.className = 'field-error';
@@ -425,7 +556,7 @@ function showStaffValidationErrors(errors) {
         target.insertAdjacentElement('afterend', errorEl);
     });
 
-    const firstErrorField = form.querySelector('.input-error');
+    const firstErrorField = form.querySelector('.input-error') || document.querySelector('.field-error');
     if (firstErrorField) {
         firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
@@ -449,12 +580,12 @@ function showStaffValidationErrors(errors) {
     .section-sub{ font-size:12px; color: var(--faint,#9AA1B2); transition:color .15s; }
 
     .field{ margin-bottom:0; }
-    input[type=text], textarea{
+    input[type=text], input[type=email], input[type=password], textarea, select{
         width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
         padding:11px 14px; font-size:14px; font-family:inherit; color: var(--ink,#171B2C);
-        outline:none; transition:box-shadow .15s, border-color .15s;
+        outline:none; transition:box-shadow .15s, border-color .15s; background:#fff;
     }
-    input[type=text]:focus, textarea:focus{
+    input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, select:focus{
         border-color: var(--orange,#BF0001);
         box-shadow: 0 0 0 4px var(--orange-tint-strong,#FFE9D8);
     }

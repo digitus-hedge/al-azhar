@@ -11,7 +11,7 @@
             icon: 'success',
             title: 'Saved!',
             text: @json(session('success')),
-            confirmButtonColor: '#EF7B2E',
+            confirmButtonColor: '#002F5F',
             timer: 2500,
             timerProgressBar: true
         });
@@ -228,7 +228,7 @@ function submitBannerForm() {
             icon: 'success',
             title: 'Saved!',
             text: 'Banner updated successfully.',
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2000,
             timerProgressBar: true
         }).then(() => {
@@ -240,7 +240,7 @@ function submitBannerForm() {
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#BF0001'
+            confirmButtonColor: '#002F5F'
         });
     })
     .finally(() => {
