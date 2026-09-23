@@ -5,14 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-
+use App\Models\Concerns\LogsActivity;
 /**
  * Named SchoolClass (not Class) because "Class" is a reserved word in PHP.
  * Still uses the "classes" table.
  */
 class SchoolClass extends Model
 {
-    use HasFactory,SoftDeletes;
+    use HasFactory,SoftDeletes,LogsActivity;
 
     protected $table = 'classes';
 

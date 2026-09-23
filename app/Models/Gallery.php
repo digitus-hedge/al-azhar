@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use App\Support\VideoUrl;
+use App\Models\Concerns\LogsActivity;
 
 class Gallery extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,LogsActivity;
 
 
 

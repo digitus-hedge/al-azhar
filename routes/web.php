@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacilityController;
+use App\Http\Controllers\Admin\ActivityLogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
@@ -35,7 +36,7 @@ Route::post('/contact-us', [ContactController::class, 'store'])
     ->middleware('throttle:5,1')   // max 5 messages per minute per visitor
     ->name('contact.store');
 
-    // Public events
+// Public events
 Route::get('/events', [WebEventController::class, 'index'])->name('events.index');
 Route::get('/events/{event}', [WebEventController::class, 'show'])->name('events.show');
 
@@ -97,6 +98,13 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('facilities/{facility}/edit', [FacilityController::class, 'edit'])->name('facilities.edit');
             Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
             Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
+
+
+            Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs');
+            Route::get('activity-logs/export', [ActivityLogController::class, 'export'])->name('activity-logs.export');
+            Route::get('activity-logs/{activityLog}', [ActivityLogController::class, 'show'])
+                ->whereNumber('activityLog')
+                ->name('activity-logs.show');
         });
 
         // ---- Staff-assignable modules (gated by the "permissions" checkboxes) ----

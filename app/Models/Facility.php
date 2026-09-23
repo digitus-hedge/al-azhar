@@ -7,10 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Models\Concerns\LogsActivity;
 
 class Facility extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,LogsActivity;
 
     /** Category key => label */
     public const CATEGORIES = [
