@@ -95,7 +95,7 @@
         {{-- Class --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-collection"></i></span> Section</h2>
+                <h2><span class="icon"><i class="bi bi-collection"></i></span> Class</h2>
             </div>
 
             <div class="field">
@@ -112,7 +112,7 @@
                 @error('class_id')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                 @enderror
-                <span class="field-hint" style="display:block;margin-top:6px;">Optional — link this staff member to a staff</span>
+                <span class="field-hint" style="display:block;margin-top:6px;">Optional — link this staff member to a class (e.g. a class teacher).</span>
             </div>
         </div>
 
@@ -180,6 +180,7 @@
 
             <div id="login-fields"
                  style="margin-top:16px; {{ old('has_login', $staffMember->has_login) ? '' : 'display:none;' }}">
+
                 <div class="field" style="margin-bottom:14px;">
                     <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">Email</label>
                     <input type="email" name="login_email"
@@ -190,7 +191,8 @@
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
                 </div>
-                <div class="field">
+
+                <div class="field" style="margin-bottom:18px;">
                     <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">Password</label>
                     <input type="password" name="login_password" autocomplete="new-password"
                            class="{{ $errors->has('login_password') ? 'input-error' : '' }}"
@@ -199,6 +201,59 @@
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
                     <span class="field-hint" style="display:block;margin-top:6px;">Minimum 8 characters.</span>
+                </div>
+
+                {{-- Role --}}
+                @php
+                    $currentRole = old('login_role', $staffMember->user->role ?? 'staff');
+                    $currentPermissions = old('login_permissions', $staffMember->user->permissions ?? []);
+                @endphp
+                <div class="field" style="margin-bottom:18px;">
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:8px;">Role</label>
+                    <div class="role-options">
+                        <label class="role-option">
+                            <input type="radio" name="login_role" value="admin" id="role_admin"
+                                   {{ $currentRole === 'admin' ? 'checked' : '' }}>
+                            <span>
+                                <b>Admin</b>
+                                <small>Full access to every section, including Staff and Departments.</small>
+                            </span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="login_role" value="staff" id="role_staff"
+                                   {{ $currentRole !== 'admin' ? 'checked' : '' }}>
+                            <span>
+                                <b>Staff</b>
+                                <small>Restricted — access only the modules checked below.</small>
+                            </span>
+                        </label>
+                    </div>
+                    @error('login_role')
+                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                    @enderror
+                </div>
+
+                {{-- Module Permissions (staff role only) --}}
+                <div id="permissions-field" style="{{ $currentRole === 'admin' ? 'display:none;' : '' }}">
+                    <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:8px;">
+                        Allowed Modules
+                    </label>
+                    <div class="permissions-grid">
+                        @foreach (\App\Models\User::MODULES as $key => $label)
+                            <label class="permission-option">
+                                <input type="checkbox" name="login_permissions[]" value="{{ $key }}"
+                                       {{ in_array($key, (array) $currentPermissions, true) ? 'checked' : '' }}>
+                                <span>{{ $label }}</span>
+                            </label>
+                        @endforeach
+                    </div>
+                    <span class="field-hint" style="display:block;margin-top:8px;">
+                        This staff login can only reach the sections checked here. Everything else
+                        (Staff, Departments, Sections, Home settings) stays admin-only.
+                    </span>
+                    @error('login_permissions')
+                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                    @enderror
                 </div>
             </div>
         </div>
@@ -246,7 +301,7 @@
         </div>
 
         {{-- Description --}}
-        <!-- <div class="card">
+        <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-code-slash"></i></span> Description</h2>
                 <span class="section-sub" id="char-count-msg" style="margin:0;">
@@ -261,7 +316,7 @@
             @error('description')
                 <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
             @enderror
-        </div> -->
+        </div>
 
         <div class="savebar">
             <div class="savebar-inner">
@@ -449,6 +504,16 @@
                 loginFields.style.display = this.checked ? 'block' : 'none';
             });
         }
+
+        const roleAdmin = document.getElementById('role_admin');
+        const roleStaff = document.getElementById('role_staff');
+        const permissionsField = document.getElementById('permissions-field');
+        function togglePermissionsField() {
+            if (!permissionsField) return;
+            permissionsField.style.display = (roleAdmin && roleAdmin.checked) ? 'none' : 'block';
+        }
+        if (roleAdmin) roleAdmin.addEventListener('change', togglePermissionsField);
+        if (roleStaff) roleStaff.addEventListener('change', togglePermissionsField);
     });
 </script>
 
@@ -495,7 +560,7 @@ function submitStaffForm() {
             icon: 'success',
             title: 'Saved!',
             text: data && data.message ? data.message : 'Staff member saved successfully.',
-            confirmButtonColor: '#002F5F',
+            confirmButtonColor: '#BF0001',
             timer: 2000,
             timerProgressBar: true
         }).then(() => {
@@ -507,7 +572,7 @@ function submitStaffForm() {
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#002F5F'
+            confirmButtonColor: '#BF0001'
         });
     })
     .finally(() => {
@@ -531,9 +596,11 @@ function showStaffValidationErrors(errors) {
         has_login: f => document.getElementById('login-access-card'),
         login_email: f => f.querySelector('[name="login_email"]'),
         login_password: f => f.querySelector('[name="login_password"]'),
+        login_role: f => document.getElementById('role_staff'),
+        login_permissions: f => document.getElementById('permissions-field'),
     };
 
-    const noBorderFields = ['is_head_of_staff', 'show_on_home', 'has_login'];
+    const noBorderFields = ['is_head_of_staff', 'show_on_home', 'has_login', 'login_role', 'login_permissions'];
 
     Object.keys(errors).forEach(field => {
         const message = errors[field][0];
@@ -545,7 +612,7 @@ function showStaffValidationErrors(errors) {
         }
 
         // Make sure the Login Access fields are visible before showing an error on them.
-        if ((field === 'login_email' || field === 'login_password')) {
+        if (['login_email', 'login_password', 'login_role', 'login_permissions'].includes(field)) {
             const loginFields = document.getElementById('login-fields');
             if (loginFields) loginFields.style.display = 'block';
         }
@@ -645,6 +712,25 @@ function showStaffValidationErrors(errors) {
     .toggle-row input[type="checkbox"]:checked + .toggle-switch{ background: var(--orange,#BF0001); }
     .toggle-row input[type="checkbox"]:checked + .toggle-switch::after{ transform:translateX(18px); }
     .toggle-label{ font-size:13.5px; color: var(--ink,#171B2C); }
+
+    .role-options{ display:flex; gap:12px; flex-wrap:wrap; }
+    .role-option{
+        display:flex; align-items:flex-start; gap:9px; flex:1; min-width:220px;
+        border:1px solid var(--input-border,#DBDFEA); border-radius:10px; padding:12px 14px;
+        cursor:pointer; transition:border-color .15s, background .15s;
+    }
+    .role-option:has(input:checked){ border-color: var(--orange,#BF0001); background: var(--orange-tint,#FFF8F3); }
+    .role-option input[type="radio"]{ margin-top:3px; accent-color: var(--orange,#BF0001); }
+    .role-option span{ display:flex; flex-direction:column; gap:2px; }
+    .role-option b{ font-size:13px; color: var(--ink,#171B2C); }
+    .role-option small{ font-size:11.5px; color: var(--faint,#9AA1B2); line-height:1.4; }
+
+    .permissions-grid{
+        display:grid; grid-template-columns:repeat(2,1fr); gap:10px;
+        background: var(--canvas,#F6F7FB); border-radius:10px; padding:14px;
+    }
+    .permission-option{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--ink,#171B2C); cursor:pointer; }
+    .permission-option input[type="checkbox"]{ accent-color: var(--orange,#BF0001); width:16px; height:16px; }
 
     .savebar{
         position:sticky; bottom:0; border-top:1px solid var(--line,#E9EBF2);

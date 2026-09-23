@@ -100,13 +100,15 @@ class StaffController extends Controller
         $validated['show_on_home']     = $request->boolean('show_on_home');
         $validated['has_login']        = $request->boolean('has_login');
 
-        $loginEmail    = $validated['login_email'] ?? null;
-        $loginPassword = $validated['login_password'] ?? null;
-        unset($validated['login_email'], $validated['login_password']);
+        $loginEmail       = $validated['login_email'] ?? null;
+        $loginPassword    = $validated['login_password'] ?? null;
+        $loginRole        = $validated['login_role'] ?? 'staff';
+        $loginPermissions = $validated['login_permissions'] ?? [];
+        unset($validated['login_email'], $validated['login_password'], $validated['login_role'], $validated['login_permissions']);
 
         $staff = Staff::create($validated);
 
-        $this->syncLoginAccount($staff, $validated['has_login'], $loginEmail, $loginPassword);
+        $this->syncLoginAccount($staff, $validated['has_login'], $loginEmail, $loginPassword, $loginRole, $loginPermissions);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -154,13 +156,15 @@ class StaffController extends Controller
         $validated['show_on_home']     = $request->boolean('show_on_home');
         $validated['has_login']        = $request->boolean('has_login');
 
-        $loginEmail    = $validated['login_email'] ?? null;
-        $loginPassword = $validated['login_password'] ?? null;
-        unset($validated['login_email'], $validated['login_password']);
+        $loginEmail       = $validated['login_email'] ?? null;
+        $loginPassword    = $validated['login_password'] ?? null;
+        $loginRole        = $validated['login_role'] ?? 'staff';
+        $loginPermissions = $validated['login_permissions'] ?? [];
+        unset($validated['login_email'], $validated['login_password'], $validated['login_role'], $validated['login_permissions']);
 
         $staffMember->update($validated);
 
-        $this->syncLoginAccount($staffMember, $validated['has_login'], $loginEmail, $loginPassword);
+        $this->syncLoginAccount($staffMember, $validated['has_login'], $loginEmail, $loginPassword, $loginRole, $loginPermissions);
 
         if ($request->wantsJson()) {
             return response()->json([
@@ -192,21 +196,36 @@ class StaffController extends Controller
 
     /**
      * Create, update, or remove the login (users table) account tied to a
-     * staff member, based on the "Login Access" toggle in the form.
+     * staff member, based on the "Login Access" toggle in the form —
+     * including that account's role and, for a "staff" role, which
+     * modules it's allowed into.
      *
      * - Toggle ON, no account yet  -> create a new User (name = staff name).
-     * - Toggle ON, account exists  -> keep name/email in sync, update the
-     *                                 password only if a new one was typed.
+     * - Toggle ON, account exists  -> keep name/email/role/permissions in
+     *                                 sync, update the password only if a
+     *                                 new one was typed.
      * - Toggle OFF, account exists -> unlink and delete the User account.
      */
-    protected function syncLoginAccount(Staff $staff, bool $hasLogin, ?string $email, ?string $password): void
-    {
+    protected function syncLoginAccount(
+        Staff $staff,
+        bool $hasLogin,
+        ?string $email,
+        ?string $password,
+        string $role = 'staff',
+        array $permissions = []
+    ): void {
+        // Only "staff" role users are restricted by the permission
+        // checkboxes; an "admin" account ignores $permissions entirely.
+        $permissions = $role === 'staff' ? array_values($permissions) : [];
+
         if ($hasLogin) {
             if ($staff->user_id) {
                 $user = User::find($staff->user_id);
                 if ($user) {
-                    $user->name  = $staff->name;
-                    $user->email = $email;
+                    $user->name        = $staff->name;
+                    $user->email       = $email;
+                    $user->role        = $role;
+                    $user->permissions = $permissions;
                     if ($password) {
                         $user->password = Hash::make($password);
                     }
@@ -214,9 +233,11 @@ class StaffController extends Controller
                 }
             } else {
                 $user = User::create([
-                    'name'     => $staff->name,
-                    'email'    => $email,
-                    'password' => Hash::make($password),
+                    'name'        => $staff->name,
+                    'email'       => $email,
+                    'password'    => Hash::make($password),
+                    'role'        => $role,
+                    'permissions' => $permissions,
                 ]);
 
                 $staff->update(['user_id' => $user->id]);

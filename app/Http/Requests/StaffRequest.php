@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Staff;
+use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -91,6 +92,12 @@ class StaffRequest extends FormRequest
                     }
                 },
             ],
+
+            // Role + module permissions — only meaningful while "has_login" is on.
+            'login_role' => ['nullable', Rule::in(['admin', 'staff'])],
+
+            'login_permissions'   => ['nullable', 'array'],
+            'login_permissions.*' => [Rule::in(array_keys(User::MODULES))],
         ];
     }
 
