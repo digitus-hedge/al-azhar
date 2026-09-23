@@ -12,9 +12,10 @@ use App\Http\Controllers\Admin\PrincipalDeskController;
 use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\FacilityController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
- 
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/about-us', function () {
@@ -68,6 +69,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('classes/{class}/edit', [ClassController::class, 'edit'])->name('classes.edit');
             Route::put('classes/{class}', [ClassController::class, 'update'])->name('classes.update');
             Route::delete('classes/{class}', [ClassController::class, 'destroy'])->name('classes.destroy');
+
+
+            Route::get('facilities', [FacilityController::class, 'index'])->name('facilities');
+            Route::get('facilities/create', [FacilityController::class, 'create'])->name('facilities.create');
+            Route::post('facilities', [FacilityController::class, 'store'])->name('facilities.store');
+            Route::get('facilities/{facility}/edit', [FacilityController::class, 'edit'])->name('facilities.edit');
+            Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
+            Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
         });
 
         // ---- Staff-assignable modules (gated by the "permissions" checkboxes) ----

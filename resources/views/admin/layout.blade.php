@@ -537,11 +537,11 @@
             </div>
             <div class="brand-text">
                 <span class="name">Al-Azhar Admin</span>
-                <!-- <span class="sub">Energy Inspection Services</span> -->
+
             </div>
         </div>
 
-     <nav class="nav">
+     <!-- <nav class="nav">
 
     {{-- Dashboard --}}
     <div class="nav-group">
@@ -602,6 +602,15 @@
                 </a>
         </div>
 
+
+         <div class="nav-group">
+                <a class="nav-item {{ request()->routeIs('admin.facilities*') ? 'active' : '' }}"
+                    href="{{ route('admin.facilities') }}">
+                    <i class="bi bi-calendar-event nav-ico"></i> Facilities
+                </a>
+        </div>
+
+
     {{-- About --}}
     <div class="nav-group">
         <a class="nav-item {{ request()->routeIs('admin.about*') ? 'active' : '' }}"
@@ -646,7 +655,131 @@
 </div>
 
 
+</nav> -->
+
+
+@php
+    $homeOpen   = request()->routeIs('admin.home.*');
+    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*');
+@endphp
+
+<nav class="nav">
+
+    {{-- Dashboard --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
+           href="{{ route('admin.dashboard') }}">
+            <i class="bi bi-grid-1x2-fill nav-ico"></i>
+            Dashboard
+        </a>
+    </div>
+
+    {{-- Master (Departments + Sections) --}}
+   
+
+    {{-- Home --}}
+    <div class="nav-group {{ $homeOpen ? 'expanded' : '' }}">
+        <a class="nav-item {{ $homeOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
+            <i class="bi bi-house-door nav-ico"></i>
+            Home
+            <i class="bi bi-chevron-right chev"></i>
+        </a>
+        <ul class="submenu">
+            <li>
+                <a class="nav-item {{ request()->routeIs('admin.home.banner*') ? 'active' : '' }}"
+                   href="{{ route('admin.home.banner') }}">
+                    <i class="bi bi-image nav-ico"></i> Hero Banner
+                </a>
+            </li>
+            <li>
+                <a class="nav-item {{ request()->routeIs('admin.home.stats*') ? 'active' : '' }}"
+                   href="{{ route('admin.home.stats') }}">
+                    <i class="bi bi-bar-chart nav-ico"></i> Quick Stats
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    {{-- About --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.about*') ? 'active' : '' }}"
+           href="{{ route('admin.about') }}">
+            <i class="bi bi-info-circle nav-ico"></i> About
+        </a>
+    </div>
+
+    {{-- Principal's Message --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.principal-desk*') ? 'active' : '' }}"
+           href="{{ route('admin.principal-desk.create') }}">
+            <i class="bi bi-chat-quote nav-ico"></i> Principal's Message
+        </a>
+    </div>
+
+    {{-- Staff --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.staff*') ? 'active' : '' }}"
+           href="{{ route('admin.staff') }}">
+            <i class="bi bi-people nav-ico"></i> Staff
+        </a>
+    </div>
+
+    {{-- News & Notices --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.news-notices*') ? 'active' : '' }}"
+           href="{{ route('admin.news-notices') }}">
+            <i class="bi bi-megaphone nav-ico"></i> News &amp; Notices
+        </a>
+    </div>
+
+    {{-- Events --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.events*') ? 'active' : '' }}"
+           href="{{ route('admin.events') }}">
+            <i class="bi bi-calendar-event nav-ico"></i> Events
+        </a>
+    </div>
+
+    {{-- Facilities --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.facilities*') ? 'active' : '' }}"
+           href="{{ route('admin.facilities') }}">
+            <i class="bi bi-building nav-ico"></i> Facilities
+        </a>
+    </div>
+
+    {{-- Gallery --}}
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}"
+           href="{{ route('admin.gallery') }}">
+            <i class="bi bi-images nav-ico"></i> Gallery
+        </a>
+    </div>
+
+     <div class="nav-group {{ $masterOpen ? 'expanded' : '' }}">
+        <a class="nav-item {{ $masterOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
+            <i class="bi bi-database-gear nav-ico"></i>
+            Master
+            <i class="bi bi-chevron-right chev"></i>
+        </a>
+        <ul class="submenu">
+            <li>
+                <a class="nav-item {{ request()->routeIs('admin.departments*') ? 'active' : '' }}"
+                   href="{{ route('admin.departments') }}">
+                    <i class="bi bi-diagram-3 nav-ico"></i> Departments
+                </a>
+            </li>
+            <li>
+                <a class="nav-item {{ request()->routeIs('admin.classes*') ? 'active' : '' }}"
+                   href="{{ route('admin.classes') }}">
+                    <i class="bi bi-collection nav-ico"></i> Sections
+                </a>
+            </li>
+        </ul>
+    </div>
+
 </nav>
+
     </aside>
 
     <!-- ---------- MAIN ---------- -->
