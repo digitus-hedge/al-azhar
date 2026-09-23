@@ -24,7 +24,7 @@
                                 </svg>
                                 </span>
                                 <span>
-                                    Call: <a href="tel:123-343-4444">123-343-4444</a>
+                                    Call: <a href="tel:123-343-4444">99884567809</a>
                                 </span>
                             </li>
                             <li>
@@ -39,12 +39,12 @@
                                 </svg>
                                 <span>
                                     <span>
-                                        Email: <a href="mailto:educve@gmail.com">educve@gmail.com</a>
+                                        Email: <a href="mailto:educve@gmail.com">al-azhar@gmail.com</a>
                                     </span>
                             </li>
                         </ul>
                     </div>
-                    <div class="td_top_header_right">
+                    {{-- <div class="td_top_header_right">
                         <div class="top_bar-curr-lang-wrapper">
                             <div class="curr-wrapper">
                                 <span>
@@ -64,12 +64,7 @@
                                     </svg>
 
                                 </span>
-                                <select class="curr-select currency_code" name="currency_code">
-                                    <option selected value="USD">USD</option>
-                                    <option value="INR">INR</option>
-                                    <option value="NGN">NGN</option>
-                                    <option value="BDT">BDT</option>
-                                </select>
+                               
                                 <span>
                                     <svg width="12" height="6" viewBox="0 0 12 6" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -80,8 +75,8 @@
 
                                 </span>
                             </div>
-                            <div class="separator">|</div>
-                            <div class="lang-wrapper">
+                            <div class="separator">|</div> --}}
+                            {{-- <div class="lang-wrapper">
                                 <span>
                                     <svg width="19" height="19" viewBox="0 0 19 19" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -106,13 +101,13 @@
                                     </svg>
 
                                 </span>
-                            </div>
-                        </div>
-                        <span>
+                            </div> --}}
+                        {{-- </div> --}}
+                        {{-- <span>
                             <a target="_blank" href="student/login.php" class="">Login</a> /
                             <a target="_blank" href="student/register.html" class="">Register</a>
 
-                        </span>
+                        </span> --}}
                     </div>
                 </div>
             </div>
@@ -163,9 +158,14 @@
                                 <div class="td_nav_list_wrap_in">
                                     <ul class="td_nav_list">
 
-                                        <li class="menu-item-has-children">
-                                            <a href="{{ url('/') }}">Home</a>
-                                            <ul>
+                                        {{-- <li class="menu-item-has-children"> --}}
+                                            <li><a href="{{ url('/') }}">Home</a>
+                                            <li><a href="{{ url('/about-us') }}">About Us</a></li>
+                                            <li><a href="{{ route('departments.index') }}">Departments</a></li>
+                                            <li><a href="{{ route('events.index') }}">Events</a></li>
+                                            <li><a href="{{ route('contact.index') }}">Contact Us</a></li>
+
+                                            {{-- <ul>
 
                                                 <li>
                                                     <a href="index1a93.html?theme=one"><span>Online
@@ -195,8 +195,8 @@
 
 
 
-                                            </ul>
-                                        </li>
+                                            </ul> --}}
+                                        {{-- </li>
 
                                         <li class="menu-item-has-children">
                                             <a href="courses.html">Courses</a>
@@ -241,7 +241,7 @@
 
 
                                         <li><a href="contact-us.html">Contact Us</a></li>
-                                    </ul>
+                                    </ul> --}}
                                 </div>
                                 <div class="top_bar-curr-lang-wrapper top_bar-curr-lang-wrapper_s3 mt-4">
                                     <div class="curr-wrapper">
