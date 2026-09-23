@@ -11,7 +11,7 @@
             icon: 'success',
             title: 'Saved!',
             text: @json(session('success')),
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2500,
             timerProgressBar: true
         });
@@ -110,12 +110,12 @@
             <table class="staff-table">
                 <thead>
                     <tr>
-                        <th style="width:64px;">Photo</th>
+                        <th>Photo</th>
                         <th>{!! $sortLink('name', 'Name') !!}</th>
                         <th>{!! $sortLink('designation', 'Designation') !!}</th>
                         <th>{!! $sortLink('department', 'Department') !!}</th>
-                        <th style="width:120px;">{!! $sortLink('is_head_of_staff', 'Head of Staff') !!}</th>
-                        <th style="width:130px;text-align:right;">Actions</th>
+                    <th>{!! $sortLink('department', 'Login Access') !!}</th>
+                        <th style="text-align:right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -130,16 +130,25 @@
                                     @endif
                                 </div>
                             </td>
-                            <td><b>{{ $member->name }}</b></td>
-                            <td>{{ $member->designation }}</td>
-                            <td>{{ $member->department ?? '—' }}</td>
-                            <td>
-                                @if ($member->is_head_of_staff)
+                            <td><b>{{ $member->name }}</b> @if ($member->is_head_of_staff)
                                     <span class="badge-head"><i class="bi bi-star-fill"></i> Head</span>
                                 @else
-                                    <span class="badge-muted">&mdash;</span>
-                                @endif
-                            </td>
+                                    <span class="badge-muted"></span>
+                                @endif</td>
+                            <td>{{ $member->designation }}</td>
+                          <td>{{ $member->department?->name ?? '—' }}</td>
+
+                         <td>
+    @if ($member->has_login)
+        <span class="badge-access"><i class="bi bi-check-circle-fill"></i> Access</span>
+    @else
+        <span class="badge-no-access"><i class="bi bi-x-circle-fill"></i> No Access</span>
+    @endif
+</td>
+
+                            <!-- <td>
+                               
+                            </td> -->
                             <td style="text-align:right;">
                                 <a href="{{ route('admin.staff.edit', $member) }}" class="icon-btn" title="Edit">
                                     <i class="bi bi-pencil"></i>
@@ -248,7 +257,7 @@ function confirmDeleteStaff(id, name) {
         showCancelButton: true,
         confirmButtonText: 'Yes, remove',
         cancelButtonText: 'Cancel',
-        confirmButtonColor: '#BF0001',
+        confirmButtonColor: '#002F5F',
         cancelButtonColor: '#667085'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -266,7 +275,7 @@ function confirmDeleteStaff(id, name) {
 
     .header{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:32px; gap:16px; flex-wrap:wrap; }
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
-    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; max-width:560px; line-height:1.55; }
+    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0;  line-height:1.55; }
 
     .btn-save{
         display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#fff;
@@ -385,6 +394,20 @@ function confirmDeleteStaff(id, name) {
     .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
     .pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
     .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+    .badge-access,
+.badge-no-access {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-access    { background: #E6F6EC; color: #1E8E4E; }
+.badge-no-access { background: #FDECEC; color: #C62828; }
+
 </style>
 
 @endsection

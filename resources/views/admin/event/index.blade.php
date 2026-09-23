@@ -1,5 +1,5 @@
 @extends('admin.layout')
-@section('title', 'Upcoming Events')
+@section('title', 'Events')
 @section('content')
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -11,7 +11,7 @@
             icon: 'success',
             title: 'Saved!',
             text: @json(session('success')),
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2500,
             timerProgressBar: true
         });
@@ -23,17 +23,17 @@
     <div class="crumbs">
         <span onclick="window.location='{{ route('admin.dashboard') }}'">Home</span>
         <span>&rsaquo;</span>
-        <b>Upcoming Events</b>
+        <b>Events</b>
     </div>
 
     <div class="header">
         <div>
-            <h1>Upcoming Events</h1>
+            <h1>Events</h1>
             <p>Manage the events shown in the "Upcoming Events" section on your homepage.</p>
         </div>
         <a href="{{ route('admin.events.create') }}" class="btn-save" style="text-decoration:none;">
             <i class="bi bi-plus-lg"></i>
-            Add Event
+            Add Events
         </a>
     </div>
 
@@ -145,6 +145,9 @@
                                 <a href="{{ route('admin.events.edit', $event) }}" class="icon-btn" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+
+                                     @if(auth()->user()->role === 'admin')
+
                                 <button type="button" class="icon-btn icon-btn-danger" title="Delete"
                                         onclick="confirmDeleteEvent({{ $event->id }}, '{{ addslashes($event->title) }}')">
                                     <i class="bi bi-trash"></i>
@@ -155,6 +158,8 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
+                                @endif
+                                
                             </td>
                         </tr>
                     @endforeach
@@ -244,7 +249,7 @@ function confirmDeleteEvent(id, title) {
         showCancelButton: true,
         confirmButtonText: 'Yes, remove',
         cancelButtonText: 'Cancel',
-        confirmButtonColor: '#BF0001',
+        confirmButtonColor: '#002F5F',
         cancelButtonColor: '#667085'
     }).then((result) => {
         if (result.isConfirmed) {

@@ -18,7 +18,7 @@ class StaffController extends Controller
      * Columns that are allowed to be sorted on from the URL.
      */
     protected array $sortable = [
-        'name', 'designation', 'department_id', 'is_head_of_staff', 'created_at',
+        'name', 'designation', 'department_id','has_login', 'is_head_of_staff', 'created_at',
     ];
 
     /**

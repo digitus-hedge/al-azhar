@@ -11,7 +11,7 @@
             icon: 'success',
             title: 'Saved!',
             text: @json(session('success')),
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2500,
             timerProgressBar: true
         });
@@ -142,6 +142,7 @@
                                 <a href="{{ route('admin.news-notices.edit', $notice) }}" class="icon-btn" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
+                                      @if(auth()->user()->role === 'admin')
                                 <button type="button" class="icon-btn icon-btn-danger" title="Delete"
                                         onclick="confirmDeleteNotice({{ $notice->id }}, '{{ addslashes($notice->title) }}')">
                                     <i class="bi bi-trash"></i>
@@ -152,6 +153,7 @@
                                     @csrf
                                     @method('DELETE')
                                 </form>
+                                @endif
                             </td>
                         </tr>
                     @endforeach
@@ -241,7 +243,7 @@ function confirmDeleteNotice(id, title) {
         showCancelButton: true,
         confirmButtonText: 'Yes, remove',
         cancelButtonText: 'Cancel',
-        confirmButtonColor: '#BF0001',
+        confirmButtonColor: '#002F5F',
         cancelButtonColor: '#667085'
     }).then((result) => {
         if (result.isConfirmed) {

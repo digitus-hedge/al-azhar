@@ -28,19 +28,24 @@ class NewsNoticeRequest extends FormRequest
             'published_at'      => ['required', 'date'],
             'is_pinned'         => ['nullable', 'boolean'],
             'is_active'         => ['nullable', 'boolean'],
+
+            'meta_title'        => ['nullable', 'string', 'max:70'],
+            'meta_description'  => ['nullable', 'string', 'max:160'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'title.required'    => 'Please enter a title.',
-            'type.in'            => 'Please choose a valid type.',
-            'attachment.mimes'  => 'The attachment must be a PDF file.',
-            'attachment.max'    => 'The attachment must not be larger than 10MB.',
-            'link.url'          => 'Please enter a valid URL (including https://).',
-            'published_at.date' => 'Please enter a valid date.',
-               'published_at.required' => 'Published Date is Required.',
+            'title.required'          => 'Please enter a title.',
+            'type.in'               => 'Please choose a valid type.',
+            'attachment.mimes'      => 'The attachment must be a PDF file.',
+            'attachment.max'        => 'The attachment must not be larger than 10MB.',
+            'link.url'              => 'Please enter a valid URL (including https://).',
+            'published_at.required' => 'Published date is required.',
+            'published_at.date'     => 'Please enter a valid date.',
+            'meta_title.max'        => 'Meta title should be 70 characters or fewer.',
+            'meta_description.max'  => 'Meta description should be 160 characters or fewer.',
         ];
     }
 }

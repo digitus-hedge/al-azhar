@@ -32,6 +32,8 @@ class NewsNotice extends Model
         'is_pinned',
         'is_active',
         'sort_order',
+        'meta_title',
+        'meta_description'
     ];
 
     protected $casts = [

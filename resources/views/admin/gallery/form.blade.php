@@ -98,8 +98,40 @@
             @enderror
         </div>
 
+
+        {{-- Video Link --}}
+<div class="card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-youtube"></i></span> Or paste a video link</h2>
+    </div>
+
+    <div class="notice caution">
+        <i class="bi bi-info-circle" style="margin-top:1px;"></i>
+        <p><b>Supported:</b> YouTube videos, Shorts, live &amp; youtu.be links &middot; Vimeo links. Use either an upload <b>or</b> a link.</p>
+    </div>
+
+    <div class="field">
+        <input type="text" name="video_url" id="video_url"
+               value="{{ old('video_url', $item->video_url) }}"
+               class="{{ $errors->has('video_url') ? 'input-error' : '' }}"
+               placeholder="https://www.youtube.com/shorts/xxxxxxxxxxx">
+        @error('video_url')
+            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+    </div>
+
+    <div id="video-preview" style="max-width:420px;margin-top:14px;{{ $item->is_embed ? '' : 'display:none;' }}">
+        <div style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#0F1220;">
+            <iframe id="video-preview-frame" src="{{ $item->embed_url }}"
+                    style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
         {{-- Display Settings --}}
-        <div class="card">
+        <!-- <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-sliders"></i></span> Display Settings</h2>
             </div>
@@ -120,7 +152,7 @@
                 <span class="toggle-switch"></span>
                 <span class="toggle-label">Show this item on the site</span>
             </label>
-        </div>
+        </div> -->
 
         <div class="savebar">
             <div class="savebar-inner">
@@ -320,12 +352,40 @@ function submitGalleryForm() {
     });
 }
 
+
+function parseVideoUrl(url) {
+    url = (url || '').trim();
+    let m = url.match(/^(?:https?:\/\/)?(?:www\.|m\.|music\.)?(?:youtube\.com|youtube-nocookie\.com|youtu\.be)\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/|v\/|)([A-Za-z0-9_-]{11})/i);
+    if (m) return `https://www.youtube-nocookie.com/embed/${m[1]}?rel=0`;
+
+    m = url.match(/^(?:https?:\/\/)?(?:www\.|player\.)?vimeo\.com\/(?:.*?\/)?(?:video\/)?(\d+)(?:\/([a-z0-9]+))?/i);
+    if (m) return `https://player.vimeo.com/video/${m[1]}${m[2] ? '?h=' + m[2] : ''}`;
+
+    return null;
+}
+
+document.getElementById('video_url').addEventListener('input', function () {
+    const embed = parseVideoUrl(this.value);
+    const wrap  = document.getElementById('video-preview');
+    const frame = document.getElementById('video-preview-frame');
+
+    if (embed) {
+        if (frame.src !== embed) frame.src = embed;
+        wrap.style.display = 'block';
+    } else {
+        frame.src = '';
+        wrap.style.display = 'none';
+    }
+});
+
+
 function showGalleryValidationErrors(errors) {
     const form = document.getElementById('galleryForm');
 
     const fieldMap = {
         title: f => f.querySelector('[name="title"]'),
         media: f => document.getElementById('drop-media'),
+        video_url: f => f.querySelector('[name="video_url"]'),
         sort_order: f => f.querySelector('[name="sort_order"]'),
     };
 

@@ -95,13 +95,13 @@
         {{-- Class --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-collection"></i></span> Class</h2>
+                <h2><span class="icon"><i class="bi bi-collection"></i></span> Section</h2>
             </div>
 
             <div class="field">
                 <select name="class_id" id="class_id"
                         class="{{ $errors->has('class_id') ? 'input-error' : '' }}">
-                    <option value="">— Not linked to a class —</option>
+                    <option value="">— Not linked to a section —</option>
                     @foreach($classes as $class)
                         <option value="{{ $class->id }}"
                             {{ (int) old('class_id', $staffMember->class_id) === $class->id ? 'selected' : '' }}>
@@ -208,7 +208,7 @@
                     $currentRole = old('login_role', $staffMember->user->role ?? 'staff');
                     $currentPermissions = old('login_permissions', $staffMember->user->permissions ?? []);
                 @endphp
-                <div class="field" style="margin-bottom:18px;">
+                <!-- <div class="field" style="margin-bottom:18px;">
                     <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:8px;">Role</label>
                     <div class="role-options">
                         <label class="role-option">
@@ -231,7 +231,7 @@
                     @error('login_role')
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
-                </div>
+                </div> -->
 
                 {{-- Module Permissions (staff role only) --}}
                 <div id="permissions-field" style="{{ $currentRole === 'admin' ? 'display:none;' : '' }}">
@@ -301,7 +301,7 @@
         </div>
 
         {{-- Description --}}
-        <div class="card">
+        <!-- <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-code-slash"></i></span> Description</h2>
                 <span class="section-sub" id="char-count-msg" style="margin:0;">
@@ -316,7 +316,7 @@
             @error('description')
                 <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
             @enderror
-        </div>
+        </div> -->
 
         <div class="savebar">
             <div class="savebar-inner">
@@ -560,7 +560,7 @@ function submitStaffForm() {
             icon: 'success',
             title: 'Saved!',
             text: data && data.message ? data.message : 'Staff member saved successfully.',
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2000,
             timerProgressBar: true
         }).then(() => {
@@ -572,7 +572,7 @@ function submitStaffForm() {
             icon: 'error',
             title: 'Error',
             text: 'Something went wrong. Please try again.',
-            confirmButtonColor: '#BF0001'
+            confirmButtonColor: '#002F5F'
         });
     })
     .finally(() => {
@@ -756,6 +756,11 @@ function showStaffValidationErrors(errors) {
     .btn-save:hover{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(15,21,38,0.5); }
 
     .req { color: #BF0001; }
+
+    div#show-on-home-card {
+    margin-top: 15px;
+}
+
 </style>
 
 @endsection

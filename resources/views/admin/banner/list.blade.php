@@ -422,7 +422,7 @@
             showCancelButton: true,
             confirmButtonText: '<i class="bi bi-trash3"></i> Yes, delete it',
             cancelButtonText: 'Cancel',
-            confirmButtonColor: '#e74c3c',
+            confirmButtonColor: '#002F5F',
             cancelButtonColor: '#6c757d',
             reverseButtons: true,
             focusCancel: true

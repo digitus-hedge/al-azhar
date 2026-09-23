@@ -11,7 +11,7 @@
             icon: 'success',
             title: 'Done!',
             text: @json(session('success')),
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2200,
             timerProgressBar: true
         });
@@ -223,7 +223,7 @@ document.querySelectorAll('.delete-btn').forEach(function (btn) {
             showCancelButton: true,
             confirmButtonText: 'Yes, delete it',
             cancelButtonText: 'Cancel',
-            confirmButtonColor: '#e74c3c',
+            confirmButtonColor: '#002F5F',
             cancelButtonColor: '#667085',
             reverseButtons: true
         }).then(function (result) {

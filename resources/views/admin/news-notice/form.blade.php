@@ -126,6 +126,40 @@
             </div>
         </div>
 
+
+         <!-- <div class="card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-search"></i></span> SEO Meta</h2>
+            </div>
+            <p class="section-sub" style="margin:0 0 16px;">Used for search engine results and social share previews.</p>
+
+            <div class="field">
+                <div class="field-top">
+                    <label class="field-label">Meta Title</label>
+                    <span class="field-hint">Recommended under 60 chars</span>
+                </div>
+                <input type="text" name="meta_title" value="{{ old('meta_title', $newsNotice->meta_title) }}" maxlength="60"
+                       class="{{ $errors->has('meta_title') ? 'input-error' : '' }}"
+                       placeholder="Enter meta title">
+                @error('meta_title')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="field">
+                <div class="field-top">
+                    <label class="field-label">Meta Description</label>
+                    <span class="field-hint">Recommended under 160 chars</span>
+                </div>
+                <textarea name="meta_description" rows="3" maxlength="160"
+                          class="{{ $errors->has('meta_description') ? 'input-error' : '' }}"
+                          placeholder="Enter meta description">{{ old('meta_description', $newsNotice->meta_description) }}</textarea>
+                @error('meta_description')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+            </div>
+        </div> -->
+
         {{-- Link --}}
         <!-- <div class="card">
             <div class="section-title">
@@ -286,14 +320,32 @@ function showValidationErrors(errors) {
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
     .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; max-width:560px; line-height:1.55; }
 
-    .section-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:6px; }
+    .section-title{ display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+    gap: 6px; }
     .section-title h2{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; margin:0; color: var(--ink,#171B2C); }
     .icon{ display:inline-flex; color: var(--orange,#BF0001); }
 
     .field{ margin-bottom:0; flex:1; }
     .field-row{ display:flex; gap:16px; flex-wrap:wrap; }
     .field-top{ margin-bottom:8px; }
-    .field-label{ font-size:13px; font-weight:600; color: var(--ink,#171B2C); }
+    .field-label{ display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink, #171B2C);
+
+}
+
+.field-hint {
+    font-size: 11.5px;
+    color: var(--faint, #9AA1B2);
+}
+
 
     input[type=text], input[type=date], input[type=file], textarea, select{
         width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
@@ -360,6 +412,23 @@ function showValidationErrors(errors) {
     .btn-save:hover{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(15,21,38,0.5); }
 
          .req{ color: #BF0001; }
+
+         .section-sub {
+    font-size: 12px;
+    color: var(--faint, #9AA1B2);
+    margin: 0 0 16px;
+}
+
+.field {
+    margin-bottom: 28px;
+}
+.field-top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
 </style>
 
 @endsection

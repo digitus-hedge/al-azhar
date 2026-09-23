@@ -15,7 +15,7 @@
     <div class="crumbs">
         <span onclick="window.location='{{ route('admin.dashboard') }}'">Home</span>
         <span>&rsaquo;</span>
-        <span onclick="window.location='{{ route('admin.events') }}'">Upcoming Events</span>
+        <span onclick="window.location='{{ route('admin.events') }}'">Events</span>
         <span>&rsaquo;</span>
         <b>{{ $event->exists ? 'Edit' : 'Add' }}</b>
     </div>

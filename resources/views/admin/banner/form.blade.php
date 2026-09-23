@@ -26,7 +26,7 @@
             icon: 'error',
             title: 'Error',
             text: @json(session('error')),
-            confirmButtonColor: '#e74c3c'
+            confirmButtonColor: '#002F5F'
         });
     });
 </script>

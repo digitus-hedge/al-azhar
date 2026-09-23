@@ -11,7 +11,7 @@
             icon: 'success',
             title: 'Saved!',
             text: @json(session('success')),
-            confirmButtonColor: '#BF0001',
+            confirmButtonColor: '#002F5F',
             timer: 2500,
             timerProgressBar: true
         });
@@ -112,20 +112,40 @@
                         <th></th>
                         <th>{!! $sortLink('title', 'Title') !!}</th>
                         <th>{!! $sortLink('media_type', 'Type') !!}</th>
-                        <th>{!! $sortLink('is_active', 'Status') !!}</th>
+                        <!-- <th>{!! $sortLink('is_active', 'Status') !!}</th> -->
                         <th style="width:130px;text-align:right;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($items as $item)
                         <tr>
-                            <td>
-                                @if ($item->is_video)
-                                    <video src="{{ $item->media_url }}" class="row-thumb" muted></video>
-                                @else
-                                    <img src="{{ $item->media_url }}" alt="{{ $item->title }}" class="row-thumb">
-                                @endif
-                            </td>
+                          <td>
+    @if ($item->is_embed)
+        <div class="row-thumb-wrap">
+            @if ($item->thumbnail_url)
+                <img src="{{ $item->thumbnail_url }}" alt="{{ $item->title }}" class="row-thumb">
+            @else
+                <div class="row-thumb row-thumb-placeholder">
+                    <i class="bi bi-vimeo"></i>
+                </div>
+            @endif
+            <span class="thumb-badge {{ $item->video_provider }}">
+                <i class="bi bi-{{ $item->video_provider === 'youtube' ? 'youtube' : 'vimeo' }}"></i>
+            </span>
+        </div>
+    @elseif ($item->is_video)
+        <div class="row-thumb-wrap">
+            <video src="{{ $item->media_url }}" class="row-thumb" muted preload="metadata"></video>
+            <span class="thumb-badge video"><i class="bi bi-play-fill"></i></span>
+        </div>
+    @elseif ($item->media)
+        <img src="{{ $item->media_url }}" alt="{{ $item->title }}" class="row-thumb">
+    @else
+        <div class="row-thumb row-thumb-placeholder">
+            <i class="bi bi-image"></i>
+        </div>
+    @endif
+</td>
                             <td>
                                 <b>{{ $item->title }}</b>
                             </td>
@@ -135,27 +155,31 @@
                                     {{ ucfirst($item->media_type) }}
                                 </span>
                             </td>
-                            <td>
+                            <!-- <td>
                                 @if ($item->is_active)
                                     <span class="badge-active"><i class="bi bi-check-circle-fill"></i> Active</span>
                                 @else
                                     <span class="badge-muted">Inactive</span>
                                 @endif
-                            </td>
+                            </td> -->
                             <td style="text-align:right;">
                                 <a href="{{ route('admin.gallery.edit', $item) }}" class="icon-btn" title="Edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <button type="button" class="icon-btn icon-btn-danger" title="Delete"
-                                        onclick="confirmDeleteGalleryItem({{ $item->id }}, '{{ addslashes($item->title) }}')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                                <form id="delete-form-{{ $item->id }}"
-                                      action="{{ route('admin.gallery.destroy', $item) }}"
-                                      method="POST" style="display:none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
+                              
+                                 @if(auth()->user()->role === 'admin')
+        <button type="button" class="icon-btn icon-btn-danger" title="Delete"
+                onclick="confirmDeleteGalleryItem({{ $item->id }}, '{{ addslashes($item->title) }}')">
+            <i class="bi bi-trash"></i>
+        </button>
+        <form id="delete-form-{{ $item->id }}"
+              action="{{ route('admin.gallery.destroy', $item) }}"
+              method="POST" style="display:none;">
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
+
                             </td>
                         </tr>
                     @endforeach
@@ -245,7 +269,7 @@ function confirmDeleteGalleryItem(id, title) {
         showCancelButton: true,
         confirmButtonText: 'Yes, remove',
         cancelButtonText: 'Cancel',
-        confirmButtonColor: '#BF0001',
+        confirmButtonColor: '#002F5F',
         cancelButtonColor: '#667085'
     }).then((result) => {
         if (result.isConfirmed) {
@@ -320,7 +344,7 @@ function confirmDeleteGalleryItem(id, title) {
     .news-table tbody tr:last-child td{ border-bottom:none; }
     .news-table tbody tr:hover{ background:#FAFBFD; }
 
-    .row-thumb{ width:40px; height:40px; border-radius:8px; object-fit:cover; display:block; background:#0F1220; }
+    .row-thumb{ width:45px; height:45px; border-radius:8px; object-fit:cover; display:block; background:#0F1220; }
 
     .badge-type{ display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600; padding:3px 10px; border-radius:999px; }
     .badge-type-image{ background:#EAF1FF; color:#2B5FD9; }
@@ -364,6 +388,23 @@ function confirmDeleteGalleryItem(id, title) {
     .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
     .pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
     .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+    .row-thumb-wrap { position: relative; display: inline-block; }
+
+.row-thumb-placeholder {
+    display: flex; align-items: center; justify-content: center;
+    background: #EEF0F6; color: #AEB4C4; font-size: 18px;
+}
+
+.thumb-badge {
+    position: absolute; bottom: 4px; right: 4px;
+    width: 20px; height: 20px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; color: #fff;
+}
+.thumb-badge.youtube { background: #FF0000; }
+.thumb-badge.vimeo   { background: #1AB7EA; }
+.thumb-badge.video   { background: rgba(0,0,0,0.65); }
 </style>
 
 @endsection

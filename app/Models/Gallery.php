@@ -5,15 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
+use App\Support\VideoUrl;
 
 class Gallery extends Model
 {
     use SoftDeletes;
 
+
+
     protected $fillable = [
         'title',
         'media',
         'media_type',
+        'video_url',
+        'video_provider',
+        'video_id',
         'is_active',
         'sort_order',
     ];
@@ -41,5 +47,23 @@ class Gallery extends Model
     public function getIsVideoAttribute(): bool
     {
         return $this->media_type === 'video';
+    }
+
+    public function getIsEmbedAttribute(): bool
+    {
+        return in_array($this->media_type, ['youtube', 'vimeo'], true);
+    }
+
+    public function getEmbedUrlAttribute(): ?string
+    {
+        return $this->is_embed ? VideoUrl::embedUrl($this->video_provider, $this->video_id) : null;
+    }
+
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        if ($this->is_embed) {
+            return VideoUrl::thumbnail($this->video_provider, $this->video_id);
+        }
+        return $this->media_type === 'image' ? $this->media_url : null;
     }
 }
