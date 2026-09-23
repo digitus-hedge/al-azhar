@@ -1,69 +1,8 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
+@extends('web.layouts.app')
 
+@section('title', 'Home || AL-Azhar')
 
-<!-- Mirrored from educve-laravel.themedox.com/?theme=four by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 11 Sep 2026 04:20:56 GMT -->
-<!-- Added by HTTrack -->
-<meta http-equiv="content-type" content="text/html;charset=UTF-8" /><!-- /Added by HTTrack -->
-
-<head>
-    <!-- Meta Tags -->
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Favicon Icon -->
-    <link rel="shortcut icon" href="uploads/website-images/favicon-2025-01-26-05-02-44-5347.png" type="image/x-icon">
-
-    <!-- Site Title -->
-    <title>Educve - Complete eLearning Management System With Laravel</title>
-    <meta name="title" content="Educve - Complete eLearning Management System With Laravel">
-    <meta name="description" content="Educve - Complete eLearning Management System With Laravel">
-
-    <link rel="stylesheet" href="frontend/assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="frontend/assets/css/fontawesome.min.css">
-    <link rel="stylesheet" href="frontend/assets/css/slick.min.css">
-    <link rel="stylesheet" href="frontend/assets/css/odometer.css">
-    <link rel="stylesheet" href="frontend/assets/css/animate.css">
-    <link rel="stylesheet" href="frontend/assets/css/jquery-ui.min.css">
-    <link rel="stylesheet" href="frontend/assets/css/style.css">
-    <link rel="stylesheet" href="frontend/assets/css/dev.css">
-    <link rel="stylesheet" href="frontend/assets/css/cookie_consent.css">
-
-    <link rel="stylesheet" href="global/toastr/toastr.min.css">
-
-
-
-
-    <script>
-        ! function (f, b, e, v, n, t, s) {
-            if (f.fbq) return;
-            n = f.fbq = function () {
-                n.callMethod ?
-                    n.callMethod.apply(n, arguments) : n.queue.push(arguments)
-            };
-            if (!f._fbq) f._fbq = n;
-            n.push = n;
-            n.loaded = !0;
-            n.version = '2.0';
-            n.queue = [];
-            t = b.createElement(e);
-            t.async = !0;
-            t.src = v;
-            s = b.getElementsByTagName(e)[0];
-            s.parentNode.insertBefore(t, s)
-        }(window, document, 'script',
-            'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '156905933');
-        fbq('track', 'PageView');
-
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-            src="https://www.facebook.com/tr?id=156905933&amp;ev=PageView&amp;noscript=1" /></noscript>
-
-</head>
-
-<body>
-   @include('web.partials.header')
+@section('content')
 
   <!-- Start Hero Section -->
 <section class="td_hero td_style_1 td_heading_bg td_center td_hero_carousel_wrap">
@@ -116,6 +55,7 @@
         <span></span>
     </div>
 </section>
+
 <!-- End Hero Section -->
 
 <style>
@@ -198,62 +138,65 @@
     });
 </script>
 
+@if (!empty($stats))
+    @php
+        // Icon picked from the stat's label (keywords), so it still matches after editing in admin.
+        $statIconSet = [
+            // Trophy — years / excellence / experience / awards
+            'award' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h2.5a1.5 1.5 0 0 1 1.5 1.5V7a4 4 0 0 1-4 4M7 5H4.5A1.5 1.5 0 0 0 3 6.5V7a4 4 0 0 0 4 4"/></svg>',
+            // Graduation cap — students / enrolled / alumni
+            'students' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/></svg>',
+            // Teacher at board — faculty / teachers / staff
+            'faculty' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="3"/><path d="M2 21v-2a5 5 0 0 1 5-5h2l4-3"/><path d="M11 3h10v10H14"/></svg>',
+            // Badge with tick — pass / result / percentage / success
+            'pass' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2L12 2z"/><path d="m8.5 12 2.3 2.3 4.7-4.6"/></svg>',
+            // Book — courses / programs / subjects / classes
+            'courses' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M2 5a2 2 0 0 1 2-2h6v17H4a2 2 0 0 0-2 2V5zM22 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2V5z"/></svg>',
+            // Star — anything else
+            'default' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>',
+        ];
+
+        $statKeywords = [
+            'award'    => ['year', 'excellence', 'experience', 'award', 'legacy', 'since'],
+            'students' => ['student', 'enroll', 'alumni', 'learner', 'pupil'],
+            'faculty'  => ['faculty', 'teacher', 'staff', 'instructor', 'mentor', 'tutor'],
+            'pass'     => ['pass', 'result', 'percent', '%', 'success', 'rank'],
+            'courses'  => ['course', 'program', 'subject', 'class', 'department'],
+        ];
+
+        $statIconFor = function ($label) use ($statIconSet, $statKeywords) {
+            $label = \Illuminate\Support\Str::lower($label);
+            foreach ($statKeywords as $key => $words) {
+                if (\Illuminate\Support\Str::contains($label, $words)) {
+                    return $statIconSet[$key];
+                }
+            }
+            return $statIconSet['default'];
+        };
+    @endphp
+
     <div class="container">
         <div class="td_hero_btn_group">
-            <a href="courses.html" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp"
-                data-wow-duration="0.9s" data-wow-delay="0.35s">
-                <span class="td_btn_in td_white_color td_accent_bg">
-                    <span>Browse Course</span>
-                    <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M15.1575 4.34302L3.84375 15.6567" stroke="currentColor" stroke-width="1.5"
-                            stroke-linecap="round" stroke-linejoin="round" />
-                        <path
-                            d="M15.157 11.4142C15.157 11.4142 16.0887 5.2748 15.157 4.34311C14.2253 3.41142 8.08594 4.34314 8.08594 4.34314"
-                            stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                </span>
-            </a>
-            <a href="faq.html" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp"
-                data-wow-duration="0.9s" data-wow-delay="0.35s">
-                <span class="td_btn_in td_white_color td_accent_bg">
-                    <span>Our FAQ</span>
-                    <svg width="19" height="18" viewBox="0 0 19 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M10.625 4.875C10.625 5.09751 10.559 5.31502 10.4354 5.50002C10.3118 5.68503 10.1361 5.82922 9.93052 5.91437C9.72496 5.99952 9.49876 6.0218 9.28053 5.97839C9.0623 5.93498 8.86184 5.82783 8.70451 5.6705C8.54718 5.51316 8.44003 5.31271 8.39662 5.09448C8.35321 4.87625 8.37549 4.65005 8.46064 4.44449C8.54579 4.23892 8.68998 4.06322 8.87499 3.9396C9.05999 3.81598 9.2775 3.75 9.5 3.75C9.79837 3.75 10.0845 3.86853 10.2955 4.07951C10.5065 4.29049 10.625 4.57664 10.625 4.875ZM18.5 9C18.5 7.21997 17.9722 5.47991 16.9832 3.99987C15.9943 2.51983 14.5887 1.36628 12.9442 0.685088C11.2996 0.00389957 9.49002 -0.17433 7.74419 0.172937C5.99836 0.520204 4.39472 1.37737 3.13604 2.63604C1.87737 3.89472 1.0202 5.49836 0.672937 7.24419C0.32567 8.99002 0.5039 10.7996 1.18509 12.4442C1.86628 14.0887 3.01983 15.4943 4.49987 16.4832C5.97991 17.4722 7.71997 18 9.5 18H18.5V9ZM17 9V16.5H9.5C8.01664 16.5 6.5666 16.0601 5.33323 15.236C4.09986 14.4119 3.13856 13.2406 2.57091 11.8701C2.00325 10.4997 1.85473 8.99168 2.14411 7.53683C2.4335 6.08197 3.14781 4.7456 4.1967 3.6967C5.2456 2.64781 6.58197 1.9335 8.03683 1.64411C9.49168 1.35473 10.9997 1.50325 12.3701 2.07091C13.7406 2.63856 14.9119 3.59986 15.736 4.83323C16.5601 6.0666 17 7.51664 17 9ZM11 9C11 8.60218 10.842 8.22065 10.5607 7.93934C10.2794 7.65804 9.89783 7.5 9.5 7.5H8V9H9.5V14.25H11V9Z"
-                            fill="currentColor" />
-                    </svg>
-                </span>
-            </a>
-            <a href="contact-us.html" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp"
-                data-wow-duration="0.9s" data-wow-delay="0.35s">
-                <span class="td_btn_in td_white_color td_accent_bg">
-                    <span>Contact with Us</span>
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_5145_10366)">
-                            <path
-                                d="M18.0008 8.43531C17.8924 6.68032 17.2727 4.99544 16.2182 3.58838C15.1638 2.18131 13.7206 1.11358 12.0666 0.516803C10.4127 -0.0799705 8.62022 -0.179693 6.91027 0.229928C5.20031 0.63955 3.6476 1.54061 2.44356 2.82202C1.23952 4.10343 0.436777 5.70918 0.134303 7.4413C-0.168171 9.17342 0.0428439 10.9562 0.741334 12.5698C1.43982 14.1835 2.59525 15.5575 4.06518 16.5224C5.5351 17.4873 7.25526 18.001 9.0136 18.0001H14.2508C15.2451 17.9991 16.1984 17.6037 16.9014 16.9006C17.6044 16.1976 17.9999 15.2443 18.0008 14.2501V8.43531ZM16.5008 14.2501C16.5008 14.8468 16.2638 15.4191 15.8418 15.841C15.4199 16.263 14.8476 16.5001 14.2508 16.5001H9.0136C7.9553 16.4996 6.90898 16.276 5.94287 15.844C4.97676 15.412 4.11255 14.7812 3.4066 13.9928C2.69723 13.2048 2.16454 12.2742 1.84427 11.2634C1.52399 10.2526 1.42352 9.18508 1.5496 8.13231C1.74867 6.47176 2.49474 4.9247 3.67018 3.735C4.84562 2.5453 6.38357 1.78064 8.0416 1.56156C8.36502 1.52102 8.69064 1.50048 9.0166 1.50006C10.7645 1.49529 12.4582 2.10598 13.8008 3.22506C14.585 3.87676 15.2286 4.68092 15.6927 5.58878C16.1569 6.49664 16.4318 7.48929 16.5008 8.50656V14.2501Z"
-                                fill="currentColor" />
-                            <path
-                                d="M6 6.75H9C9.19891 6.75 9.38968 6.67098 9.53033 6.53033C9.67098 6.38968 9.75 6.19891 9.75 6C9.75 5.80109 9.67098 5.61032 9.53033 5.46967C9.38968 5.32902 9.19891 5.25 9 5.25H6C5.80109 5.25 5.61032 5.32902 5.46967 5.46967C5.32902 5.61032 5.25 5.80109 5.25 6C5.25 6.19891 5.32902 6.38968 5.46967 6.53033C5.61032 6.67098 5.80109 6.75 6 6.75Z"
-                                fill="currentColor" />
-                            <path
-                                d="M12 8.25H6C5.80109 8.25 5.61032 8.32902 5.46967 8.46967C5.32902 8.61032 5.25 8.80109 5.25 9C5.25 9.19891 5.32902 9.38968 5.46967 9.53033C5.61032 9.67098 5.80109 9.75 6 9.75H12C12.1989 9.75 12.3897 9.67098 12.5303 9.53033C12.671 9.38968 12.75 9.19891 12.75 9C12.75 8.80109 12.671 8.61032 12.5303 8.46967C12.3897 8.32902 12.1989 8.25 12 8.25Z"
-                                fill="currentColor" />
-                            <path
-                                d="M12 11.25H6C5.80109 11.25 5.61032 11.329 5.46967 11.4697C5.32902 11.6103 5.25 11.8011 5.25 12C5.25 12.1989 5.32902 12.3897 5.46967 12.5303C5.61032 12.671 5.80109 12.75 6 12.75H12C12.1989 12.75 12.3897 12.671 12.5303 12.5303C12.671 12.3897 12.75 12.1989 12.75 12C12.75 11.8011 12.671 11.6103 12.5303 11.4697C12.3897 11.329 12.1989 11.25 12 11.25Z"
-                                fill="currentColor" />
-                        </g>
-                        <defs>
-                            <clipPath id="clip0_5145_10366">
-                                <rect width="18" height="18" fill="currentColor" />
-                            </clipPath>
-                        </defs>
-                    </svg>
+            @foreach ($stats as $item)
+                @php
+                    $value = $item['value'] ?? $item['number'] ?? $item['count'] ?? '';
+                    $label = $item['label'] ?? $item['title'] ?? '';
+                @endphp
 
-                </span>
-            </a>
+                @if ($value !== '' || $label !== '')
+                    <a href="javascript:;" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp"
+                        data-wow-duration="0.9s" data-wow-delay="0.35s">
+                        <span class="td_btn_in td_white_color td_accent_bg">
+                            <span>{{ $value }} {{ $label }}</span>
+                            {!! $statIconFor($label . ' ' . $value) !!}
+                        </span>
+                    </a>
+                @endif
+            @endforeach
         </div>
     </div>
+
+@endif
     <!-- End Hero Section -->
 
 
@@ -624,7 +567,7 @@
                 <p
                     class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
                     Departments</p>
-                <h2 class="td_section_title td_fs_48 mb-0">Popular Departments</h2>
+                <h2 class="td_section_title td_fs_48 mb-0">Our Departments</h2>
                 <div class="d-flex justify-content-center">
                     <p class="td_section_subtitle td_fs_18 mb-0 qs-custom-min-width-1">Far far away, behind the word
                         mountains, far from the Consonantia, there live the blind texts. Separated they marks grove
@@ -633,36 +576,31 @@
             </div>
             <div class="td_height_50 td_height_lg_50"></div>
             <div class="td_iconbox_1_wrap">
-                <div class="td_iconbox td_style_1 text-center wow fadeInUp" data-wow-duration="1s"
-                    data-wow-delay="0.2s">
-                    <div class="td_iconbox_icon td_accent_color td_mb_10">
-                        <img src="uploads/website-images/1738413524_department_one_image.html" alt="">
-                    </div>
-                    <h3 class="td_iconbox_title mb-0 td_medium td_fs_36">Economics</h3>
-                </div>
-
-                <div class="td_iconbox td_style_1 text-center wow fadeInUp" data-wow-duration="1s"
-                    data-wow-delay="0.3s">
-                    <div class="td_iconbox_icon td_accent_color td_mb_10">
-                        <img src="uploads/website-images/1738413524_department_two_image.html" alt="">
-                    </div>
-                    <h3 class="td_iconbox_title mb-0 td_medium td_fs_36">Computer</h3>
-                </div>
-
-                <div class="td_iconbox td_style_1 text-center wow fadeInUp" data-wow-duration="1s"
-                    data-wow-delay="0.4s">
-                    <div class="td_iconbox_icon td_accent_color td_mb_10">
-                        <img src="uploads/website-images/1738413524_department_three_image.html" alt="">
-                    </div>
-                    <h3 class="td_iconbox_title mb-0 td_medium td_fs_36">Electrical</h3>
-                </div>
-                <div class="td_iconbox td_style_1 text-center wow fadeInUp" data-wow-duration="1s"
-                    data-wow-delay="0.4s">
-                    <div class="td_iconbox_icon td_accent_color td_mb_10">
-                        <img src="uploads/website-images/1738413524_department_four_image.html" alt="">
-                    </div>
-                    <h3 class="td_iconbox_title mb-0 td_medium td_fs_36">Civil</h3>
-                </div>
+                @forelse ($homeDepartments as $department)
+                    @php
+                        $deptImage = $department->icon ?? $department->image ?? $department->photo ?? null;
+                    @endphp
+                    <a href="{{ route('departments.show', $department) }}"
+                        class="td_iconbox td_style_1 text-center wow fadeInUp d-block" data-wow-duration="1s"
+                        data-wow-delay="{{ 0.2 + ($loop->index % 4) * 0.1 }}s">
+                        <div class="td_iconbox_icon td_accent_color td_mb_10">
+                            @if ($deptImage)
+                                <img src="{{ asset('storage/' . $deptImage) }}" alt="{{ $department->name }}">
+                            @else
+                                {{-- default icon when the department has no image --}}
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M3 21h18M5 21V10l7-5 7 5v11" />
+                                    <path d="M9 21v-6h6v6M10 10h4" />
+                                </svg>
+                            @endif
+                        </div>
+                        <h3 class="td_iconbox_title mb-0 td_medium td_fs_36">{{ $department->name }}</h3>
+                    </a>
+                @empty
+                    <p class="text-center w-100 mb-0">Departments will appear here soon.</p>
+                @endforelse
             </div>
         </div>
         <div class="td_height_100 td_height_lg_50"></div>
@@ -705,6 +643,7 @@
     <!-- End Video Section -->
 
 
+    @if ($featuredStaff->isNotEmpty())
     <!-- Start Team Section -->
     <section class="td_shape_section_8 td_hobble">
         <span class="td_shape_position_1 position-absolute td_hover_layer_3">
@@ -767,63 +706,34 @@
             </div>
             <div class="td_height_50 td_height_lg_50"></div>
             <div class="row td_gap_y_30">
-                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
-                    <div class="td_team td_style_1 td_style-home-four text-center position-relative">
+                @php
+                    $staffPlaceholder = 'data:image/svg+xml;utf8,' . rawurlencode(
+                        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 340"><rect width="300" height="340" fill="#eef0f7"/><circle cx="150" cy="130" r="55" fill="#c9cde0"/><path d="M50 340c8-70 50-105 100-105s92 35 100 105z" fill="#c9cde0"/></svg>'
+                    );
+                @endphp
+                @foreach ($featuredStaff as $member)
+                    <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-duration="1s"
+                        data-wow-delay="{{ 0.2 + ($loop->index % 4) * 0.05 }}s">
+                        <div class="td_team td_style_1 td_style-home-four text-center position-relative">
 
-                        <img src="uploads/website-images/david.png" alt=""
-                            class="w-100 td_radius_10" />
+                            <img src="{{ $member->photo ? asset('storage/' . $member->photo) : $staffPlaceholder }}"
+                                alt="{{ $member->name }}" class="w-100 td_radius_10 home_staff_img" />
 
-                        <a href="instructors/david-rechard-20250115042132.html" class="td_team_info td_white_bg">
-                            <h3 class="td_team_member_title td_fs_18 td_semibold mb-0">David Malan</h3>
-                            <p class="td_team_member_designation mb-0 td_fs_14 td_opacity_7 td_heading_color">Laravel
-                                Developer</p>
-                        </a>
+                            <a href="{{ $member->department ? route('departments.show', $member->department) : route('departments.index') }}"
+                                class="td_team_info td_white_bg">
+                                <h3 class="td_team_member_title td_fs_18 td_semibold mb-0">{{ $member->name }}</h3>
+                                <p class="td_team_member_designation mb-0 td_fs_14 td_opacity_7 td_heading_color">
+                                    {{ $member->designation }}
+                                </p>
+                            </a>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
-                    <div class="td_team td_style_1 td_style-home-four text-center position-relative">
-
-                        <img src="uploads/website-images/richard.png" alt=""
-                            class="w-100 td_radius_10" />
-
-                        <a href="instructors/david-rechard-20250118091258.html" class="td_team_info td_white_bg">
-                            <h3 class="td_team_member_title td_fs_18 td_semibold mb-0">David Richard</h3>
-                            <p class="td_team_member_designation mb-0 td_fs_14 td_opacity_7 td_heading_color">Web
-                                Developer</p>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
-                    <div class="td_team td_style_1 td_style-home-four text-center position-relative">
-
-                        <img src="uploads/website-images/selena.png" alt=""
-                            class="w-100 td_radius_10" />
-
-                        <a href="instructors/sabbir-rahman-20250118091258.html" class="td_team_info td_white_bg">
-                            <h3 class="td_team_member_title td_fs_18 td_semibold mb-0">Selena Gomez</h3>
-                            <p class="td_team_member_designation mb-0 td_fs_14 td_opacity_7 td_heading_color">Web
-                                Developer</p>
-                        </a>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-sm-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.25s">
-                    <div class="td_team td_style_1 td_style-home-four text-center position-relative">
-
-                        <img src="uploads/website-images/islam.png" alt=""
-                            class="w-100 td_radius_10" />
-
-                        <a href="instructors/rajibul-islam-20250118091258.html" class="td_team_info td_white_bg">
-                            <h3 class="td_team_member_title td_fs_18 td_semibold mb-0">Rajibul Islam</h3>
-                            <p class="td_team_member_designation mb-0 td_fs_14 td_opacity_7 td_heading_color">Web
-                                Developer</p>
-                        </a>
-                    </div>
-                </div>
+                @endforeach
             </div>
             <div class="td_height_60 td_height_lg_40"></div>
             <div class="text-center wow zoomIn" data-wow-duration="1s" data-wow-delay="0.2s">
 
-                <a href="instructors.html" class="td_btn td_style_1 td_radius_30 td_medium td_with_shadow">
+                <a href="{{ route('departments.index') }}" class="td_btn td_style_1 td_radius_30 td_medium td_with_shadow">
                     <span class="td_btn_in td_white_color td_accent_bg">
                         <span>See All Instructors</span>
                         <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -842,6 +752,7 @@
         <div class="td_height_100 td_height_lg_50"></div>
     </section>
     <!-- End Team Section -->
+    @endif
 
 
     <!-- Start Testimonial Section -->
@@ -1243,335 +1154,60 @@
     </section>
     <!-- End Blog Section -->
 
+    @endsection
 
+@push('styles')
+<style>
+    /* Featured instructors: keep every photo the same shape */
+    .home_staff_img {
+        aspect-ratio: 300 / 340;
+        object-fit: cover;
+        object-position: top;
+    }
+</style>
+@endpush
 
-
-    <!-- Start Footer Section -->
-    <footer class="td_footer td_style_1">
-        <div class="container">
-            <div class="td_footer_row">
-                <div class="td_footer_col">
-                    <div class="td_footer_widget">
-                        <div class="td_footer_text_widget td_fs_18">
-                            <img src="uploads/custom-images/secondary-logo.webp"
-                                alt="Logo">
-                            <p>It is a long established fact that a reader will be distracted by the readable content of
-                                a page when looking at its layout the point of using lorem varius sit amet ipsum.</p>
-                        </div>
-                        <ul class="td_footer_address_widget td_medium td_mp_0">
-    <li>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-            <path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.02-.24c1.12.37 2.33.57 3.57.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.24.2 2.45.57 3.57a1 1 0 0 1-.25 1.02l-2.2 2.2z"/>
-        </svg>
-        <a href="tel:123-343-4444">123-343-4444</a>
-    </li>
-    <li>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
-            <path d="M12 2C7.86 2 4.5 5.36 4.5 9.5c0 5.25 6.3 11.53 6.57 11.8a1.25 1.25 0 0 0 1.77 0c.26-.27 6.57-6.55 6.57-11.8C19.5 5.36 16.14 2 12 2zm0 10.25a2.75 2.75 0 1 1 0-5.5 2.75 2.75 0 0 1 0 5.5z"/>
-        </svg>
-        Los Angeles, CA, USA <br>Los Angeles, CA, USA
-    </li>
-</ul>
-                    </div>
-                </div>
-                <div class="td_footer_col">
-                    <div class="td_footer_widget">
-                        <h2 class="td_footer_widget_title td_fs_32 td_white_color td_medium td_mb_30">Navigate</h2>
-                        <ul class="td_footer_widget_menu">
-                            <li><a href="{{ url('/') }}">Home</a></li>
-                            <li><a href="{{ url('/about-us') }}">About Us</a></li>
-                            <li><a href="contact-us.html">Contact</a></li>
-                            <li><a href="faq.html">FAQ</a></li>
-                            <li><a href="terms-conditions.html">Terms &amp; Conditions</a></li>
-                            <li><a href="privacy-policy.html">Privacy Policy</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="td_footer_col">
-                    <div class="td_footer_widget">
-                        <h2 class="td_footer_widget_title td_fs_32 td_white_color td_medium td_mb_30">Category</h2>
-                        <ul class="td_footer_widget_menu">
-                            <li><a href="coursesf88d.html?category=server-management">Server Management</a></li>
-                            <li><a href="coursesb8ec.html?category=online-educations">Online Educations</a></li>
-                            <li><a href="courses33fa.html?category=design-system">Design System</a></li>
-                            <li><a href="courses0b61.html?category=blockchain-develop">Blockchain Develop</a></li>
-                            <li><a href="courses4a40.html?category=photography-video">Photography &amp; Video</a></li>
-                            <li><a href="coursesbd10.html?category=math-technology">Math &amp; Technology</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="td_footer_col">
-                    <div class="td_footer_widget">
-                        <h2 class="td_footer_widget_title td_fs_32 td_white_color td_medium td_mb_30">Subscribe Now</h2>
-                        <div class="td_newsletter td_style_1">
-                            <p class="td_mb_20 td_opacity_7">Far far away, behind the word mountains, far from the
-                                Consonantia.</p>
-                            <form action="https://educve-laravel.themedox.com/store-newsletter" method="POST"
-                                class="td_newsletter_form">
-                                <input type="hidden" name="_token" value="VqO89dIZeDlcA4eRdpnkwW1ct9J7cXbs9lCJByJ6"
-                                    autocomplete="off"> <input type="email" class="td_newsletter_input"
-                                    placeholder="Email address" name="email">
-                                <button type="submit" class="td_btn td_style_1 td_radius_30 td_medium">
-                                    <span class="td_btn_in td_white_color td_accent_bg">
-                                        <span>Subscribe</span>
-                                    </span>
-                                </button>
-                            </form>
-                        </div>
-                        <div class="td_footer_social_btns td_fs_20">
-    <a target="_blank" href="https://www.facebook.com/" class="td_center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"/>
-        </svg>
-    </a>
-    <a target="_blank" href="https://www.twitter.com/" class="td_center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-        </svg>
-    </a>
-    <a target="_blank" href="https://www.instagram.com/" class="td_center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.256 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.25a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5zm5.25-8.6a1.13 1.13 0 1 0 0-2.26 1.13 1.13 0 0 0 0 2.26z"/>
-        </svg>
-    </a>
-    <a target="_blank" href="https://www.linkedin.com/" class="td_center">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
-            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.446-2.136 2.94v5.666H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.114 20.452H3.56V9h3.554v11.452z"/>
-        </svg>
-    </a>
-</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="td_footer_bottom td_fs_18">
-            <div class="container">
-                <div class="td_footer_bottom_in">
-                    <p class="td_copyright mb-0">Copyright 2025, Educve All Rights Reserved.</p>
-                    <ul class="td_footer_widget_menu">
-                        <li><a href="terms-conditions.html"> Terms &amp; Conditions</a></li>
-                        <li><a href="privacy-policy.html">Privacy &amp; Policy</a></li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </footer>
-    <!-- End Footer Section -->
-    <!-- Start Scroll Up Button -->
-    <div class="td_scrollup">
-        <i class="fa-solid fa-arrow-up"></i>
-    </div>
-    <!-- End Scroll Up Button -->
-
-
-
-
-
-
-
-    <!-- common-modal start  -->
-    <div class="common-modal cookie_consent_modal d-none bg-white">
-        <button type="button" class="btn-close cookie_consent_close_btn" aria-label="Close"></button>
-
-        <h5>Cookies</h5>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-            industry&#039;s standard dummy text ever since the when an unknown printer took.</p>
-
-
-        <a href="javascript:;"
-            class="td_btn td_style_1 td_type_3 td_radius_30 td_medium td_fs_14 report-modal-btn cookie_consent_accept_btn">
-            <span class="td_btn_in td_accent_color">
-                <span>Accept</span>
-            </span>
-        </a>
-
-    </div>
-    <!-- common-modal end  -->
-
-
-    <!-- Script -->
-    <script src="global/js/jquery-3.7.1.min.js"></script>
-    <script src="frontend/assets/js/jquery.slick.min.js"></script>
-    <script src="frontend/assets/js/odometer.js"></script>
-    <script src="frontend/assets/js/gsap.min.js"></script>
-    <script src="frontend/assets/js/jquery-ui.min.js"></script>
-    <script src="frontend/assets/js/wow.min.js"></script>
-    <script src="frontend/assets/js/main.js"></script>
-
-
-    <script src="global/toastr/toastr.min.js"></script>
-
-    <script>
-        (function ($) {
-            "use strict"
-            $(document).ready(function () {
-
-                const session_notify_message = null;
-                const demo_mode_message = null;
-
-                if (session_notify_message != null) {
-                    const session_notify_type = "info";
-                    switch (session_notify_type) {
-                        case 'info':
-                            toastr.info(session_notify_message);
-                            break;
-                        case 'success':
-                            toastr.success(session_notify_message);
-                            break;
-                        case 'warning':
-                            toastr.warning(session_notify_message);
-                            break;
-                        case 'error':
-                            toastr.error(session_notify_message);
-                            break;
-                    }
-                }
-
-                if (demo_mode_message != null) {
-                    toastr.warning("All Language keywords are not implemented in the demo mode");
-                    toastr.info("Admin can translate every word from the admin panel");
-                }
-
-                const validation_errors = [];
-
-                if (validation_errors.length > 0) {
-                    validation_errors.forEach(error => toastr.error(error));
-                }
-
-                if (localStorage.getItem('educve-cookie') != '1') {
-                    $('.cookie_consent_modal').removeClass('d-none');
-                }
-
-                $('.cookie_consent_close_btn').on('click', function () {
-                    $('.cookie_consent_modal').addClass('d-none');
-                });
-
-                $('.cookie_consent_accept_btn').on('click', function () {
-                    localStorage.setItem('educve-cookie', '1');
-                    $('.cookie_consent_modal').addClass('d-none');
-                });
-
-                $('.before_auth_wishlist').on("click", function () {
-                    toastr.error("Please login first")
-                });
-
-                $(".currency_code").on('change', function () {
-                    var currency_code = $(this).val();
-
-                    window.location.href = "https://educve-laravel.themedox.com/currency-switcher" +
-                        "?currency_code=" + currency_code;
-                });
-
-                $(".language_code").on('change', function () {
-                    var language_code = $(this).val();
-
-                    window.location.href = "https://educve-laravel.themedox.com/language-switcher" +
-                        "?lang_code=" + language_code;
-                });
-
-            });
-        })(jQuery);
-
-    </script>
-
-
-    <script>
-        "use strict";
-        $(function () {
-
-
-            $(".add_to_cart").on("click", function (e) {
-
-                let course_id = $(this).data('course_id');
-
-                $.ajax({
-                    type: 'GET',
-                    url: "https://educve-laravel.themedox.com/add-to-card" + "/" + course_id,
-                    success: function (response) {
-                        toastr.success(response.message);
-
-                        let total_cart = $('#total_cart').html();
-                        total_cart = parseInt(total_cart) + parseInt(1);
-                        $('#total_cart').html(total_cart);
-
-                    },
-                    error: function (err) {
-
-                        if (err.status == 403) {
-                            toastr.error(err.responseJSON.message)
-                        } else {
-                            toastr.error(`Server error occured`)
-                        }
-
-                    }
-                });
-
-            })
-
-            $(".add_to_wishlist").on("click", function (e) {
-
-                var app_mode = "DEMO"
-                if (app_mode == 'DEMO') {
-                    toastr.error('This Is Demo Version. You Can Not Change Anything');
-                    return;
-                }
-
-                let course_id = $(this).data('course_id');
-                let current_item = $(this);
-
-                current_item.addClass('active');
-
-                let _token = "VqO89dIZeDlcA4eRdpnkwW1ct9J7cXbs9lCJByJ6";
-
-                $.ajax({
-                    type: 'POST',
-                    data: {
-                        _token,
-                        item_id: course_id
-                    },
-                    url: "https://educve-laravel.themedox.com/student/wishlist",
-                    success: function (response) {
-                        toastr.success(response.message);
-
-                        if (response.type == 'added') {
-                            current_item.addClass('active');
-
-                            let total_wishlist = $('#total_wishlist').html();
-                            total_wishlist = parseInt(total_wishlist) + parseInt(1);
-                            $('#total_wishlist').html(total_wishlist);
-
-                        } else if (response.type == 'removed') {
-                            current_item.removeClass('active');
-
-                            let total_wishlist = $('#total_wishlist').html();
-                            total_wishlist = parseInt(total_wishlist) - parseInt(1);
-                            $('#total_wishlist').html(total_wishlist);
-
-                        }
-
-                    },
-                    error: function (err) {
-                        current_item.removeClass('active');
-                        if (err.status == 401) {
-                            toastr.error(`Please login first`)
-                        } else {
-                            toastr.error(`Server error occured`)
-                        }
-                    }
-                });
-
-            })
-
-
-
+@push('scripts')
+<script>
+$(function () {
+    // Hero carousel
+    var $hero = $('.td_hero_bg_carousel');
+    if ($hero.find('.td_hero_bg_slide').length > 1) {
+        $hero.slick({
+            slidesToShow: 1, slidesToScroll: 1, fade: true, arrows: false, dots: true,
+            autoplay: true, autoplaySpeed: 4000, speed: 800, pauseOnHover: false, infinite: true
         });
+    }
 
-    </script>
+    // Add to cart
+    $(document).on("click", ".add_to_cart", function (e) {
+        e.preventDefault();
+        $.get("{{ url('add-to-card') }}/" + $(this).data('course_id'))
+            .done(function (res) {
+                toastr.success(res.message);
+                $('#total_cart').html((parseInt($('#total_cart').html()) || 0) + 1);
+            })
+            .fail(function (err) {
+                toastr.error(err.status == 403 ? err.responseJSON.message : 'Server error occurred');
+            });
+    });
 
-
-</body>
-
-
-<!-- Mirrored from educve-laravel.themedox.com/?theme=four by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 11 Sep 2026 04:21:10 GMT -->
-
-</html>
+    // Wishlist
+    $(document).on("click", ".add_to_wishlist", function (e) {
+        e.preventDefault();
+        var item = $(this);
+        $.post("{{ url('student/wishlist') }}", { item_id: item.data('course_id') })
+            .done(function (res) {
+                toastr.success(res.message);
+                var total = parseInt($('#total_wishlist').html()) || 0;
+                if (res.type == 'added') { item.addClass('active'); $('#total_wishlist').html(total + 1); }
+                if (res.type == 'removed') { item.removeClass('active'); $('#total_wishlist').html(total - 1); }
+            })
+            .fail(function (err) {
+                item.removeClass('active');
+                toastr.error(err.status == 401 ? 'Please login first' : 'Server error occurred');
+            });
+    });
+});
+</script>
+@endpush

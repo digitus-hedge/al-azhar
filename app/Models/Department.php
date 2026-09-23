@@ -31,4 +31,11 @@ class Department extends Model
     {
         return $query->where('is_active', true)->orderBy('sort_order');
     }
+        /**
+     * All staff members in this department.
+     */
+    public function staff()
+    {
+        return $this->hasMany(Staff::class);
+    }
 }

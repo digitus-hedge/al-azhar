@@ -15,12 +15,32 @@ use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacilityController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
+use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
+use App\Http\Controllers\web\ContactController;
+use App\Http\Controllers\web\EventController as WebEventController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/about-us', function () {
     return view('web.about');
 });
+
+// Public departments page
+Route::get('/departments', [WebDepartmentController::class, 'index'])->name('departments.index');
+Route::get('/departments/{department}', [WebDepartmentController::class, 'show'])->name('departments.show');
+
+// Contact page
+Route::get('/contact-us', [ContactController::class, 'index'])->name('contact.index');
+Route::post('/contact-us', [ContactController::class, 'store'])
+    ->middleware('throttle:5,1')   // max 5 messages per minute per visitor
+    ->name('contact.store');
+
+    // Public events
+Route::get('/events', [WebEventController::class, 'index'])->name('events.index');
+Route::get('/events/{event}', [WebEventController::class, 'show'])->name('events.show');
+
+
+
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Guest routes (login)
