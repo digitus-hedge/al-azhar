@@ -13,11 +13,13 @@ use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DepartmentController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\web\HomeController;
+ 
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/about-us', function () {
+    return view('web.about');
 });
-
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Guest routes (login)
