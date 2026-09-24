@@ -62,7 +62,7 @@
             @if ($perPage !== 10) <input type="hidden" name="per_page" value="{{ $perPage }}"> @endif
             <i class="bi bi-search search-ico"></i>
             <input type="text" name="q" id="gallerySearchInput" value="{{ $search }}"
-                   placeholder="Search by title..." autocomplete="off">
+                   placeholder="Search by Title or Type..." autocomplete="off">
             @if ($search !== '')
                 <a href="{{ route('admin.gallery', array_filter(['sort' => $sortBy !== 'sort_order' ? $sortBy : null, 'dir' => $sortDir !== 'asc' ? $sortDir : null, 'per_page' => $perPage !== 10 ? $perPage : null])) }}" class="search-clear" title="Clear search">
                     <i class="bi bi-x-lg"></i>

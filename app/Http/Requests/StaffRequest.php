@@ -28,7 +28,7 @@ class StaffRequest extends FormRequest
         return [
             'name'             => ['required', 'string', 'max:255'],
             'designation'      => ['required', 'string', 'max:255'],
-            'department_id'    => ['required', 'exists:departments,id'],
+            'department_id'    => ['nullable', 'exists:departments,id'],
             'class_id'         => ['nullable', 'exists:classes,id'],
             'description'      => ['nullable', 'string', 'max:2000'],
             'show_on_home'     => ['nullable', 'boolean'],
@@ -37,7 +37,9 @@ class StaffRequest extends FormRequest
             // (PUT via method spoofing) since an existing photo may be kept.
             'photo' => [
                 $this->isMethod('post') ? 'required' : 'nullable',
-                'image', 'mimes:jpg,jpeg,png,webp', 'max:10240',
+                'image',
+                'mimes:jpg,jpeg,png,webp',
+                'max:10240',
             ],
 
             'is_head_of_staff' => [
@@ -58,7 +60,7 @@ class StaffRequest extends FormRequest
 
                     $alreadyHasHead = Staff::where('department_id', $departmentId)
                         ->where('is_head_of_staff', true)
-                        ->when($currentStaffId, fn ($q) => $q->where('id', '!=', $currentStaffId))
+                        ->when($currentStaffId, fn($q) => $q->where('id', '!=', $currentStaffId))
                         ->exists();
 
                     if ($alreadyHasHead) {
@@ -71,27 +73,24 @@ class StaffRequest extends FormRequest
             'has_login' => ['nullable', 'boolean'],
 
             'login_email' => [
-                'nullable', 'string', 'email', 'max:255',
+                'nullable',
+                'required_if:has_login,1',
+                'string',
+                'email',
+                'max:255',
                 Rule::unique('users', 'email')->ignore($currentUserId),
-                function ($attribute, $value, $fail) {
-                    if ($this->boolean('has_login') && ! $value) {
-                        $fail('Please enter an email address to enable login for this staff member.');
-                    }
-                },
             ],
 
             'login_password' => [
-                'nullable', 'string', 'min:8',
-                function ($attribute, $value, $fail) use ($currentUserId) {
-                    // A password is required only the first time login is
-                    // switched on (no user account exists yet). Once an
-                    // account exists, leaving it blank just keeps the
-                    // current password.
-                    if ($this->boolean('has_login') && ! $currentUserId && ! $value) {
-                        $fail('Please set a password to enable login for this staff member.');
-                    }
-                },
+                'nullable',
+                // Required when login is ON and no account exists yet.
+                // When editing a staff member who already has a login, blank = keep current password.
+                Rule::requiredIf(fn() => $this->boolean('has_login') && ! $currentUserId),
+                'string',
+                'min:8',
             ],
+
+
 
             // Role + module permissions — only meaningful while "has_login" is on.
             'login_role' => ['nullable', Rule::in(['admin', 'staff'])],
@@ -106,7 +105,7 @@ class StaffRequest extends FormRequest
         return [
             'name.required'          => 'Please enter the staff member\'s name.',
             'designation.required'   => 'Please enter a designation.',
-            'department_id.required' => 'Please select a department.',
+
             'department_id.exists'   => 'The selected department is not valid.',
             'class_id.exists'        => 'The selected class is not valid.',
             'photo.required'         => 'Please upload a photo.',
@@ -116,6 +115,9 @@ class StaffRequest extends FormRequest
             'login_email.email'      => 'Please enter a valid email address.',
             'login_email.unique'     => 'This email is already used by another account.',
             'login_password.min'     => 'Password must be at least 8 characters.',
+            'login_email.required_if'  => 'Please enter an email address to enable login for this staff member.',
+'login_password.required'  => 'Please set a password to enable login for this staff member.',
+
         ];
     }
 }

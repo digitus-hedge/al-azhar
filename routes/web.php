@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AdmissionEnquiryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
@@ -69,6 +70,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('staff/{staffMember}', [StaffController::class, 'update'])->name('staff.update');
             Route::delete('staff/{staffMember}', [StaffController::class, 'destroy'])->name('staff.destroy');
 
+            
             Route::get('about', [AboutController::class, 'index'])->name('about');
             Route::post('about', [AboutController::class, 'store'])->name('about.store');
 
@@ -135,6 +137,19 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('gallery/{gallery}', [GalleryController::class, 'destroy'])->name('gallery.destroy');
         });
 
+
+        Route::middleware('module:enquiries')->group(function () {
+            Route::get('admission-enquiries', [AdmissionEnquiryController::class, 'index'])->name('admission-enquiries');
+            Route::get('admission-enquiries/export', [AdmissionEnquiryController::class, 'export'])->name('admission-enquiries.export');
+            Route::get('admission-enquiries/{admissionEnquiry}', [AdmissionEnquiryController::class, 'show'])
+                ->whereNumber('admissionEnquiry')->name('admission-enquiries.show');
+            Route::put('admission-enquiries/{admissionEnquiry}', [AdmissionEnquiryController::class, 'update'])
+                ->whereNumber('admissionEnquiry')->name('admission-enquiries.update');
+            Route::patch('admission-enquiries/{admissionEnquiry}/status', [AdmissionEnquiryController::class, 'updateStatus'])
+                ->whereNumber('admissionEnquiry')->name('admission-enquiries.status');
+            Route::delete('admission-enquiries/{admissionEnquiry}', [AdmissionEnquiryController::class, 'destroy'])
+                ->whereNumber('admissionEnquiry')->name('admission-enquiries.destroy');
+        });
         // NOTE: there is no Enquiries module/controller in the app yet, so
         // "enquiries" is only a selectable permission for now (it does
         // nothing on its own). Once an EnquiryController + routes exist,

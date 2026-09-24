@@ -18,60 +18,61 @@ class StaffController extends Controller
      * Columns that are allowed to be sorted on from the URL.
      */
     protected array $sortable = [
-        'name', 'designation', 'department_id','has_login', 'is_head_of_staff', 'created_at',
+        'id','name', 'designation', 'department_id','has_login', 'is_head_of_staff', 'created_at',
     ];
 
     /**
      * Allowed "per page" choices for the listing.
      */
-    protected array $perPageOptions = [5, 10, 25, 50, 100];
+    protected array $perPageOptions = [10, 25, 50, 100];
 
     /**
      * Display a listing of staff members.
      */
-    public function index(Request $request)
-    {
-        $search  = trim((string) $request->query('q', ''));
-        $sortBy  = $request->query('sort', 'sort_order');
-        $sortDir = strtolower($request->query('dir', 'asc')) === 'desc' ? 'desc' : 'asc';
-        $perPage = (int) $request->query('per_page', 5);
+   public function index(Request $request)
+{
+    $search  = trim((string) $request->query('q', ''));
+    $sortBy  = $request->query('sort', 'id');
+    $sortDir = strtolower($request->query('dir', 'desc')) === 'asc' ? 'asc' : 'desc';
+    $perPage = (int) $request->query('per_page', 10);
 
-        if (! in_array($sortBy, $this->sortable, true)) {
-            $sortBy = 'sort_order';
-        }
-
-        if (! in_array($perPage, $this->perPageOptions, true)) {
-            $perPage = 5;
-        }
-
-        $query = Staff::query()->with('department');
-
-        if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('designation', 'like', "%{$search}%")
-                  ->orWhereHas('department', function ($dq) use ($search) {
-                      $dq->where('name', 'like', "%{$search}%");
-                  });
-            });
-        }
-
-        $query->orderBy($sortBy, $sortDir);
-        if ($sortBy !== 'name') {
-            $query->orderBy('name');
-        }
-
-        $staff = $query->paginate($perPage)->appends($request->query());
-
-        return view('admin.staff.index', [
-            'staff'          => $staff,
-            'search'         => $search,
-            'sortBy'         => $sortBy,
-            'sortDir'        => $sortDir,
-            'perPage'        => $perPage,
-            'perPageOptions' => $this->perPageOptions,
-        ]);
+    if (! in_array($sortBy, $this->sortable, true)) {
+        $sortBy  = 'id';
+        $sortDir = 'desc';
     }
+
+    if (! in_array($perPage, $this->perPageOptions, true)) {
+        $perPage = 10;
+    }
+
+    $query = Staff::query()->with('department');
+
+    if ($search !== '') {
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%")
+              ->orWhere('designation', 'like', "%{$search}%")
+              ->orWhereHas('department', function ($dq) use ($search) {
+                  $dq->where('name', 'like', "%{$search}%");
+              });
+        });
+    }
+
+    $query->orderBy($sortBy, $sortDir);
+    if ($sortBy !== 'id') {
+        $query->orderBy('id', 'desc');
+    }
+
+    $staff = $query->paginate($perPage)->appends($request->query());
+
+    return view('admin.staff.index', [
+        'staff'          => $staff,
+        'search'         => $search,
+        'sortBy'         => $sortBy,
+        'sortDir'        => $sortDir,
+        'perPage'        => $perPage,
+        'perPageOptions' => $this->perPageOptions,
+    ]);
+}
 
     /**
      * Show the form for creating a new staff member.

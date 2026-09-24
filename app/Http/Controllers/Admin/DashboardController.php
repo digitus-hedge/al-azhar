@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdmissionEnquiry;
+use App\Models\NewsNotice;
+use App\Models\Gallery;
 
 
 class DashboardController extends Controller
@@ -10,8 +13,10 @@ class DashboardController extends Controller
     public function index()
     {
        
-
-        return view('admin.dashboard');
+    $newEnquiries = AdmissionEnquiry::where('status', 'new')->count();
+    $activeNotices = NewsNotice::count();
+    $activeGallery = Gallery::count();
+    return view('admin.dashboard', compact('newEnquiries','activeNotices','activeGallery'));
     }
 
     public function home()

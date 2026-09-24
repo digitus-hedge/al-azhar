@@ -9,26 +9,28 @@
 
 <div class="dash-grid">
 
+   <!-- <a href="{{ route('admin.admission-enquiries', ['status' => 'new']) }}" class="dash-card"> -->
     <a href="" class="dash-card">
-        <div class="dash-card-icon"><i class="bi bi-envelope-paper"></i></div>
-        <div class="dash-card-body">
-            <span class="dash-card-count">0</span>
-            <span class="dash-card-label">New Enquiries</span>
-        </div>
-    </a>
+    <div class="dash-card-icon"><i class="bi bi-envelope-paper"></i></div>
+    <div class="dash-card-body">
+        <span class="dash-card-count">{{ $newEnquiries }}</span>
+        <span class="dash-card-label">New Enquiries</span>
+    </div>
+</a>
 
-    <a href="" class="dash-card">
-        <div class="dash-card-icon"><i class="bi bi-megaphone"></i></div>
-        <div class="dash-card-body">
-            <span class="dash-card-count"></span>
-            <span class="dash-card-label">Active Notices</span>
-        </div>
-    </a>
+   <!-- <a href="{{ route('admin.news-notices') }}" class="dash-card"> -->
+       <a href="" class="dash-card">
+    <div class="dash-card-icon"><i class="bi bi-megaphone"></i></div>
+    <div class="dash-card-body">
+        <span class="dash-card-count">{{ $activeNotices }}</span>
+        <span class="dash-card-label">Active Notices</span>
+    </div>
+</a>
 
     <a href="" class="dash-card">
         <div class="dash-card-icon"><i class="bi bi-images"></i></div>
         <div class="dash-card-body">
-            <span class="dash-card-count"></span>
+            <span class="dash-card-count">{{ $activeGallery}}</span>
             <span class="dash-card-label">Media Files</span>
         </div>
     </a>
@@ -63,7 +65,7 @@
             Upload Media
         </a>
 
-        <a href="" class="quick-btn">
+        <a href="{{ route('admin.admission-enquiries') }}" class="quick-btn">
             <i class="bi bi-envelope-open"></i>
             View Enquiries
         </a>

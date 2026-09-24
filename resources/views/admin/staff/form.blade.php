@@ -28,7 +28,7 @@
     </div>
 
     <form action="{{ $staffMember->exists ? route('admin.staff.update', $staffMember) : route('admin.staff.store') }}"
-          method="POST" enctype="multipart/form-data" id="staffForm">
+          method="POST" enctype="multipart/form-data" id="staffForm" novalidate>
         @csrf
         @if ($staffMember->exists)
             @method('PUT')
@@ -182,21 +182,36 @@
                  style="margin-top:16px; {{ old('has_login', $staffMember->has_login) ? '' : 'display:none;' }}">
 
                 <div class="field" style="margin-bottom:14px;">
-                    <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">Email</label>
-                    <input type="email" name="login_email"
-                           value="{{ old('login_email', $staffMember->user->email ?? '') }}"
-                           class="{{ $errors->has('login_email') ? 'input-error' : '' }}"
-                           placeholder="staff@example.com">
+                     <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">
+    Email <span class="req">*</span>
+</label>
+<input type="email" name="login_email" id="login_email"
+       value="{{ old('login_email', $staffMember->user->email ?? '') }}"
+       class="{{ $errors->has('login_email') ? 'input-error' : '' }}"
+       placeholder="staff@example.com">
                     @error('login_email')
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
                 </div>
 
                 <div class="field" style="margin-bottom:18px;">
-                    <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">Password</label>
-                    <input type="password" name="login_password" autocomplete="new-password"
-                           class="{{ $errors->has('login_password') ? 'input-error' : '' }}"
-                           placeholder="{{ $staffMember->user_id ? 'Leave blank to keep current password' : 'Set a password' }}">
+                <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:6px;">
+    Password @if(!$staffMember->user_id)<span class="req">*</span>@endif
+</label>
+
+<!-- <input type="password" name="login_password" id="login_password" autocomplete="new-password"
+       minlength="8"
+       class="{{ $errors->has('login_password') ? 'input-error' : '' }}"
+       placeholder="{{ $staffMember->user_id ? 'Leave blank to keep current password' : 'Set a password (min 8 characters)' }}"> -->
+
+       <div class="password-wrap">
+    <input type="password" name="login_password" id="login_password" autocomplete="new-password"
+           class="{{ $errors->has('login_password') ? 'input-error' : '' }}"
+           placeholder="{{ $staffMember->user_id ? 'Leave blank to keep current password' : 'Set a password (min 8 characters)' }}">
+    <button type="button" class="toggle-password" onclick="togglePassword(this)" title="Show password">
+        <i class="bi bi-eye"></i>
+    </button>
+</div>
                     @error('login_password')
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
@@ -390,6 +405,16 @@
         if (input) input.click();
     }
 
+    function togglePassword(btn) {
+    const input = btn.parentElement.querySelector('input');
+    const icon  = btn.querySelector('i');
+    const show  = input.type === 'password';
+
+    input.type     = show ? 'text' : 'password';
+    icon.className = show ? 'bi bi-eye-slash' : 'bi bi-eye';
+    btn.title      = show ? 'Hide password' : 'Show password';
+}
+
     function previewImage(input, previewId) {
         const preview = document.getElementById(previewId);
         if (!preview) return;
@@ -497,13 +522,34 @@
             firstErrorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        const hasLoginToggle = document.getElementById('has_login');
-        const loginFields = document.getElementById('login-fields');
-        if (hasLoginToggle && loginFields) {
-            hasLoginToggle.addEventListener('change', function () {
-                loginFields.style.display = this.checked ? 'block' : 'none';
-            });
-        }
+        // const hasLoginToggle = document.getElementById('has_login');
+        // const loginFields = document.getElementById('login-fields');
+        // if (hasLoginToggle && loginFields) {
+        //     hasLoginToggle.addEventListener('change', function () {
+        //         loginFields.style.display = this.checked ? 'block' : 'none';
+        //     });
+        // }
+
+        const hasLoginToggle  = document.getElementById('has_login');
+const loginFields     = document.getElementById('login-fields');
+const loginEmail      = document.querySelector('[name="login_email"]');
+const loginPassword   = document.querySelector('[name="login_password"]');
+const hasExistingUser = {{ $staffMember->user_id ? 'true' : 'false' }};
+
+function syncLoginRequired() {
+    const on = hasLoginToggle.checked;
+    loginFields.style.display = on ? 'block' : 'none';
+    if (loginEmail)    loginEmail.required    = on;
+    if (loginPassword) {
+        loginPassword.required  = on && !hasExistingUser;
+        loginPassword.minLength = 8;
+    }
+}
+
+if (hasLoginToggle && loginFields) {
+    hasLoginToggle.addEventListener('change', syncLoginRequired);
+    syncLoginRequired(); // apply correct state on page load (e.g. editing a staff with login ON)
+}
 
         const roleAdmin = document.getElementById('role_admin');
         const roleStaff = document.getElementById('role_staff');
@@ -595,7 +641,7 @@ function showStaffValidationErrors(errors) {
         show_on_home: f => document.getElementById('show-on-home-card'),
         has_login: f => document.getElementById('login-access-card'),
         login_email: f => f.querySelector('[name="login_email"]'),
-        login_password: f => f.querySelector('[name="login_password"]'),
+      login_password: f => f.querySelector('.password-wrap'),
         login_role: f => document.getElementById('role_staff'),
         login_permissions: f => document.getElementById('permissions-field'),
     };
@@ -607,9 +653,10 @@ function showStaffValidationErrors(errors) {
         const target = fieldMap[field] ? fieldMap[field](form) : null;
         if (!target) return;
 
-        if (!noBorderFields.includes(field)) {
-            target.classList.add('input-error');
-        }
+       if (!noBorderFields.includes(field)) {
+    const borderTarget = field === 'login_password' ? target.querySelector('input') : target;
+    borderTarget.classList.add('input-error');
+}
 
         // Make sure the Login Access fields are visible before showing an error on them.
         if (['login_email', 'login_password', 'login_role', 'login_permissions'].includes(field)) {
@@ -760,6 +807,17 @@ function showStaffValidationErrors(errors) {
     div#show-on-home-card {
     margin-top: 15px;
 }
+
+.password-wrap{ position:relative; }
+.password-wrap input{ padding-right:44px; }
+.toggle-password{
+    position:absolute; top:50%; right:8px; transform:translateY(-50%);
+    width:32px; height:32px; border:none; background:none; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--faint,#9AA1B2); font-size:16px; cursor:pointer;
+    transition:color .15s, background .15s;
+}
+.toggle-password:hover{ color: var(--ink,#171B2C); background: var(--canvas,#F6F7FB); }
 
 </style>
 

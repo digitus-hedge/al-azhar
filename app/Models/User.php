@@ -23,6 +23,7 @@ class User extends Authenticatable
         'events'       => 'Events',
         'gallery'      => 'Gallery',
         'enquiries'    => 'Admission Enquiries',
+        
     ];
 
     protected $fillable = [
