@@ -111,9 +111,9 @@
                     <tr>
                         <th>{!! $sortLink('title', 'Title') !!}</th>
                         <th>{!! $sortLink('type', 'Type') !!}</th>
-                        <th>{!! $sortLink('published_at', 'Published') !!}</th>
-                        <!-- <th style="width:90px;">{!! $sortLink('is_pinned', 'Pinned') !!}</th>
-                        <th style="width:90px;">{!! $sortLink('is_active', 'Active') !!}</th> -->
+                        <th>{!! $sortLink('priority', 'Priority') !!}</th>
+                        <th>{!! $sortLink('published_at', 'Publication Date') !!}</th>
+                      
                         <th style="width:130px;text-align:right;">Actions</th>
                     </tr>
                 </thead>
@@ -136,6 +136,14 @@
                                     <span class="badge-muted">&mdash;</span>
                                 @endif
                             </td>
+
+                        <td>
+    @php $priority = $notice->priority ?? 'normal'; @endphp
+    <span class="badge-priority badge-priority-{{ $priority }}">
+        <!-- <i class="bi bi-flag-fill"></i> -->
+        {{ \App\Models\NewsNotice::PRIORITIES[$priority] ?? ucfirst($priority) }}
+    </span>
+</td>
                             <td>{{ $notice->published_at?->format('d M Y') ?? '—' }}</td>
                           
                             <td style="text-align:right;">
@@ -361,6 +369,15 @@ function confirmDeleteNotice(id, title) {
     .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
     .pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
     .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+    .badge-priority{
+    display:inline-flex; align-items:center; gap:5px;
+    font-size:11.5px; font-weight:600; padding:3px 10px; border-radius:999px;
+}
+.badge-priority i{ font-size:10px; }
+.badge-priority-normal{ background:#F2F4F7; color:#475467; }
+.badge-priority-important{ background:#FFF7E6; color:#B45309; }
+.badge-priority-urgent{ background:#FEF2F2; color:#B91C1C; }
 </style>
 
 @endsection

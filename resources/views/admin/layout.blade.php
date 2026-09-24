@@ -944,6 +944,15 @@
             </a>
         </div>
 
+
+         <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.mandatory-disclosures*') ? 'active' : '' }}"
+           href="{{ route('admin.mandatory-disclosures') }}">
+            <i class="bi bi-file-earmark-check nav-ico"></i> Mandatory Disclosure
+        </a>
+    </div>
+    
+
         {{-- Master (Departments + Sections) --}}
         <div class="nav-group {{ $masterOpen ? 'expanded' : '' }}">
             <a class="nav-item {{ $masterOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">

@@ -9,13 +9,19 @@ use App\Models\Concerns\LogsActivity;
 
 class NewsNotice extends Model
 {
-    use HasFactory, SoftDeletes,LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $table = 'news_notices';
 
     public const TYPE_NOTICE       = 'notice';
     public const TYPE_CIRCULAR     = 'circular';
     public const TYPE_ANNOUNCEMENT = 'announcement';
+
+    public const PRIORITIES = [
+        'normal'    => 'Normal',
+        'important' => 'Important',
+        'urgent'    => 'Urgent',
+    ];
 
     public const TYPES = [
         self::TYPE_NOTICE       => 'Notice',
@@ -31,6 +37,7 @@ class NewsNotice extends Model
         'link',
         'published_at',
         'is_pinned',
+        'priority',
         'is_active',
         'sort_order',
         'meta_title',
@@ -61,4 +68,16 @@ class NewsNotice extends Model
             ->orderBy('sort_order')
             ->orderByDesc('published_at');
     }
+
+    public function getPriorityLabelAttribute(): string
+    {
+        return self::PRIORITIES[$this->priority] ?? 'Normal';
+    }
+
+    /** Urgent first, then Important, then Normal. */
+    public function scopeByPriority($q)
+    {
+        return $q->orderByRaw("FIELD(priority, 'urgent', 'important', 'normal')");
+    }
+    
 }

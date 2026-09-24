@@ -49,6 +49,24 @@
             </div>
         </div>
 
+
+        {{-- Priority --}}
+<div class="card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-flag"></i></span> Priority</h2>
+    </div>
+    @php $currentPriority = old('priority', $newsNotice->priority ?? 'normal'); @endphp
+    <div class="priority-options">
+        @foreach (\App\Models\NewsNotice::PRIORITIES as $key => $label)
+            <label class="priority-option priority-{{ $key }}">
+                <input type="radio" name="priority" value="{{ $key }}" {{ $currentPriority === $key ? 'checked' : '' }}>
+                <i class="bi bi-flag-fill"></i> {{ $label }}
+            </label>
+        @endforeach
+    </div>
+    <p class="field-hint" style="margin:10px 0 0;">Urgent notices are shown first on the website with a red badge.</p>
+</div>
+
         {{-- Type + Published date --}}
         <div class="card">
             <div class="section-title">
@@ -68,7 +86,7 @@
                     @enderror
                 </div>
                 <div class="field">
-                    <div class="field-top"><label class="field-label">Published Date</label></div>
+                    <div class="field-top"><label class="field-label">Publication Date</label></div>
                     <input type="date" name="published_at"
                            value="{{ old('published_at', optional($newsNotice->published_at)->format('Y-m-d')) }}"
                            class="{{ $errors->has('published_at') ? 'input-error' : '' }}">
@@ -429,6 +447,22 @@ function showValidationErrors(errors) {
     margin-bottom: 8px;
 }
 
+
+.priority-options{ display:flex; gap:10px; flex-wrap:wrap; }
+.priority-option{
+    display:flex; align-items:center; gap:8px; cursor:pointer;
+    border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
+    padding:10px 16px; font-size:13px; font-weight:600; color: var(--muted,#667085);
+    transition:border-color .15s, background .15s, color .15s;
+}
+.priority-option input{ display:none; }
+.priority-normal i{ color:#98A2B3; }
+.priority-important i{ color:#D97706; }
+.priority-urgent i{ color:#DC2626; }
+.priority-normal:has(input:checked){ border-color:#98A2B3; background:#F2F4F7; color:#344054; }
+.priority-important:has(input:checked){ border-color:#D97706; background:#FFF7E6; color:#92400E; }
+.priority-urgent:has(input:checked){ border-color:#DC2626; background:#FEF2F2; color:#991B1B; }
+.field-hint{ font-size:12px; color: var(--faint,#9AA1B2); }
 </style>
 
 @endsection

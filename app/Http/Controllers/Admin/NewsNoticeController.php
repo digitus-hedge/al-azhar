@@ -14,7 +14,7 @@ class NewsNoticeController extends Controller
      * Columns that are allowed to be sorted on from the URL.
      */
     protected array $sortable = [
-        'title', 'type', 'published_at', 'is_pinned', 'is_active', 'created_at',
+        'title', 'type', 'priority','published_at', 'is_pinned', 'is_active', 'created_at',
     ];
 
     /**

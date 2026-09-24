@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdmissionEnquiryController;
+use App\Http\Controllers\Admin\MandatoryDisclosureController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
@@ -70,7 +71,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('staff/{staffMember}', [StaffController::class, 'update'])->name('staff.update');
             Route::delete('staff/{staffMember}', [StaffController::class, 'destroy'])->name('staff.destroy');
 
-            
+
             Route::get('about', [AboutController::class, 'index'])->name('about');
             Route::post('about', [AboutController::class, 'store'])->name('about.store');
 
@@ -100,6 +101,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('facilities/{facility}/edit', [FacilityController::class, 'edit'])->name('facilities.edit');
             Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
             Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
+
+
+            Route::get('mandatory-disclosures', [MandatoryDisclosureController::class, 'index'])->name('mandatory-disclosures');
+            Route::get('mandatory-disclosures/create', [MandatoryDisclosureController::class, 'create'])->name('mandatory-disclosures.create');
+            Route::post('mandatory-disclosures', [MandatoryDisclosureController::class, 'store'])->name('mandatory-disclosures.store');
+            Route::get('mandatory-disclosures/{disclosure}/edit', [MandatoryDisclosureController::class, 'edit'])->name('mandatory-disclosures.edit');
+            Route::put('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'update'])->name('mandatory-disclosures.update');
+            Route::delete('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'destroy'])->name('mandatory-disclosures.destroy');
+            Route::patch('mandatory-disclosures/{disclosure}/toggle', [MandatoryDisclosureController::class, 'toggle'])->name('mandatory-disclosures.toggle');
 
 
             Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs');

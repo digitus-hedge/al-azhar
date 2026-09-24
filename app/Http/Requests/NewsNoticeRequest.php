@@ -16,12 +16,13 @@ class NewsNoticeRequest extends FormRequest
     /**
      * Used for both creating and updating a notice.
      */
-    public function rules(): array
+     public function rules(): array
     {
         return [
             'title'             => ['required', 'string', 'max:255'],
             'description'       => ['nullable', 'string', 'max:2000'],
             'type'              => ['required', Rule::in(array_keys(NewsNotice::TYPES))],
+            'priority'          => ['required', Rule::in(array_keys(NewsNotice::PRIORITIES))],
             'attachment'        => ['nullable', 'file', 'mimes:pdf', 'max:10240'],
             'remove_attachment' => ['nullable', 'boolean'],
             'link'              => ['nullable', 'url', 'max:2048'],
@@ -37,8 +38,10 @@ class NewsNoticeRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'title.required'          => 'Please enter a title.',
+            'title.required'        => 'Please enter a title.',
             'type.in'               => 'Please choose a valid type.',
+            'priority.required'     => 'Please choose a priority.',
+            'priority.in'           => 'Please choose a valid priority.',
             'attachment.mimes'      => 'The attachment must be a PDF file.',
             'attachment.max'        => 'The attachment must not be larger than 10MB.',
             'link.url'              => 'Please enter a valid URL (including https://).',

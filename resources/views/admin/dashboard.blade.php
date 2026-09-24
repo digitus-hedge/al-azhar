@@ -38,7 +38,7 @@
     <a href="" class="dash-card">
         <div class="dash-card-icon"><i class="bi bi-calendar-event"></i></div>
         <div class="dash-card-body">
-            <span class="dash-card-count"></span>
+            <span class="dash-card-count">{{ $upcomingEvents }}</span>
             <span class="dash-card-label">Upcoming Events</span>
         </div>
     </a>

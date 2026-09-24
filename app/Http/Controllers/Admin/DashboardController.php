@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdmissionEnquiry;
+use App\Models\Event;
 use App\Models\NewsNotice;
 use App\Models\Gallery;
 
@@ -16,7 +17,9 @@ class DashboardController extends Controller
     $newEnquiries = AdmissionEnquiry::where('status', 'new')->count();
     $activeNotices = NewsNotice::count();
     $activeGallery = Gallery::count();
-    return view('admin.dashboard', compact('newEnquiries','activeNotices','activeGallery'));
+    $upcomingEvents = Event::whereDate('event_date', '>=', today())->count();
+
+    return view('admin.dashboard', compact('newEnquiries','activeNotices','activeGallery','upcomingEvents'));
     }
 
     public function home()

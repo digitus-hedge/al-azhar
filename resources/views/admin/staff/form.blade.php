@@ -69,7 +69,7 @@
         {{-- Department --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-building"></i></span> Department <span class="req">*</span></h2>
+                <h2><span class="icon"><i class="bi bi-building"></i></span> Department </h2>
             </div>
 
             <div class="field">
