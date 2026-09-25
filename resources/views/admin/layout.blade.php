@@ -660,7 +660,7 @@
 
 @php
     $homeOpen   = request()->routeIs('admin.home.*');
-    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*');
+    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*','admin.disclosure-categories*');
 @endphp
 
 
@@ -973,6 +973,14 @@
                         <i class="bi bi-collection nav-ico"></i> Sections
                     </a>
                 </li>
+
+                 <li>
+        <a class="nav-item {{ request()->routeIs('admin.disclosure-categories*') ? 'active' : '' }}"
+           href="{{ route('admin.disclosure-categories') }}">
+            <i class="bi bi-folder2-open nav-ico"></i> Disclosure Categories
+        </a>
+    </li>
+
             </ul>
         </div>
     @endif

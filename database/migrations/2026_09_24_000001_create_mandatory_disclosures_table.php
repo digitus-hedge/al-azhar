@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('mandatory_disclosures', function (Blueprint $table) {
             $table->id();
             $table->string('title');
+            $table->string('category', 30)->index();
             $table->string('file');                            // PDF path on the public disk
             $table->string('original_name')->nullable();       // file name as uploaded
             $table->unsignedInteger('file_size')->nullable();  // bytes
