@@ -1,17 +1,13 @@
 @extends('web.layouts.app')
 
 @php
-    use Illuminate\Support\Str;
-    use Illuminate\Support\Facades\Storage;
-    use App\Models\NewsNotice;
-
     $isDetail = isset($notice) && $notice;
-    $types    = NewsNotice::TYPES;
+    $types    = \App\Models\NewsNotice::TYPES;
 
     // ---- small helpers ----
     $dateOf  = fn ($n) => $n->published_at ?? $n->created_at;
-    $urlOf   = fn ($n) => route('news-notices.show', [$n, Str::slug($n->title) ?: 'notice']);
-    $excerpt = fn ($n, $len = 170) => Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $n->description))), $len);
+    $urlOf   = fn ($n) => route('news-notices.show', [$n, \Illuminate\Support\Str::slug($n->title) ?: 'notice']);
+    $excerpt = fn ($n, $len = 170) => \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $n->description))), $len);
 
     $typeIcons = [
         'notice'       => '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
@@ -107,7 +103,7 @@
                     @foreach ($types as $key => $label)
                         <a href="{{ route('news-notices.index', array_filter(['q' => $search, 'type' => $key, 'year' => $year ?: null])) }}"
                             class="nn_chip {{ $type === $key ? 'is-active' : '' }}">
-                            {!! $icon($key, 15) !!} {{ Str::plural($label) }} <span>{{ $typeCounts[$key] ?? 0 }}</span>
+                            {!! $icon($key, 15) !!} {{ \Illuminate\Support\Str::plural($label) }} <span>{{ $typeCounts[$key] ?? 0 }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -122,7 +118,12 @@
                         <div class="row td_gap_y_24">
                             @foreach ($highlights as $h)
                                 <div class="col-lg-4 col-md-6">
-                                    <a href="{{ $urlOf($h) }}" class="nn_hcard nn_p_{{ $h->priority ?: 'normal' }}">
+                                    <a href="{{ $urlOf($h) }}" class="nn_hcard nn_p_{{ $h->priority ?: 'normal' }} {{ $h->image_url ? 'has-img' : '' }}">
+                                        @if ($h->image_url)
+                                            <div class="nn_hcard_img">
+                                                <img src="{{ $h->image_url }}" alt="{{ $h->title }}" loading="lazy">
+                                            </div>
+                                        @endif
                                         <div class="nn_hcard_top">
                                             <span class="nn_prio nn_prio_{{ $h->priority ?: 'normal' }}">
                                                 {{ $h->is_pinned && $h->priority === 'normal' ? 'Pinned' : $h->priority_label }}
@@ -152,7 +153,7 @@
                             $description = trim((string) $notice->description);
                             $isHtml = $description !== strip_tags($description);
 
-                            $attUrl = $notice->attachment ? Storage::url($notice->attachment) : null;
+                            $attUrl = $notice->attachment ? \Illuminate\Support\Facades\Storage::url($notice->attachment) : null;
                             $attExt = $notice->attachment ? strtolower(pathinfo($notice->attachment, PATHINFO_EXTENSION)) : null;
                             $attIsImage = in_array($attExt, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
                             $shareUrl = url()->current();
@@ -180,6 +181,12 @@
                                 </div>
                             </div>
 
+                            @if ($notice->image_url)
+                                <a href="{{ $notice->image_url }}" target="_blank" rel="noopener" class="nn_cover">
+                                    <img src="{{ $notice->image_url }}" alt="{{ $notice->title }}">
+                                </a>
+                            @endif
+
                             @if ($description !== '')
                                 <div class="nn_body td_fs_18">
                                     @if ($isHtml)
@@ -205,7 +212,7 @@
                                             <span class="nn_attach_icon">{{ strtoupper($attExt ?: 'FILE') }}</span>
                                             <div class="nn_attach_info">
                                                 <strong>Attachment</strong>
-                                                <small>{{ Str::limit(basename($notice->attachment), 40) }}</small>
+                                                <small>{{ \Illuminate\Support\Str::limit(basename($notice->attachment), 40) }}</small>
                                             </div>
                                             <div class="nn_attach_actions">
                                                 <a href="{{ $attUrl }}" target="_blank" rel="noopener" class="nn_btn nn_btn_outline">View</a>
@@ -243,13 +250,13 @@
                                 @if ($older)
                                     <a href="{{ $urlOf($older) }}" class="nn_pager_item">
                                         <small>← Previous</small>
-                                        <span>{{ Str::limit($older->title, 60) }}</span>
+                                        <span>{{ \Illuminate\Support\Str::limit($older->title, 60) }}</span>
                                     </a>
                                 @else <span></span> @endif
                                 @if ($newer)
                                     <a href="{{ $urlOf($newer) }}" class="nn_pager_item text-end">
                                         <small>Next →</small>
-                                        <span>{{ Str::limit($newer->title, 60) }}</span>
+                                        <span>{{ \Illuminate\Support\Str::limit($newer->title, 60) }}</span>
                                     </a>
                                 @endif
                             </div>
@@ -265,7 +272,7 @@
                         <div class="nn_list_head">
                             <h2 class="td_fs_24 td_semibold mb-0">
                                 @if ($filtering)
-                                    {{ $notices->total() }} {{ Str::plural('result', $notices->total()) }}
+                                    {{ $notices->total() }} {{ \Illuminate\Support\Str::plural('result', $notices->total()) }}
                                     @if ($search) for “{{ $search }}” @endif
                                 @else
                                     Latest Updates
@@ -278,12 +285,22 @@
 
                         @forelse ($notices as $n)
                             @php $d = $dateOf($n); @endphp
-                            <article class="nn_item nn_p_{{ $n->priority ?: 'normal' }} {{ $n->is_pinned ? 'is-pinned' : '' }}">
-                                <a href="{{ $urlOf($n) }}" class="nn_date" aria-hidden="true" tabindex="-1">
-                                    <strong>{{ $d->format('d') }}</strong>
-                                    <span>{{ $d->format('M') }}</span>
-                                    <small>{{ $d->format('Y') }}</small>
-                                </a>
+                            <article class="nn_item nn_p_{{ $n->priority ?: 'normal' }} {{ $n->is_pinned ? 'is-pinned' : '' }} {{ $n->image_url ? 'has-img' : '' }}">
+                                @if ($n->image_url)
+                                    <a href="{{ $urlOf($n) }}" class="nn_item_img" aria-hidden="true" tabindex="-1">
+                                        <img src="{{ $n->image_url }}" alt="" loading="lazy">
+                                        <span class="nn_item_img_date">
+                                            <strong>{{ $d->format('d') }}</strong>
+                                            <span>{{ $d->format('M Y') }}</span>
+                                        </span>
+                                    </a>
+                                @else
+                                    <a href="{{ $urlOf($n) }}" class="nn_date" aria-hidden="true" tabindex="-1">
+                                        <strong>{{ $d->format('d') }}</strong>
+                                        <span>{{ $d->format('M') }}</span>
+                                        <small>{{ $d->format('Y') }}</small>
+                                    </a>
+                                @endif
                                 <div class="nn_item_body">
                                     <div class="nn_tags">
                                         <span class="nn_type">{!! $icon($n->type) !!} {{ $types[$n->type] ?? 'Notice' }}</span>
@@ -369,7 +386,7 @@
                                         <a href="{{ route('news-notices.index', ['type' => $key]) }}"
                                             class="{{ (! $isDetail && $type === $key) ? 'is-active' : '' }}">
                                             <span class="nn_cat_icon">{!! $icon($key, 18) !!}</span>
-                                            {{ Str::plural($label) }}
+                                            {{ \Illuminate\Support\Str::plural($label) }}
                                             <b>{{ $typeCounts[$key] ?? 0 }}</b>
                                         </a>
                                     </li>
@@ -397,9 +414,14 @@
                                 <ul class="nn_recent td_mp_0">
                                     @foreach ($recent as $r)
                                         <li>
-                                            <a href="{{ $urlOf($r) }}">
-                                                <span class="nn_recent_date">{{ $dateOf($r)->format('d M Y') }}</span>
-                                                <span class="nn_recent_title">{{ $r->title }}</span>
+                                            <a href="{{ $urlOf($r) }}" class="{{ $r->image_url ? 'has-img' : '' }}">
+                                                @if ($r->image_url)
+                                                    <img src="{{ $r->image_url }}" alt="" class="nn_recent_img" loading="lazy">
+                                                @endif
+                                                <span class="nn_recent_text">
+                                                    <span class="nn_recent_date">{{ $dateOf($r)->format('d M Y') }}</span>
+                                                    <span class="nn_recent_title">{{ $r->title }}</span>
+                                                </span>
                                             </a>
                                         </li>
                                     @endforeach
@@ -690,6 +712,34 @@
     }
     .nn_help > * { position: relative; z-index: 1; }
 
+    /* ---------- Notices with an image ---------- */
+    /* Priority card */
+    .nn_hcard.has-img { padding-top: 0; }
+    .nn_hcard_img { margin: 0 -24px 4px; aspect-ratio: 16 / 9; overflow: hidden; }
+    .nn_hcard_img img { width: 100%; height: 100%; object-fit: cover; transition: transform .7s ease; }
+    .nn_hcard:hover .nn_hcard_img img { transform: scale(1.06); }
+
+    /* List item */
+    .nn_item_img { position: relative; flex: none; width: 220px; border-radius: 14px; overflow: hidden; align-self: stretch; min-height: 150px; }
+    .nn_item_img img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s ease; }
+    .nn_item:hover .nn_item_img img { transform: scale(1.06); }
+    .nn_item_img_date {
+        position: absolute; left: 10px; top: 10px; min-width: 58px; padding: 6px 8px; border-radius: 10px; text-align: center;
+        background: var(--nn-accent); color: #fff; box-shadow: 0 10px 20px -8px rgba(0,0,0,.5);
+    }
+    .nn_item.nn_p_urgent .nn_item_img_date { background: var(--nn-urgent); }
+    .nn_item_img_date strong { display: block; font-size: 22px; line-height: 1; }
+    .nn_item_img_date span { display: block; margin-top: 2px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .5px; opacity: .9; }
+
+    /* Detail cover */
+    .nn_cover { display: block; margin-top: 26px; border-radius: 14px; overflow: hidden; border: 1px solid var(--nn-line); }
+    .nn_cover img { width: 100%; max-height: 520px; object-fit: cover; display: block; }
+
+    /* Sidebar recent */
+    .nn_recent a.has-img { flex-direction: row; align-items: center; gap: 12px; }
+    .nn_recent_text { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .nn_recent_img { flex: none; width: 64px; height: 52px; border-radius: 10px; object-fit: cover; }
+
     /* ---------- Responsive ---------- */
     @media (max-width: 991px) {
         .nn_search { flex-wrap: wrap; }
@@ -717,12 +767,14 @@
         .nn_attach_actions .nn_btn { flex: 1; }
         .nn_pager { grid-template-columns: 1fr; }
         .nn_pager .text-end { text-align: left !important; }
+        .nn_item_img { width: 150px; min-height: 120px; }
     }
     @media (max-width: 420px) {
         .nn_item { flex-direction: column; }
         .nn_item .nn_date { flex-direction: row; width: auto; align-self: flex-start; }
         .nn_item .nn_date strong, .nn_item .nn_date span, .nn_item .nn_date small { padding: 6px 10px; font-size: 14px; }
         .nn_search_field { min-width: 0; }
+        .nn_item_img { width: 100%; min-height: 0; aspect-ratio: 16 / 9; }
     }
 </style>
 @endpush
