@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\web;
 
 use App\Http\Controllers\Controller;
+use App\Mail\ContactMessageReceived;
 use App\Models\Contact;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\View\View;
+use Throwable;
 
 class ContactController extends Controller
 {
@@ -20,7 +24,7 @@ class ContactController extends Controller
     }
 
     /**
-     * POST /contact-us — validate and save the message.
+     * POST /contact-us — validate, save the message and email the school.
      */
     public function store(Request $request): JsonResponse|RedirectResponse
     {
@@ -40,11 +44,42 @@ class ContactController extends Controller
             'message.min' => 'Your message should be at least 10 characters.',
         ]);
 
-        Contact::create($data + [
+        $contact = Contact::create($data + [
             'ip_address' => $request->ip(),
         ]);
 
+        $this->notifySchool($contact);
+
         return $this->success($request);
+    }
+
+    /**
+     * Email the school office, sent "from" the visitor (email taken from the
+     * contact form / saved record). If the mail server refuses to send with the
+     * visitor's address as sender, it retries once with the site's own sender,
+     * keeping the visitor as Reply-To. The message is already saved, so a mail
+     * problem is only logged — the visitor still sees "message sent".
+     */
+    protected function notifySchool(Contact $contact): void
+    {
+        $to = config('services.school.email');
+
+        if (blank($to)) {
+            Log::warning('Contact form: SCHOOL_MAIL_TO is not set, no email sent.', ['contact_id' => $contact->id]);
+            return;
+        }
+
+        try {
+            Mail::to($to)->send(new ContactMessageReceived($contact));
+        } catch (Throwable $e) {
+            Log::warning('Contact form: sending as visitor failed, retrying with site sender. ' . $e->getMessage(), ['contact_id' => $contact->id]);
+
+            try {
+                Mail::to($to)->send(new ContactMessageReceived($contact, visitorAsSender: false));
+            } catch (Throwable $e) {
+                Log::error('Contact form email failed: ' . $e->getMessage(), ['contact_id' => $contact->id]);
+            }
+        }
     }
 
     protected function success(Request $request): JsonResponse|RedirectResponse
