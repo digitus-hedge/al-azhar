@@ -810,7 +810,8 @@
 
 
 
-    @php
+    
+   @php
     $user    = auth()->user();
     $isAdmin = $user?->role === 'admin';
 
@@ -821,8 +822,11 @@
     // Admin can see everything; staff only the modules ticked for them.
     $can = fn (string $module) => $isAdmin || in_array($module, $perms, true);
 
-    $homeOpen   = request()->routeIs('admin.home.*');
-    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*');
+    // Pattern "name*" (no dot) matches the list page AND its create/edit pages.
+    $homeOpen        = request()->routeIs('admin.home.*');
+    $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
+    $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*');
+    $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*');
 @endphp
 
 <nav class="nav">
@@ -860,20 +864,39 @@
             </ul>
         </div>
 
-        {{-- About --}}
-        <div class="nav-group">
-            <a class="nav-item {{ request()->routeIs('admin.about*') ? 'active' : '' }}"
-               href="{{ route('admin.about') }}">
-                <i class="bi bi-info-circle nav-ico"></i> About
+        {{-- Institution (About, Management, Principal's Message, Mandatory Disclosure) --}}
+        <div class="nav-group {{ $institutionOpen ? 'expanded' : '' }}">
+            <a class="nav-item {{ $institutionOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
+                <i class="bi bi-bank nav-ico"></i>
+                Institution
+                <i class="bi bi-chevron-right chev"></i>
             </a>
-        </div>
-
-        {{-- Principal's Message --}}
-        <div class="nav-group">
-            <a class="nav-item {{ request()->routeIs('admin.principal-desk*') ? 'active' : '' }}"
-               href="{{ route('admin.principal-desk.create') }}">
-                <i class="bi bi-chat-quote nav-ico"></i> Principal's Message
-            </a>
+            <ul class="submenu">
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.about*') ? 'active' : '' }}"
+                       href="{{ route('admin.about') }}">
+                        <i class="bi bi-info-circle nav-ico"></i> About
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.school-management*') ? 'active' : '' }}"
+                       href="{{ route('admin.school-management') }}">
+                        <i class="bi bi-person-badge nav-ico"></i> Management
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.principal-desk*') ? 'active' : '' }}"
+                       href="{{ route('admin.principal-desk.create') }}">
+                        <i class="bi bi-chat-quote nav-ico"></i> Principal's Message
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.mandatory-disclosures*') ? 'active' : '' }}"
+                       href="{{ route('admin.mandatory-disclosures') }}">
+                        <i class="bi bi-file-earmark-check nav-ico"></i> Mandatory Disclosure
+                    </a>
+                </li>
+            </ul>
         </div>
 
         {{-- Staff --}}
@@ -905,23 +928,32 @@
         </div>
     @endif
 
-    {{-- Facilities --}}
-    @if ($isAdmin)
-        <div class="nav-group">
-            <a class="nav-item {{ request()->routeIs('admin.facilities*') ? 'active' : '' }}"
-               href="{{ route('admin.facilities') }}">
-                <i class="bi bi-building nav-ico"></i> Facilities
+    {{-- Campus Life (Facilities + Gallery) --}}
+    @if ($isAdmin || $can('gallery'))
+        <div class="nav-group {{ $campusOpen ? 'expanded' : '' }}">
+            <a class="nav-item {{ $campusOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
+                <i class="bi bi-tree nav-ico"></i>
+                Campus Life
+                <i class="bi bi-chevron-right chev"></i>
             </a>
-        </div>
-    @endif
-
-    {{-- Gallery --}}
-    @if ($can('gallery'))
-        <div class="nav-group">
-            <a class="nav-item {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}"
-               href="{{ route('admin.gallery') }}">
-                <i class="bi bi-images nav-ico"></i> Gallery
-            </a>
+            <ul class="submenu">
+                @if ($isAdmin)
+                    <li>
+                        <a class="nav-item {{ request()->routeIs('admin.facilities*') ? 'active' : '' }}"
+                           href="{{ route('admin.facilities') }}">
+                            <i class="bi bi-building nav-ico"></i> Facilities
+                        </a>
+                    </li>
+                @endif
+                @if ($can('gallery'))
+                    <li>
+                        <a class="nav-item {{ request()->routeIs('admin.gallery*') ? 'active' : '' }}"
+                           href="{{ route('admin.gallery') }}">
+                            <i class="bi bi-images nav-ico"></i> Gallery
+                        </a>
+                    </li>
+                @endif
+            </ul>
         </div>
     @endif
 
@@ -944,16 +976,7 @@
             </a>
         </div>
 
-
-         <div class="nav-group">
-        <a class="nav-item {{ request()->routeIs('admin.mandatory-disclosures*') ? 'active' : '' }}"
-           href="{{ route('admin.mandatory-disclosures') }}">
-            <i class="bi bi-file-earmark-check nav-ico"></i> Mandatory Disclosure
-        </a>
-    </div>
-    
-
-        {{-- Master (Departments + Sections) --}}
+        {{-- Master (Departments, Sections, Designations, Disclosure Categories) --}}
         <div class="nav-group {{ $masterOpen ? 'expanded' : '' }}">
             <a class="nav-item {{ $masterOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
                 <i class="bi bi-database-gear nav-ico"></i>
@@ -973,19 +996,24 @@
                         <i class="bi bi-collection nav-ico"></i> Sections
                     </a>
                 </li>
-
-                 <li>
-        <a class="nav-item {{ request()->routeIs('admin.disclosure-categories*') ? 'active' : '' }}"
-           href="{{ route('admin.disclosure-categories') }}">
-            <i class="bi bi-folder2-open nav-ico"></i> Disclosure Categories
-        </a>
-    </li>
-
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.designations*') ? 'active' : '' }}"
+                       href="{{ route('admin.designations') }}">
+                        <i class="bi bi-person-lines-fill nav-ico"></i> Designations
+                    </a>
+                </li>
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.disclosure-categories*') ? 'active' : '' }}"
+                       href="{{ route('admin.disclosure-categories') }}">
+                        <i class="bi bi-folder2-open nav-ico"></i> Disclosure Categories
+                    </a>
+                </li>
             </ul>
         </div>
     @endif
 
 </nav>
+
 
 
 

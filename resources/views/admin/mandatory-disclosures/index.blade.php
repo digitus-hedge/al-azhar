@@ -103,7 +103,7 @@
                             <!-- <th>{!! $sortLink('valid_until', 'Valid Until') !!}</th>
                             <th>{!! $sortLink('sort_order', 'Order') !!}</th> -->
                             <!-- <th>{!! $sortLink('is_active', 'Visible') !!}</th> -->
-                            <th style="width:130px;text-align:right;">Actions</th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>

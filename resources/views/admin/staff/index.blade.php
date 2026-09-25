@@ -134,8 +134,20 @@
                                     <span class="badge-head"><i class="bi bi-star-fill"></i> Head</span>
                                 @else
                                     <span class="badge-muted"></span>
-                                @endif</td>
-                            <td>{{ $member->designation }}</td>
+                                @endif
+                            </td>
+
+                            <td>
+    @if ($member->staffDesignation)
+        <span class="{{ $member->staffDesignation->trashed() ? 'is-deleted' : '' }}"
+              title="{{ $member->staffDesignation->trashed() ? 'This designation was deleted' : '' }}">
+            {{ $member->designation }}
+        </span>
+    @else
+        <span class="badge-muted">—</span>
+    @endif
+</td>
+                    
                           <td>{{ $member->department?->name ?? '—' }}</td>
 
                          <td>

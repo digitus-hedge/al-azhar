@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StaffRequest;
 use App\Models\Department;
+use App\Models\ManagementDesignation;
 use App\Models\SchoolClass;
 use App\Models\Staff;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -45,19 +47,30 @@ class StaffController extends Controller
         $perPage = 10;
     }
 
-    $query = Staff::query()->with('department');
+    $query = Staff::query()->with(['department', 'staffDesignation']);
 
     if ($search !== '') {
         $query->where(function ($q) use ($search) {
             $q->where('name', 'like', "%{$search}%")
-              ->orWhere('designation', 'like', "%{$search}%")
+              ->orWhereHas('staffDesignation', function ($dq) use ($search) {
+                  $dq->where('name', 'like', "%{$search}%");
+              })
               ->orWhereHas('department', function ($dq) use ($search) {
                   $dq->where('name', 'like', "%{$search}%");
               });
         });
     }
 
-    $query->orderBy($sortBy, $sortDir);
+    // "Designation" sorts by the designation NAME (the table only stores designation_id)
+    if ($sortBy === 'designation') {
+        $query->orderBy(
+            ManagementDesignation::withTrashed()->select('name')
+                ->whereColumn('management_designations.id', 'staff.designation_id'),
+            $sortDir
+        );
+    } else {
+        $query->orderBy($sortBy, $sortDir);
+    }
     if ($sortBy !== 'id') {
         $query->orderBy('id', 'desc');
     }
@@ -79,11 +92,12 @@ class StaffController extends Controller
      */
     public function create()
     {
-        $staffMember = new Staff();
-        $departments = Department::active()->get();
-        $classes     = SchoolClass::active()->get();
+        $staffMember  = new Staff();
+        $departments  = Department::active()->get();
+        $classes      = SchoolClass::active()->get();
+        $designations = $this->designationOptions();
 
-        return view('admin.staff.form', compact('staffMember', 'departments', 'classes'));
+        return view('admin.staff.form', compact('staffMember', 'departments', 'classes', 'designations'));
     }
 
     /**
@@ -128,10 +142,11 @@ class StaffController extends Controller
      */
     public function edit(Staff $staffMember)
     {
-        $departments = Department::active()->get();
-        $classes     = SchoolClass::active()->get();
+        $departments  = Department::active()->get();
+        $classes      = SchoolClass::active()->get();
+        $designations = $this->designationOptions($staffMember);
 
-        return view('admin.staff.form', compact('staffMember', 'departments', 'classes'));
+        return view('admin.staff.form', compact('staffMember', 'departments', 'classes', 'designations'));
     }
 
     /**
@@ -193,6 +208,28 @@ class StaffController extends Controller
         return redirect()
             ->route('admin.staff')
             ->with('success', 'Staff member removed successfully.');
+    }
+
+    /**
+     * Designations for the Staff dropdown: only type = staff and not deleted,
+     * plus the staff member's current one (so editing still shows it selected).
+     */
+    protected function designationOptions(?Staff $staffMember = null): Collection
+    {
+        $current = $staffMember?->designation_id;
+
+        return ManagementDesignation::withTrashed()
+            ->where(function ($q) use ($current) {
+                $q->where(function ($w) {
+                    $w->whereNull('deleted_at')
+                      ->where('type', 'staff');          // only Staff designations
+                });
+                if ($current) {
+                    $q->orWhere('id', $current);
+                }
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'type', 'deleted_at']);
     }
 
     /**

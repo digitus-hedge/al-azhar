@@ -24,10 +24,24 @@ class StaffRequest extends FormRequest
         $currentStaffMember = $this->route('staffMember');
         $currentStaffId     = $currentStaffMember?->id;
         $currentUserId      = $currentStaffMember?->user_id;
+        $currentDesignation = $currentStaffMember?->designation_id;
 
         return [
             'name'             => ['required', 'string', 'max:255'],
-            'designation'      => ['required', 'string', 'max:255'],
+            // Staff designation from Master > Designations (type = staff).
+            // On edit the current one stays valid even if it was deleted later.
+            'designation_id'   => [
+                'required',
+                'integer',
+                Rule::exists('management_designations', 'id')->where(function ($q) use ($currentDesignation) {
+                    $q->where(function ($w) use ($currentDesignation) {
+                        $w->where(fn ($x) => $x->whereNull('deleted_at')->where('type', 'staff'));
+                        if ($currentDesignation) {
+                            $w->orWhere('id', $currentDesignation);
+                        }
+                    });
+                }),
+            ],
             'department_id'    => ['nullable', 'exists:departments,id'],
             'class_id'         => ['nullable', 'exists:classes,id'],
             'description'      => ['nullable', 'string', 'max:2000'],
@@ -104,7 +118,9 @@ class StaffRequest extends FormRequest
     {
         return [
             'name.required'          => 'Please enter the staff member\'s name.',
-            'designation.required'   => 'Please enter a designation.',
+            'designation_id.required' => 'Please select a designation.',
+            'designation_id.integer'  => 'Please select a valid designation.',
+            'designation_id.exists'   => 'Please select a Staff designation from the list.',
 
             'department_id.exists'   => 'The selected department is not valid.',
             'class_id.exists'        => 'The selected class is not valid.',
@@ -116,7 +132,7 @@ class StaffRequest extends FormRequest
             'login_email.unique'     => 'This email is already used by another account.',
             'login_password.min'     => 'Password must be at least 8 characters.',
             'login_email.required_if'  => 'Please enter an email address to enable login for this staff member.',
-'login_password.required'  => 'Please set a password to enable login for this staff member.',
+            'login_password.required'  => 'Please set a password to enable login for this staff member.',
 
         ];
     }
