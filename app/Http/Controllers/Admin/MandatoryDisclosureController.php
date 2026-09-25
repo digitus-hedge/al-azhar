@@ -4,14 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\MandatoryDisclosureRequest;
+use App\Models\DisclosureCategory;
 use App\Models\MandatoryDisclosure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
 
 class MandatoryDisclosureController extends Controller
 {
     /** Columns allowed to be sorted on from the URL. */
-    protected array $sortable = ['id', 'title','valid_until', 'sort_order', 'is_active', 'created_at'];
+    protected array $sortable = ['id', 'title', 'category', 'valid_until', 'sort_order', 'is_active', 'created_at'];
 
     /** Allowed "per page" choices. */
     protected array $perPageOptions = [10, 25, 50, 100];
@@ -22,7 +24,7 @@ class MandatoryDisclosureController extends Controller
     public function index(Request $request)
     {
         $search   = trim((string) $request->query('q', ''));
-
+        $category = $request->integer('category') ?: null;   // disclosure_categories.id
         $sortBy   = $request->query('sort', 'id');
         $sortDir  = strtolower($request->query('dir', 'desc')) === 'asc' ? 'asc' : 'desc';
         $perPage  = (int) $request->query('per_page', 10);
@@ -36,18 +38,31 @@ class MandatoryDisclosureController extends Controller
             $perPage = 10;
         }
 
-        $query = MandatoryDisclosure::query();
+        $query = MandatoryDisclosure::query()
+            ->with('disclosureCategory');   // load category names in one query, not one per row
 
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('issued_by', 'like', "%{$search}%");
+                  ->orWhere('issued_by', 'like', "%{$search}%")
+                  ->orWhereHas('disclosureCategory', fn ($c) => $c->where('name', 'like', "%{$search}%"));
             });
         }
 
-      
+        $query->inCategory($category);
 
-        $query->orderBy($sortBy, $sortDir);
+        // Sort "Category" by the category NAME (the column itself only holds the id)
+        if ($sortBy === 'category') {
+            $query->orderBy(
+                DisclosureCategory::withTrashed()
+                    ->select('name')
+                    ->whereColumn('disclosure_categories.id', 'mandatory_disclosures.category'),
+                $sortDir
+            );
+        } else {
+            $query->orderBy($sortBy, $sortDir);
+        }
+
         if ($sortBy !== 'id') {
             $query->orderBy('id', 'desc');
         }
@@ -64,6 +79,8 @@ class MandatoryDisclosureController extends Controller
         return view('admin.mandatory-disclosures.index', [
             'disclosures'    => $disclosures,
             'search'         => $search,
+            'category'       => $category,
+            'categories'     => DisclosureCategory::orderBy('name')->pluck('name', 'id'),   // [id => name]
             'sortBy'         => $sortBy,
             'sortDir'        => $sortDir,
             'perPage'        => $perPage,
@@ -80,7 +97,10 @@ class MandatoryDisclosureController extends Controller
     {
         $disclosure = new MandatoryDisclosure(['is_active' => true, 'sort_order' => 0]);
 
-        return view('admin.mandatory-disclosures.form', compact('disclosure'));
+        return view('admin.mandatory-disclosures.form', [
+            'disclosure' => $disclosure,
+            'categories' => $this->categoryOptions(),
+        ]);
     }
 
     /**
@@ -88,7 +108,7 @@ class MandatoryDisclosureController extends Controller
      */
     public function store(MandatoryDisclosureRequest $request)
     {
-        $validated = $request->validated();
+        $validated = $request->validated();   // 'category' is the disclosure_categories id
 
         $file = $request->file('file');
         $validated['file']          = $file->store('mandatory-disclosures', 'public');
@@ -116,7 +136,10 @@ class MandatoryDisclosureController extends Controller
      */
     public function edit(MandatoryDisclosure $disclosure)
     {
-        return view('admin.mandatory-disclosures.form', compact('disclosure'));
+        return view('admin.mandatory-disclosures.form', [
+            'disclosure' => $disclosure,
+            'categories' => $this->categoryOptions($disclosure),
+        ]);
     }
 
     /**
@@ -183,5 +206,24 @@ class MandatoryDisclosureController extends Controller
             'message'   => $disclosure->is_active ? 'Document is now visible on the website.' : 'Document hidden from the website.',
             'is_active' => $disclosure->is_active,
         ]);
+    }
+
+    /**
+     * Categories for the form dropdown: all active ones, plus this document's
+     * current category if it has since been deleted (shown as "(deleted)").
+     */
+    private function categoryOptions(?MandatoryDisclosure $disclosure = null): Collection
+    {
+        $current = $disclosure?->category;
+
+        return DisclosureCategory::withTrashed()
+            ->where(function ($q) use ($current) {
+                $q->whereNull('deleted_at');
+                if ($current) {
+                    $q->orWhere('id', $current);
+                }
+            })
+            ->orderBy('name')
+            ->get(['id', 'name', 'deleted_at']);
     }
 }

@@ -52,7 +52,79 @@
         </div>
 
         {{-- Category --}}
-       
+            {{-- Category (from disclosure_categories table) --}}
+        <div class="card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-folder2"></i></span> Category <span class="req">*</span></h2>
+                <a href="{{ route('admin.disclosure-categories.create') }}" target="_blank" class="add-cat-link">
+                    <i class="bi bi-plus-lg"></i> New category
+                </a>
+            </div>
+            <div class="field">
+                <select name="category" class="{{ $errors->has('category') ? 'input-error' : '' }}"
+                        {{ $categories->isEmpty() ? 'disabled' : '' }}>
+                    <option value="">— Select Category —</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->id }}"
+                            @selected((string) old('category', $disclosure->category) === (string) $cat->id)>
+                            {{ $cat->name }}{{ $cat->trashed() ? ' (deleted)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('category')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+
+                @if ($categories->isEmpty())
+                    <span class="field-hint" style="color:#B7791F;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        No categories yet. Add one under Master &rsaquo; Disclosure Categories first, then reload this page.
+                    </span>
+                @else
+                    <span class="field-hint">Documents are grouped under these headings on the website.</span>
+                @endif
+            </div>
+        </div>
+
+        {{-- Issue details --}}
+        <!-- <div class="card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-patch-check"></i></span> Issue Details</h2>
+            </div>
+
+            <div class="field">
+                <div class="field-top"><label class="field-label">Issued By</label></div>
+                <input type="text" name="issued_by" value="{{ old('issued_by', $disclosure->issued_by) }}"
+                       class="{{ $errors->has('issued_by') ? 'input-error' : '' }}"
+                       placeholder="e.g. Kerala Fire & Rescue Services">
+                @error('issued_by')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <div class="field-top"><label class="field-label">Issue Date</label></div>
+                    <input type="date" name="issue_date"
+                           value="{{ old('issue_date', optional($disclosure->issue_date)->format('Y-m-d')) }}"
+                           class="{{ $errors->has('issue_date') ? 'input-error' : '' }}">
+                    @error('issue_date')
+                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="field">
+                    <div class="field-top"><label class="field-label">Valid Until</label></div>
+                    <input type="date" name="valid_until"
+                           value="{{ old('valid_until', optional($disclosure->valid_until)->format('Y-m-d')) }}"
+                           class="{{ $errors->has('valid_until') ? 'input-error' : '' }}">
+                    @error('valid_until')
+                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+            <span class="field-hint" style="margin-top:10px;">Leave "Valid Until" empty for documents that don't expire (e.g. affiliation letter, trust registration).</span>
+        </div> -->
+
         {{-- PDF --}}
         <div class="card" id="fileSection">
             <div class="section-title">
@@ -95,6 +167,7 @@
         </div>
 
         {{-- Order & Visibility --}}
+        
 
         <!-- <div class="card">
             <div class="section-title">
@@ -121,6 +194,7 @@
                 <span class="toggle-label">Show on website</span>
             </label>
         </div> -->
+        
 
         <div class="savebar">
             <div class="savebar-inner">
@@ -374,6 +448,10 @@
     .btn-save:disabled{ opacity:.7; cursor:wait; transform:none; }
 
     .req{ color:#BF0001; }
+
+        .add-cat-link{ display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:600;
+                   color: var(--orange,#BF0001); text-decoration:none; }
+    .add-cat-link:hover{ text-decoration:underline; }
 </style>
 
 @endsection

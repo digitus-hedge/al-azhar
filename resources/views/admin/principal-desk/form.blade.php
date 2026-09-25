@@ -80,18 +80,22 @@
                 <h2><span class="icon"><i class="bi bi-chat-quote"></i></span> Message</h2>
             </div>
 
-            <div class="field">
-                <div class="field-top">
-                    <label class="field-label">Short Excerpt</label>
-                    <span class="field-hint">Shown on the preview card</span>
-                </div>
-                <textarea name="excerpt" id="excerpt-input" rows="4" maxlength="500"
-                          class="{{ $errors->has('excerpt') ? 'input-error' : '' }}"
-                          placeholder="A brief welcome message shown on the homepage card...">{{ old('excerpt', $item->excerpt) }}</textarea>
-                @error('excerpt')
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                @enderror
-            </div>
+          @php $excerptMax = \App\Http\Requests\PrincipalDeskRequest::EXCERPT_MAX_WORDS; @endphp
+<div class="field" id="excerptField">
+    <div class="field-top">
+        <label class="field-label">Short Excerpt <span class="req">*</span></label>
+        <span class="field-hint">
+            Shown on the preview card &middot;
+            <span class="word-counter" id="excerptCounter"><b id="excerptWords">0</b> / {{ $excerptMax }} words</span>
+        </span>
+    </div>
+    <textarea name="excerpt" id="excerpt-input" rows="4" data-max-words="{{ $excerptMax }}"
+              class="{{ $errors->has('excerpt') ? 'input-error' : '' }}"
+              placeholder="A brief welcome message shown on the homepage card...">{{ old('excerpt', $item->excerpt) }}</textarea>
+    @error('excerpt')
+        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+    @enderror
+</div>
 
             <!-- <div class="field">
                 <div class="field-top">
@@ -371,6 +375,45 @@ function showValidationErrors(errors) {
 
 <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
+    // tinymce.init({
+    //     selector: '#excerpt-input, #message-input',
+    //     height: 260,
+    //     menubar: false,
+    //     plugins: 'advlist autolink lists link charmap preview anchor searchreplace visualblocks code fullscreen wordcount',
+    //     toolbar: 'undo redo | blocks | bold italic forecolor | ' +
+    //         'alignleft aligncenter alignright alignjustify | ' +
+    //         'bullist numlist outdent indent | link | code preview fullscreen | removeformat help',
+    //     content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size:14px }',
+    //     branding: false,
+    //     promotion: false,
+    //     setup: function (editor) {
+    //         editor.on('change keyup blur', function () {
+    //             editor.save();
+    //         });
+    //     }
+    // });
+
+
+
+
+ 
+    // Same counting as PrincipalDeskRequest::countWords()
+    function countEditorWords(editor) {
+        const text = editor.getContent({ format: 'text' }).replace(/\u00A0/g, ' ').trim();
+        return text === '' ? 0 : text.split(/\s+/).length;
+    }
+
+    function updateExcerptCounter(editor) {
+        const max     = parseInt(document.getElementById('excerpt-input').dataset.maxWords, 10);
+        const words   = countEditorWords(editor);
+        const counter = document.getElementById('excerptCounter');
+
+        document.getElementById('excerptWords').textContent = words;
+        counter.classList.toggle('over', words > max);
+        counter.classList.toggle('near', words > max * 0.9 && words <= max);
+        return { words, max };
+    }
+
     tinymce.init({
         selector: '#excerpt-input, #message-input',
         height: 260,
@@ -383,11 +426,13 @@ function showValidationErrors(errors) {
         branding: false,
         promotion: false,
         setup: function (editor) {
-            editor.on('change keyup blur', function () {
+            editor.on('init input keyup change paste undo redo SetContent', function () {
                 editor.save();
+                if (editor.id === 'excerpt-input') updateExcerptCounter(editor);
             });
         }
     });
+
 
     // TinyMCE replaces the textareas with iframes, so make sure their
     // content is synced into the underlying <textarea> before the form

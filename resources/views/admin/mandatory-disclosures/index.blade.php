@@ -58,10 +58,15 @@
         <form method="GET" action="{{ route('admin.mandatory-disclosures') }}" class="toolbar">
             <div class="search-box">
                 <i class="bi bi-search"></i>
-                <input type="text" name="q" value="{{ $search }}" placeholder="Search title or issuer...">
+              <input type="text" name="q" value="{{ $search }}" placeholder="Search title, issuer or category...">
             </div>
 
-         
+                       <select name="category" onchange="this.form.submit()">
+                <option value="">All Categories</option>
+                @foreach ($categories as $id => $name)
+                    <option value="{{ $id }}" @selected($category === (int) $id)>{{ $name }}</option>
+                @endforeach
+            </select>
 
             <select name="per_page" onchange="this.form.submit()" style="max-width:120px;">
                 @foreach ($perPageOptions as $n)
@@ -72,7 +77,7 @@
             <input type="hidden" name="sort" value="{{ $sortBy }}">
             <input type="hidden" name="dir" value="{{ $sortDir }}">
 
-            @if ($search !== '')
+            @if ($search !== '' || $category)
                 <a href="{{ route('admin.mandatory-disclosures') }}" class="btn-clear">Clear</a>
             @endif
         </form>
@@ -80,9 +85,9 @@
         @if ($disclosures->isEmpty())
             <div class="empty">
                 <div class="empty-ico"><i class="bi bi-file-earmark-pdf"></i></div>
-                <h3>{{ $search !== '' ? 'No documents match your filters' : 'No documents yet' }}</h3>
-                <p>{{ $search !== ''  ? 'Try a different search or category.' : 'Upload your first statutory document to get started.' }}</p>
-                @if ($search === '')
+                <h3>{{ $search !== '' || $category ? 'No documents match your filters' : 'No documents yet' }}</h3>
+                <p>{{ $search !== '' || $category ? 'Try a different search or category.' : 'Upload your first statutory document to get started.' }}</p>
+                @if ($search === '' && ! $category)
                     <a href="{{ route('admin.mandatory-disclosures.create') }}" class="btn-add" style="margin-top:14px;">
                         <i class="bi bi-plus-lg"></i> Add Document
                     </a>
@@ -94,10 +99,10 @@
                     <thead>
                         <tr>
                             <th>{!! $sortLink('title', 'Document') !!}</th>
-                 
+                            <th>{!! $sortLink('category', 'Category') !!}</th>
                             <!-- <th>{!! $sortLink('valid_until', 'Valid Until') !!}</th>
                             <th>{!! $sortLink('sort_order', 'Order') !!}</th> -->
-                            <th>{!! $sortLink('is_active', 'Visible') !!}</th>
+                            <!-- <th>{!! $sortLink('is_active', 'Visible') !!}</th> -->
                             <th style="width:130px;text-align:right;">Actions</th>
                         </tr>
                     </thead>
@@ -116,7 +121,15 @@
                                         </div>
                                     </div>
                                 </td>
-                               
+                                                               <td>
+                                    @php $cat = $doc->disclosureCategory; @endphp
+                                    <span class="badge-cat {{ $cat?->trashed() ? 'is-deleted' : '' }}"
+                                          title="{{ $cat?->trashed() ? 'This category was deleted' : '' }}">
+                                        <i class="bi bi-folder2"></i>
+                                        {{ $doc->category_label }}
+                                    </span>
+                                </td>
+
                                 <!-- <td>
                                     @if (! $doc->valid_until)
                                         <span class="badge-muted">No expiry</span>
@@ -133,17 +146,18 @@
                                             <i class="bi bi-check-circle-fill"></i> {{ $doc->valid_until->format('d M Y') }}
                                         </span>
                                     @endif
-                                </td> -->
+                                </td>
 
-                                <!-- <td>{{ $doc->sort_order }}</td> -->
+                                <td>{{ $doc->sort_order }}</td> -->
 
-                                <td>
+                                <!-- <td>
                                     <label class="mini-toggle" title="Show / hide on website">
                                         <input type="checkbox" {{ $doc->is_active ? 'checked' : '' }}
                                                onchange="toggleDisclosure(this, '{{ route('admin.mandatory-disclosures.toggle', $doc) }}')">
                                         <span></span>
                                     </label>
-                                </td>
+                                </td> -->
+
                                 <td style="text-align:right;white-space:nowrap;">
                                     <a href="{{ $doc->file_url }}" target="_blank" class="icon-btn" title="View PDF">
                                         <i class="bi bi-eye"></i>
@@ -170,10 +184,54 @@
                 </table>
             </div>
 
-            <div class="table-foot">
-                <span>Showing {{ $disclosures->firstItem() }}–{{ $disclosures->lastItem() }} of {{ $disclosures->total() }}</span>
-                {{ $disclosures->links() }}
-            </div>
+                      @php
+                $current = $disclosures->currentPage();
+                $last    = $disclosures->lastPage();
+                $start   = max(1, $current - 2);
+                $end     = min($last, $start + 4);
+                $start   = max(1, min($start, $end - 4));
+            @endphp
+
+            <nav class="pager" role="navigation" aria-label="Pagination">
+                <div class="pager-status">
+                    Showing <b>{{ $disclosures->firstItem() }}</b> to <b>{{ $disclosures->lastItem() }}</b>
+                    of <b>{{ $disclosures->total() }}</b> {{ Str::plural('result', $disclosures->total()) }}
+                </div>
+
+                @if ($disclosures->hasPages())
+                    <div class="pager-links">
+                        @if ($current <= 1)
+                            <span class="pager-btn pager-btn-disabled"><i class="bi bi-chevron-left"></i></span>
+                        @else
+                            <a href="{{ $disclosures->url($current - 1) }}" class="pager-btn" rel="prev"><i class="bi bi-chevron-left"></i></a>
+                        @endif
+
+                        @if ($start > 1)
+                            <a href="{{ $disclosures->url(1) }}" class="pager-btn">1</a>
+                            @if ($start > 2)<span class="pager-dots">&hellip;</span>@endif
+                        @endif
+
+                        @for ($page = $start; $page <= $end; $page++)
+                            @if ($page == $current)
+                                <span class="pager-btn pager-btn-active">{{ $page }}</span>
+                            @else
+                                <a href="{{ $disclosures->url($page) }}" class="pager-btn">{{ $page }}</a>
+                            @endif
+                        @endfor
+
+                        @if ($end < $last)
+                            @if ($end < $last - 1)<span class="pager-dots">&hellip;</span>@endif
+                            <a href="{{ $disclosures->url($last) }}" class="pager-btn">{{ $last }}</a>
+                        @endif
+
+                        @if ($current >= $last)
+                            <span class="pager-btn pager-btn-disabled"><i class="bi bi-chevron-right"></i></span>
+                        @else
+                            <a href="{{ $disclosures->url($current + 1) }}" class="pager-btn" rel="next"><i class="bi bi-chevron-right"></i></a>
+                        @endif
+                    </div>
+                @endif
+            </nav>
         @endif
     </div>
 </div>
@@ -304,6 +362,27 @@
                 display:flex; align-items:center; justify-content:center; font-size:24px; }
     .empty h3{ font-size:15px; margin:0 0 4px; color: var(--ink,#171B2C); }
     .empty p{ font-size:13px; margin:0; color: var(--muted,#667085); }
+
+
+        .badge-cat.is-deleted{ background:#F2F3F7; color:#8A92A6; text-decoration:line-through; }
+
+    /* Pager — same as Events */
+    .pager{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:18px; }
+    .pager-status{ font-size:12.5px; color: var(--faint,#9AA1B2); }
+    .pager-status b{ color: var(--ink,#171B2C); font-weight:600; }
+    .pager-links{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+    .pager-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        min-width:32px; height:32px; padding:0 8px; border-radius:8px;
+        border:1px solid var(--line,#E9EBF2); background:#fff;
+        font-size:12.5px; font-weight:600; color: var(--muted,#667085);
+        text-decoration:none; transition:background .15s, color .15s;
+    }
+    .pager-btn:hover{ background: var(--canvas,#F6F7FB); color: var(--ink,#171B2C); }
+    .pager-btn-active{ background:linear-gradient(135deg, #0F1526, #1D2439); border-color:transparent; color:#fff; }
+    .pager-btn-active:hover{ color:#fff; }
+    .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
+    .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
 </style>
 
 @endsection

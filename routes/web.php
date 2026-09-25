@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdmissionEnquiryController;
+use App\Http\Controllers\Admin\DisclosureCategoryController;
 use App\Http\Controllers\Admin\MandatoryDisclosureController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
@@ -111,6 +112,17 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::delete('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'destroy'])->name('mandatory-disclosures.destroy');
             Route::patch('mandatory-disclosures/{disclosure}/toggle', [MandatoryDisclosureController::class, 'toggle'])->name('mandatory-disclosures.toggle');
 
+
+            // Master > Disclosure Categories
+            Route::get('disclosure-categories',                  [DisclosureCategoryController::class, 'index'])->name('disclosure-categories');
+            Route::get('disclosure-categories/create',           [DisclosureCategoryController::class, 'create'])->name('disclosure-categories.create');
+            Route::post('disclosure-categories',                 [DisclosureCategoryController::class, 'store'])->name('disclosure-categories.store');
+            Route::get('disclosure-categories/{category}/edit',  [DisclosureCategoryController::class, 'edit'])->name('disclosure-categories.edit');
+            Route::put('disclosure-categories/{category}',       [DisclosureCategoryController::class, 'update'])->name('disclosure-categories.update');
+
+            // Delete / restore. If you have an admin-only middleware group (like Events delete), put these two inside it.
+            Route::delete('disclosure-categories/{category}',    [DisclosureCategoryController::class, 'destroy'])->name('disclosure-categories.destroy');
+            Route::patch('disclosure-categories/{id}/restore',   [DisclosureCategoryController::class, 'restore'])->name('disclosure-categories.restore')->whereNumber('id');
 
             Route::get('activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs');
             Route::get('activity-logs/export', [ActivityLogController::class, 'export'])->name('activity-logs.export');
