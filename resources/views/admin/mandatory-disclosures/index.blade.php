@@ -54,14 +54,19 @@
     @endif
 
     <div class="card">
-        {{-- Toolbar: search, category filter, per page --}}
-        <form method="GET" action="{{ route('admin.mandatory-disclosures') }}" class="toolbar">
+        {{-- Toolbar: search (auto-submits while typing), category filter, per page --}}
+        <form method="GET" action="{{ route('admin.mandatory-disclosures') }}" class="toolbar" id="mdSearchForm">
             <div class="search-box">
                 <i class="bi bi-search"></i>
-              <input type="text" name="q" value="{{ $search }}" placeholder="Search title, issuer or category...">
+                <input type="text" name="q" id="mdSearchInput" value="{{ $search }}"
+                       placeholder="Search title, issuer or category..." autocomplete="off">
+                @if ($search !== '')
+                    <a href="{{ route('admin.mandatory-disclosures', array_filter(['category' => $category, 'per_page' => $perPage !== 10 ? $perPage : null])) }}"
+                       class="search-clear" title="Clear search"><i class="bi bi-x-lg"></i></a>
+                @endif
             </div>
 
-                       <select name="category" onchange="this.form.submit()">
+            <select name="category" onchange="this.form.submit()">
                 <option value="">All Categories</option>
                 @foreach ($categories as $id => $name)
                     <option value="{{ $id }}" @selected($category === (int) $id)>{{ $name }}</option>
@@ -100,18 +105,24 @@
                         <tr>
                             <th>{!! $sortLink('title', 'Document') !!}</th>
                             <th>{!! $sortLink('category', 'Category') !!}</th>
-                            <!-- <th>{!! $sortLink('valid_until', 'Valid Until') !!}</th>
-                            <th>{!! $sortLink('sort_order', 'Order') !!}</th> -->
-                            <!-- <th>{!! $sortLink('is_active', 'Visible') !!}</th> -->
+                            {{-- <th>{!! $sortLink('valid_until', 'Valid Until') !!}</th>
+                            <th>{!! $sortLink('sort_order', 'Order') !!}</th>
+                            <th>{!! $sortLink('is_active', 'Visible') !!}</th> --}}
                             <th style="text-align:right;">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($disclosures as $doc)
+                            @php
+                                $ext    = strtolower(pathinfo($doc->original_name ?: $doc->file, PATHINFO_EXTENSION));
+                                $isWord = in_array($ext, ['doc', 'docx'], true);
+                            @endphp
                             <tr>
                                 <td>
                                     <div class="doc-cell">
-                                        <div class="pdf-ico"><i class="bi bi-file-earmark-pdf-fill"></i></div>
+                                        <div class="pdf-ico {{ $isWord ? 'is-word' : '' }}">
+                                            <i class="bi {{ $isWord ? 'bi-file-earmark-word-fill' : 'bi-file-earmark-pdf-fill' }}"></i>
+                                        </div>
                                         <div class="doc-meta">
                                             <b>{{ $doc->title }}</b>
                                             <small>
@@ -121,7 +132,7 @@
                                         </div>
                                     </div>
                                 </td>
-                                                               <td>
+                                <td>
                                     @php $cat = $doc->disclosureCategory; @endphp
                                     <span class="badge-cat {{ $cat?->trashed() ? 'is-deleted' : '' }}"
                                           title="{{ $cat?->trashed() ? 'This category was deleted' : '' }}">
@@ -130,7 +141,8 @@
                                     </span>
                                 </td>
 
-                                <!-- <td>
+                                {{-- Valid Until / Order / Visible columns (hidden)
+                                <td>
                                     @if (! $doc->valid_until)
                                         <span class="badge-muted">No expiry</span>
                                     @elseif ($doc->is_expired)
@@ -148,19 +160,21 @@
                                     @endif
                                 </td>
 
-                                <td>{{ $doc->sort_order }}</td> -->
+                                <td>{{ $doc->sort_order }}</td>
 
-                                <!-- <td>
+                                <td>
                                     <label class="mini-toggle" title="Show / hide on website">
                                         <input type="checkbox" {{ $doc->is_active ? 'checked' : '' }}
                                                onchange="toggleDisclosure(this, '{{ route('admin.mandatory-disclosures.toggle', $doc) }}')">
                                         <span></span>
                                     </label>
-                                </td> -->
+                                </td>
+                                --}}
 
                                 <td style="text-align:right;white-space:nowrap;">
-                                    <a href="{{ $doc->file_url }}" target="_blank" class="icon-btn" title="View PDF">
-                                        <i class="bi bi-eye"></i>
+                                    <a href="{{ $doc->file_url }}" target="_blank" class="icon-btn"
+                                       title="{{ $isWord ? 'Download document' : 'View PDF' }}">
+                                        <i class="bi {{ $isWord ? 'bi-download' : 'bi-eye' }}"></i>
                                     </a>
                                     <a href="{{ route('admin.mandatory-disclosures.edit', $doc) }}" class="icon-btn" title="Edit">
                                         <i class="bi bi-pencil"></i>
@@ -184,7 +198,7 @@
                 </table>
             </div>
 
-                      @php
+            @php
                 $current = $disclosures->currentPage();
                 $last    = $disclosures->lastPage();
                 $start   = max(1, $current - 2);
@@ -237,6 +251,33 @@
 </div>
 
 <script>
+    // Live search: submit the toolbar form shortly after the user stops typing.
+    (function () {
+        const input = document.getElementById('mdSearchInput');
+        const form  = document.getElementById('mdSearchForm');
+        if (!input || !form) return;
+
+        let timer = null;
+        let lastValue = input.value.trim();
+
+        input.addEventListener('input', function () {
+            clearTimeout(timer);
+            timer = setTimeout(function () {
+                const value = input.value.trim();
+                if (value === lastValue) return;   // nothing really changed (e.g. only spaces)
+                lastValue = value;
+                form.submit();                      // page resets to 1 (no page field in the form)
+            }, 450);
+        });
+
+        // After reload, keep the cursor at the end of the search text so typing can continue.
+        if (input.value) {
+            input.focus();
+            const len = input.value.length;
+            input.setSelectionRange(len, len);
+        }
+    })();
+
     function confirmDeleteDisclosure(id, title) {
         Swal.fire({
             icon: 'warning',
@@ -300,8 +341,14 @@
 
     .toolbar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px; }
     .search-box{ position:relative; flex:1; min-width:220px; }
-    .search-box i{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color: var(--faint,#9AA1B2); font-size:14px; }
-    .search-box input{ padding-left:36px !important; }
+    .search-box > i{ position:absolute; left:13px; top:50%; transform:translateY(-50%); color: var(--faint,#9AA1B2); font-size:14px; pointer-events:none; }
+    .search-box input{ padding-left:36px !important; padding-right:36px !important; }
+    .search-box .search-clear{
+        position:absolute; right:8px; top:50%; transform:translateY(-50%);
+        width:24px; height:24px; border-radius:6px; display:flex; align-items:center; justify-content:center;
+        color: var(--faint,#9AA1B2); text-decoration:none; font-size:12px; transition:background .15s, color .15s;
+    }
+    .search-box .search-clear:hover{ background: var(--canvas,#F6F7FB); color: var(--ink,#171B2C); }
     .toolbar input[type=text], .toolbar select{
         width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
         padding:10px 14px; font-size:13.5px; font-family:inherit; color: var(--ink,#171B2C); background:#fff; outline:none;
@@ -326,12 +373,14 @@
     .doc-cell{ display:flex; align-items:center; gap:10px; }
     .pdf-ico{ width:34px; height:34px; border-radius:8px; background:#FEECEC; color:#D92D20;
               display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+    .pdf-ico.is-word{ background:#EAF2FF; color:#1D5BD8; }
     .doc-meta{ display:flex; flex-direction:column; min-width:0; }
     .doc-meta b{ font-weight:600; }
     .doc-meta small{ font-size:12px; color: var(--faint,#9AA1B2); }
 
     .badge-cat{ display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600;
                 padding:4px 10px; border-radius:999px; background:#EEF2FF; color:#3538CD; white-space:nowrap; }
+    .badge-cat.is-deleted{ background:#F2F3F7; color:#8A92A6; text-decoration:line-through; }
     .badge-muted{ font-size:12px; color: var(--faint,#9AA1B2); }
     .badge-exp{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600;
                 padding:4px 10px; border-radius:999px; white-space:nowrap; }
@@ -353,18 +402,11 @@
     .icon-btn:hover{ background: var(--canvas,#F6F7FB); color: var(--ink,#171B2C); }
     .icon-btn-danger:hover{ background:#FEF2F2; color:#D92D20; }
 
-    .table-foot{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;
-                 margin-top:16px; font-size:12.5px; color: var(--faint,#9AA1B2); }
-    .table-foot nav{ margin:0; }
-
     .empty{ text-align:center; padding:48px 16px; }
     .empty-ico{ width:56px; height:56px; margin:0 auto 12px; border-radius:999px; background:#FEECEC; color:#D92D20;
                 display:flex; align-items:center; justify-content:center; font-size:24px; }
     .empty h3{ font-size:15px; margin:0 0 4px; color: var(--ink,#171B2C); }
     .empty p{ font-size:13px; margin:0; color: var(--muted,#667085); }
-
-
-        .badge-cat.is-deleted{ background:#F2F3F7; color:#8A92A6; text-decoration:line-through; }
 
     /* Pager — same as Events */
     .pager{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:18px; }

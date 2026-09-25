@@ -19,6 +19,7 @@ use App\Http\Controllers\Admin\DisclosureCategoryController;
 use App\Http\Controllers\Admin\MandatoryDisclosureController;
 use App\Http\Controllers\Admin\ManagementMemberController;
 use App\Http\Controllers\Admin\ManagementDesignationController;
+use App\Http\Controllers\Admin\ContactNewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
@@ -153,6 +154,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('school-management/{member}/toggle', [ManagementMemberController::class, 'toggle'])->name('school-management.toggle');
             Route::delete('school-management/{member}',       [ManagementMemberController::class, 'destroy'])->name('school-management.destroy');
 
+
+            Route::get('contacts', [ContactNewController::class, 'index'])->name('contacts');
 
             // Master > Disclosure Categories
             Route::get('disclosure-categories',                  [DisclosureCategoryController::class, 'index'])->name('disclosure-categories');
