@@ -21,6 +21,11 @@ use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
 use App\Http\Controllers\web\ContactController;
 use App\Http\Controllers\web\EventController as WebEventController;
+use App\Http\Controllers\Web\AdmissionController;
+use App\Http\Controllers\Web\PrincipalMessageController;
+use App\Http\Controllers\Web\WebFacilityController;
+
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -42,6 +47,14 @@ Route::post('/contact-us', [ContactController::class, 'store'])
 Route::get('/events', [WebEventController::class, 'index'])->name('events.index');
 Route::get('/events/{event}', [WebEventController::class, 'show'])->name('events.show');
 
+Route::get('/admission', [AdmissionController::class, 'create'])->name('admission');
+Route::post('/admission', [AdmissionController::class, 'store'])
+    ->middleware('throttle:5,1')          // max 5 submissions per minute per IP
+    ->name('admission.store');
+Route::get('/about-us/principal-message', PrincipalMessageController::class)->name('principal-message');
+
+Route::get('/facilities', [WebFacilityController::class, 'index'])->name('facilities.index');
+Route::get('/facilities/{facility:slug}', [WebFacilityController::class, 'show'])->name('facilities.show');
 
 
 Route::prefix('admin')->name('admin.')->group(function () {

@@ -160,11 +160,18 @@
 
                                         {{-- <li class="menu-item-has-children"> --}}
                                             <li><a href="{{ url('/') }}">Home</a>
-                                            <li><a href="{{ url('/about-us') }}">About Us</a></li>
+                                            <li class="menu-item-has-children">
+                                                <a href="{{ url('/about-us') }}">About Us</a>
+                                                <ul>
+                                                    <li><a href="{{ url('/about-us') }}">About Us</a></li>
+                                                    <li><a href="{{ route('principal-message') }}">Principal's Message</a></li>
+                                                    <li><a href="{{ route('facilities.index') }}">Facilities</a></li>
+                                                </ul>
+                                            </li>
                                             <li><a href="{{ route('departments.index') }}">Departments</a></li>
                                             <li><a href="{{ route('events.index') }}">Events</a></li>
                                             <li><a href="{{ route('contact.index') }}">Contact Us</a></li>
-
+                                            <li><a href="{{ route('admission') }}">Admission</a></li>
                                             {{-- <ul>
 
                                                 <li>

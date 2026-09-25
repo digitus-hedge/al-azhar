@@ -29,6 +29,12 @@ public const STATUS_ICONS = [
     'admitted'   => 'bi-check-circle-fill',
 ];
 
+public const GRADES = [
+    'Pre-KG', 'LKG', 'UKG',
+    'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
+    'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12',
+];
+
     protected $fillable = [
         'student_name', 'parent_name', 'parent_phone', 'parent_email',
         'grade', 'needs_hostel', 'message',
@@ -81,4 +87,21 @@ public const STATUS_ICONS = [
 
         return strlen($digits) === 10 ? '91' . $digits : ltrim($digits, '0');
     }
+
+    /**
+ * Academic session shown on the form, e.g. "2026-27".
+ * Set ADMISSION_SESSION in .env to override; otherwise from October onward
+ * the next year's session is shown.
+ */
+public static function currentSession(): string
+{
+    if ($fixed = config('app.admission_session')) {
+        return $fixed;
+    }
+
+    $now   = now();
+    $start = $now->month >= 10 ? $now->year + 1 : $now->year;
+
+    return $start . '-' . substr((string) ($start + 1), -2);
+}
 }
