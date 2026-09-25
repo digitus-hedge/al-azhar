@@ -25,14 +25,14 @@ use App\Http\Controllers\web\EventController as WebEventController;
 use App\Http\Controllers\Web\AdmissionController;
 use App\Http\Controllers\Web\PrincipalMessageController;
 use App\Http\Controllers\Web\WebFacilityController;
-
+use App\Http\Controllers\Web\WebGalleryController;
+use App\Http\Controllers\Web\WebNewsNoticeController;
+use App\Http\Controllers\Web\WebMandatoryDisclosureController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-Route::get('/about-us', function () {
-    return view('web.about');
-});
+Route::get('/about-us', [HomeController::class, 'about'])->name('about');
 
 // Public departments page
 Route::get('/departments', [WebDepartmentController::class, 'index'])->name('departments.index');
@@ -56,6 +56,13 @@ Route::get('/about-us/principal-message', PrincipalMessageController::class)->na
 
 Route::get('/facilities', [WebFacilityController::class, 'index'])->name('facilities.index');
 Route::get('/facilities/{facility:slug}', [WebFacilityController::class, 'show'])->name('facilities.show');
+Route::get('/gallery', [WebGalleryController::class, 'index'])->name('gallery.index');
+
+Route::get('/news-notices', [WebNewsNoticeController::class, 'index'])->name('news-notices.index');
+Route::get('/news-notices/{newsNotice}/{slug?}', [WebNewsNoticeController::class, 'show'])
+    ->whereNumber('newsNotice')->name('news-notices.show');
+Route::get('/mandatory-disclosure', [WebMandatoryDisclosureController::class, 'index'])->name('mandatory-disclosure');
+
 
 
 Route::prefix('admin')->name('admin.')->group(function () {

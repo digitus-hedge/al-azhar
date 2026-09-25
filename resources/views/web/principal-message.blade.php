@@ -49,12 +49,13 @@
         <div class="td_faq_1 td_style_1 td_type_1 pm_wrap">
 
             {{-- Left: photo --}}
-            <div class="td_faq_1_left wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
+            <div class="td_faq_1_left">
                 @if ($principal->photo_url)
-                    <div class="td_faq_1_img td_bg_filed pm_photo" data-src="{{ $principal->photo_url }}"
+                    <div class="td_faq_1_img pm_photo"
+                        style="background-image: url('{{ $principal->photo_url }}');"
                         role="img" aria-label="{{ $principal->name }}"></div>
                 @else
-                    <div class="td_faq_1_img pm_photo pm_photo_fallback td_center td_heading_bg">
+                    <div class="td_faq_1_img pm_photo pm_photo_fallback td_center">
                         <span class="pm_initial td_white_color">{{ $principal->initial }}</span>
                     </div>
                 @endif
@@ -69,7 +70,7 @@
                     <h2 class="td_section_title td_fs_48 mb-0">{{ $principal->heading }}</h2>
                 </div>
 
-                <div class="pm_message td_fs_18 td_heading_color">
+               <div class="pm_message td_fs_18 td_heading_color">
                     <span class="pm_quote td_accent_color" aria-hidden="true">
                         <svg width="65" height="46" viewBox="0 0 65 46" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path opacity="0.08"
@@ -77,11 +78,22 @@
                                 fill="currentColor" stroke="currentColor" stroke-width="2" />
                         </svg>
                     </span>
-                    @foreach (preg_split('/\R{2,}/', trim((string) $principal->excerpt)) as $para)
-                        @if (trim($para) !== '')
-                            <p>{!! nl2br(e(trim($para))) !!}</p>
-                        @endif
-                    @endforeach
+
+                    @php
+                        $message = trim((string) $principal->excerpt);
+                        $isHtml  = $message !== strip_tags($message);
+                    @endphp
+
+                    @if ($isHtml)
+                        {{-- Editor HTML: keep formatting, drop anything unsafe (scripts, iframes, etc.) --}}
+                        {!! strip_tags($message, '<p><br><strong><b><em><i><u><ul><ol><li><a><h3><h4><h5><span><blockquote>') !!}
+                    @else
+                        @foreach (preg_split('/\R{2,}/', $message) as $para)
+                            @if (trim($para) !== '')
+                                <p>{!! nl2br(e(trim($para))) !!}</p>
+                            @endif
+                        @endforeach
+                    @endif
                 </div>
 
                 <div class="pm_sign_block">
@@ -108,7 +120,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
     /* Photo: keep the face in view for portrait images */
-    .pm_wrap .pm_photo { background-position: center top; }
+    .pm_wrap .pm_photo { background-size: cover; background-repeat: no-repeat; background-position: center top; }
     .pm_wrap .pm_photo_fallback { background-color: var(--heading-color); }
     .pm_initial { font-size: 180px; line-height: 1; font-weight: 700; opacity: .9; }
 
