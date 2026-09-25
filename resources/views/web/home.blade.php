@@ -518,29 +518,61 @@
             {{-- Left: featured (pinned / urgent / latest) --}}
             <div class="col-lg-5 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                 @php $fd = $nnDate($nnFeatured); @endphp
-                <a href="{{ $nnUrl($nnFeatured) }}" class="home_nn_feature home_nn_p_{{ $nnFeatured->priority ?: 'normal' }}">
-                    <div class="home_nn_feature_top">
-                        <div class="home_nn_bigdate">
-                            <strong>{{ $fd->format('d') }}</strong>
-                            <span>{{ $fd->format('M Y') }}</span>
+                <a href="{{ $nnUrl($nnFeatured) }}"
+                   class="home_nn_feature home_nn_p_{{ $nnFeatured->priority ?: 'normal' }} {{ $nnFeatured->image_url ? 'has-img' : '' }}">
+
+                    @if ($nnFeatured->image_url)
+                        {{-- With image: photo on top, date badge on the photo --}}
+                        <div class="home_nn_feature_img">
+                            <img src="{{ $nnFeatured->image_url }}" alt="{{ $nnFeatured->title }}" loading="lazy">
+                            <div class="home_nn_img_date">
+                                <strong>{{ $fd->format('d') }}</strong>
+                                <span>{{ $fd->format('M Y') }}</span>
+                            </div>
                         </div>
-                        <div class="home_nn_tags">
-                            <span class="home_nn_type">{{ $nnTypes[$nnFeatured->type] ?? 'Notice' }}</span>
-                            @if ($nnFeatured->priority && $nnFeatured->priority !== 'normal')
-                                <span class="home_nn_prio home_nn_prio_{{ $nnFeatured->priority }}">{{ $nnFeatured->priority_label }}</span>
-                            @endif
-                            @if ($nnFeatured->is_pinned)
-                                <span class="home_nn_pin">Pinned</span>
-                            @endif
+                        <div class="home_nn_feature_body">
+                            <div class="home_nn_tags">
+                                <span class="home_nn_type">{{ $nnTypes[$nnFeatured->type] ?? 'Notice' }}</span>
+                                @if ($nnFeatured->priority && $nnFeatured->priority !== 'normal')
+                                    <span class="home_nn_prio home_nn_prio_{{ $nnFeatured->priority }}">{{ $nnFeatured->priority_label }}</span>
+                                @endif
+                                @if ($nnFeatured->is_pinned)
+                                    <span class="home_nn_pin">Pinned</span>
+                                @endif
+                            </div>
+                            <h3 class="home_nn_feature_title">{{ $nnFeatured->title }}</h3>
+                            <p class="home_nn_feature_text">
+                                {{ \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $nnFeatured->description))), 130) }}
+                            </p>
+                            <span class="home_nn_more">Read full notice
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                            </span>
                         </div>
-                    </div>
-                    <h3 class="home_nn_feature_title">{{ $nnFeatured->title }}</h3>
-                    <p class="home_nn_feature_text">
-                        {{ \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $nnFeatured->description))), 200) }}
-                    </p>
-                    <span class="home_nn_more">Read full notice
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </span>
+                    @else
+                        {{-- Without image: blue card --}}
+                        <div class="home_nn_feature_top">
+                            <div class="home_nn_bigdate">
+                                <strong>{{ $fd->format('d') }}</strong>
+                                <span>{{ $fd->format('M Y') }}</span>
+                            </div>
+                            <div class="home_nn_tags">
+                                <span class="home_nn_type">{{ $nnTypes[$nnFeatured->type] ?? 'Notice' }}</span>
+                                @if ($nnFeatured->priority && $nnFeatured->priority !== 'normal')
+                                    <span class="home_nn_prio home_nn_prio_{{ $nnFeatured->priority }}">{{ $nnFeatured->priority_label }}</span>
+                                @endif
+                                @if ($nnFeatured->is_pinned)
+                                    <span class="home_nn_pin">Pinned</span>
+                                @endif
+                            </div>
+                        </div>
+                        <h3 class="home_nn_feature_title">{{ $nnFeatured->title }}</h3>
+                        <p class="home_nn_feature_text">
+                            {{ \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $nnFeatured->description))), 200) }}
+                        </p>
+                        <span class="home_nn_more">Read full notice
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </span>
+                    @endif
                 </a>
             </div>
 
@@ -550,10 +582,17 @@
                     @forelse ($nnList as $n)
                         @php $d = $nnDate($n); @endphp
                         <a href="{{ $nnUrl($n) }}" class="home_nn_item home_nn_p_{{ $n->priority ?: 'normal' }}">
-                            <div class="home_nn_date">
-                                <strong>{{ $d->format('d') }}</strong>
-                                <span>{{ $d->format('M') }}</span>
-                            </div>
+                            @if ($n->image_url)
+                                <div class="home_nn_thumb">
+                                    <img src="{{ $n->image_url }}" alt="{{ $n->title }}" loading="lazy">
+                                    <span>{{ $d->format('d M') }}</span>
+                                </div>
+                            @else
+                                <div class="home_nn_date">
+                                    <strong>{{ $d->format('d') }}</strong>
+                                    <span>{{ $d->format('M') }}</span>
+                                </div>
+                            @endif
                             <div class="home_nn_item_body">
                                 <div class="home_nn_tags">
                                     <span class="home_nn_type">{{ $nnTypes[$n->type] ?? 'Notice' }}</span>
@@ -657,6 +696,46 @@
         .home_nn_item { padding: 14px; gap: 12px; }
         .home_nn_item:hover { transform: none; }
         .home_nn_arrow { display: none; }
+    }
+
+    /* ---- Featured card with image ---- */
+    .home_nn_feature.has-img { padding: 0; background: #fff; color: inherit; border: 1px solid var(--nn-line); box-shadow: 0 30px 60px -38px rgba(0,0,27,.55); }
+    .home_nn_feature.has-img::after { display: none; }
+    .home_nn_feature.has-img.home_nn_p_urgent { background: #fff; border-top: 4px solid var(--nn-red); }
+    .home_nn_feature.has-img.home_nn_p_important { border-top: 4px solid var(--nn-amber); }
+    .home_nn_feature_img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+    .home_nn_feature_img img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s ease; }
+    .home_nn_feature.has-img:hover .home_nn_feature_img img { transform: scale(1.06); }
+    .home_nn_img_date {
+        position: absolute; left: 18px; bottom: 18px; min-width: 70px; padding: 8px 12px; border-radius: 12px; text-align: center;
+        background: var(--nn); color: #fff; box-shadow: 0 12px 24px -10px rgba(0,0,0,.5);
+    }
+    .home_nn_feature.has-img.home_nn_p_urgent .home_nn_img_date { background: var(--nn-red); }
+    .home_nn_img_date strong { display: block; font-size: 28px; line-height: 1; font-weight: 700; }
+    .home_nn_img_date span { display: block; margin-top: 3px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: .85; }
+    .home_nn_feature_body { display: flex; flex-direction: column; flex: 1; padding: 24px 26px 26px; }
+    .home_nn_feature.has-img .home_nn_tags { justify-content: flex-start; }
+    .home_nn_feature.has-img .home_nn_type { background: #F4F7FB; color: var(--nn); }
+    .home_nn_feature.has-img .home_nn_pin { background: #eef4ff; color: var(--nn); }
+    .home_nn_feature.has-img .home_nn_feature_title { margin: 14px 0 10px; color: var(--nn); font-size: 22px; }
+    .home_nn_feature.has-img .home_nn_feature_text { color: #5b6477; opacity: 1; }
+    .home_nn_feature.has-img .home_nn_more { color: var(--nn); padding-top: 20px; }
+    .home_nn_feature.has-img:hover { color: inherit; }
+
+    /* ---- List item thumbnail ---- */
+    .home_nn_thumb { position: relative; flex: none; width: 92px; height: 72px; border-radius: 12px; overflow: hidden; }
+    .home_nn_thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+    .home_nn_item:hover .home_nn_thumb img { transform: scale(1.08); }
+    .home_nn_thumb span {
+        position: absolute; left: 0; right: 0; bottom: 0; padding: 3px 0; text-align: center;
+        background: rgba(0,47,95,.85); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+    }
+    .home_nn_item.home_nn_p_urgent .home_nn_thumb span { background: rgba(200,16,46,.9); }
+
+    @media (max-width: 575px) {
+        .home_nn_feature_body { padding: 20px; }
+        .home_nn_feature.has-img .home_nn_feature_title { font-size: 19px; }
+        .home_nn_thumb { width: 74px; height: 60px; }
     }
 </style>
 @endif

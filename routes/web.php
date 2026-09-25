@@ -31,7 +31,7 @@ use App\Http\Controllers\Web\WebFacilityController;
 use App\Http\Controllers\Web\WebGalleryController;
 use App\Http\Controllers\Web\WebNewsNoticeController;
 use App\Http\Controllers\Web\WebMandatoryDisclosureController;
-
+use App\Http\Controllers\web\WebManagementController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -65,7 +65,7 @@ Route::get('/news-notices', [WebNewsNoticeController::class, 'index'])->name('ne
 Route::get('/news-notices/{newsNotice}/{slug?}', [WebNewsNoticeController::class, 'show'])
     ->whereNumber('newsNotice')->name('news-notices.show');
 Route::get('/mandatory-disclosure', [WebMandatoryDisclosureController::class, 'index'])->name('mandatory-disclosure');
-
+Route::get('/about-us/school-management', [WebManagementController::class, 'index'])->name('school-management');
 
 
 Route::prefix('admin')->name('admin.')->group(function () {
