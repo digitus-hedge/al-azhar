@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Concerns\LogsActivity;
+use Illuminate\Support\Facades\Storage;
 
 class NewsNotice extends Model
 {
@@ -32,6 +33,7 @@ class NewsNotice extends Model
     protected $fillable = [
         'title',
         'description',
+        'image',
         'type',
         'attachment',
         'link',
@@ -41,7 +43,7 @@ class NewsNotice extends Model
         'is_active',
         'sort_order',
         'meta_title',
-        'meta_description'
+        'meta_description',
     ];
 
     protected $casts = [
@@ -69,15 +71,26 @@ class NewsNotice extends Model
             ->orderByDesc('published_at');
     }
 
-    public function getPriorityLabelAttribute(): string
-    {
-        return self::PRIORITIES[$this->priority] ?? 'Normal';
-    }
-
     /** Urgent first, then Important, then Normal. */
     public function scopeByPriority($q)
     {
         return $q->orderByRaw("FIELD(priority, 'urgent', 'important', 'normal')");
     }
-    
+
+    public function getPriorityLabelAttribute(): string
+    {
+        return self::PRIORITIES[$this->priority] ?? 'Normal';
+    }
+
+    /** Public URL of the cover image, or null. Use {{ $notice->image_url }} in views. */
+    public function getImageUrlAttribute(): ?string
+    {
+        return $this->image ? Storage::url($this->image) : null;
+    }
+
+    /** Public URL of the PDF attachment, or null. */
+    public function getAttachmentUrlAttribute(): ?string
+    {
+        return $this->attachment ? Storage::url($this->attachment) : null;
+    }
 }

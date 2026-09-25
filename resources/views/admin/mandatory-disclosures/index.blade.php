@@ -282,7 +282,7 @@
 
     .header{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
-    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; max-width:600px; line-height:1.55; }
+    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0;  line-height:1.55; }
 
     .btn-add{
         display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#fff;

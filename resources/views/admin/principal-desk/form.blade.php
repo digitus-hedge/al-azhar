@@ -54,8 +54,8 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Heading</label></div>
-                <input type="text" name="heading" value="{{ old('heading', $item->heading) }}"
+                <div class="field-top"><label class="field-label">Heading <span class="req">*</span></label></div>
+                <input type="text" name="heading" maxlength="255" value="{{ old('heading', $item->heading) }}"
                        class="{{ $errors->has('heading') ? 'input-error' : '' }}"
                        placeholder="e.g. Principal's Desk">
                 @error('heading')
@@ -64,8 +64,8 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Principal's Name</label></div>
-                <input type="text" name="name" value="{{ old('name', $item->name) }}"
+                <div class="field-top"><label class="field-label">Principal's Name <span class="req">*</span></label></div>
+                <input type="text" name="name" maxlength="255" value="{{ old('name', $item->name) }}"
                        class="{{ $errors->has('name') ? 'input-error' : '' }}"
                        placeholder="e.g. Dr. Jane Doe">
                 @error('name')
@@ -114,12 +114,12 @@
         {{-- Photo --}}
         <div class="card" id="imageSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span> Photo</h2>
+                <h2><span class="icon"><i class="bi bi-image"></i></span> Photo <span class="req">*</span></h2>
             </div>
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p>Optional &middot; square photo recommended &middot; JPG, PNG, WEBP &middot; up to 2MB. If left empty, the fallback initial below is shown instead.</p>
+                <p><b>Required</b> &middot; square photo recommended &middot; JPG, PNG, WEBP &middot; up to 2MB.</p>
             </div>
 
             @error('photo')
@@ -150,8 +150,9 @@
                             <i class="bi bi-check-circle"></i> Uploaded
                         </div>
                     </div>
-                    <input type="file" name="photo" id="imageInput" accept="image/*" hidden>
+                    <input type="file" name="photo" id="imageInput" accept="image/jpeg,image/png,image/webp" hidden>
                     <input type="hidden" name="remove_photo" id="removeImageInput" value="0">
+                    <input type="hidden" id="hasSavedPhoto" value="{{ $item->photo ? 1 : 0 }}">
                 </div>
 <!-- 
                 <div class="field" style="flex:1;min-width:160px;margin-bottom:0;">
@@ -219,13 +220,24 @@ document.getElementById('aboutForm').addEventListener('submit', function (e) {
 
 function submitAboutForm() {
     const form = document.getElementById('aboutForm');
-    const formData = new FormData(form);
+    if (window.tinymce) tinymce.triggerSave();   // copy editor content into the textareas first
+
     const submitBtn = form.querySelector('.btn-save');
     const originalBtnHtml = submitBtn.innerHTML;
 
     form.querySelectorAll('.field-error').forEach(el => el.remove());
     form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     form.querySelectorAll('.notice.caution.dynamic-error').forEach(el => el.remove());
+    document.querySelectorAll('.tox-tinymce.input-error').forEach(el => el.classList.remove('input-error'));
+
+    // ---- Check in the browser first (the server checks again) ----
+    const clientErrors = validatePrincipalForm(form);
+    if (Object.keys(clientErrors).length) {
+        showValidationErrors(clientErrors);
+        return;
+    }
+
+    const formData = new FormData(form);
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
@@ -275,6 +287,43 @@ function submitAboutForm() {
     });
 }
 
+/** Same rules as PrincipalDeskRequest. Returns { field: [message] } like Laravel's 422 response. */
+function validatePrincipalForm(form) {
+    const errors  = {};
+    const heading = form.querySelector('[name="heading"]').value.trim();
+    const name    = form.querySelector('[name="name"]').value.trim();
+
+    if (heading === '')         errors.heading = ['Please enter the heading.'];
+    else if (heading.length > 255) errors.heading = ['The heading may not be longer than 255 characters.'];
+
+    if (name === '')            errors.name = ["Please enter the principal's name."];
+    else if (name.length > 255) errors.name = ["The principal's name may not be longer than 255 characters."];
+
+    const editor = window.tinymce && tinymce.get('excerpt-input');
+    if (editor) {
+        const { words, max } = updateExcerptCounter(editor);
+        if (words === 0)      errors.excerpt = ['Please enter the short excerpt.'];
+        else if (words > max) errors.excerpt = [`The short excerpt must not be more than ${max} words (you have ${words}).`];
+    }
+
+    // Photo (required): a new file, or the saved one that was not removed
+    const file      = document.getElementById('imageInput').files[0];
+    const hasSaved  = document.getElementById('hasSavedPhoto').value === '1';
+    const removed   = document.getElementById('removeImageInput').value === '1';
+
+    if (!file && (!hasSaved || removed)) {
+        errors.photo = ["Please upload the principal's photo."];
+    } else if (file) {
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+            errors.photo = ['The photo must be a JPG, PNG or WEBP file.'];
+        } else if (file.size > 2 * 1024 * 1024) {
+            errors.photo = [`The photo must not be larger than 2MB (it is ${(file.size / 1048576).toFixed(2)} MB).`];
+        }
+    }
+
+    return errors;
+}
+
 function showValidationErrors(errors) {
     const form = document.getElementById('aboutForm');
     const fieldMap = {
@@ -296,11 +345,16 @@ function showValidationErrors(errors) {
             notice.style.marginBottom = '16px';
             notice.innerHTML = `<i class="bi bi-exclamation-circle" style="margin-top:1px;"></i><p>${message}</p>`;
             imageSection.querySelector('.section-title').insertAdjacentElement('afterend', notice);
+            document.getElementById('imageDrop').classList.add('input-error');
             return;
         }
 
-        const target = fieldMap[field] ? fieldMap[field](form) : null;
+        let target = fieldMap[field] ? fieldMap[field](form) : null;
         if (!target) return;
+
+        // TinyMCE field: mark the visible editor box and put the message below it
+        const editor = window.tinymce && target.id ? tinymce.get(target.id) : null;
+        if (editor) target = editor.getContainer();
 
         target.classList.add('input-error');
 
@@ -338,6 +392,10 @@ function showValidationErrors(errors) {
             document.getElementById('uploadedTag').style.display = '';
             document.getElementById('imageDrop').classList.add('filled');
             document.getElementById('removeImageInput').value = '0';
+
+            // Clear any photo error once a file is chosen
+            document.getElementById('imageDrop').classList.remove('input-error');
+            document.querySelectorAll('#imageSection .notice.dynamic-error').forEach(el => el.remove());
         };
         reader.readAsDataURL(file);
     });
@@ -358,6 +416,17 @@ function showValidationErrors(errors) {
         document.getElementById('imageDrop').classList.remove('filled');
         document.getElementById('removeImageInput').value = '1';
     }
+
+    // Clear a field's error as soon as the admin types in it
+    ['heading', 'name'].forEach(function (n) {
+        const input = document.querySelector('[name="' + n + '"]');
+        if (!input) return;
+        input.addEventListener('input', function () {
+            input.classList.remove('input-error');
+            const next = input.nextElementSibling;
+            if (next && next.classList.contains('field-error')) next.remove();
+        });
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
         const firstErrorField = document.querySelector('.input-error');
@@ -430,6 +499,22 @@ function showValidationErrors(errors) {
                 editor.save();
                 if (editor.id === 'excerpt-input') updateExcerptCounter(editor);
             });
+
+            editor.on('init', function () {
+                // Page reloaded with server errors: move the message below the editor
+                const textarea = editor.getElement();
+                const next = textarea.nextElementSibling;
+                if (textarea.classList.contains('input-error')) editor.getContainer().classList.add('input-error');
+                if (next && next.classList.contains('field-error')) editor.getContainer().insertAdjacentElement('afterend', next);
+            });
+
+            editor.on('input keyup', function () {
+                // Clear the error once the admin starts fixing it
+                const box  = editor.getContainer();
+                const next = box.nextElementSibling;
+                box.classList.remove('input-error');
+                if (next && next.classList.contains('field-error')) next.remove();
+            });
         }
     });
 
@@ -454,7 +539,7 @@ function showValidationErrors(errors) {
 
     .header{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:32px; gap:16px; flex-wrap:wrap; }
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
-    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; max-width:560px; line-height:1.55; }
+    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; line-height:1.55; }
 
     .section-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:6px; }
     .section-title h2{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; margin:0; color: var(--ink,#171B2C); }
@@ -479,6 +564,12 @@ function showValidationErrors(errors) {
     }
     textarea{ resize:vertical; line-height:1.5; }
     .input-error{ border-color:#e74c3c !important; background:#fff8f8; }
+    .tox.tox-tinymce.input-error{ border:1px solid #e74c3c !important; }
+    .drop.input-error{ border:2px dashed #e74c3c !important; }
+    .word-counter{ font-weight:600; color: var(--faint,#9AA1B2); }
+    .word-counter b{ color: var(--ink,#171B2C); }
+    .word-counter.near b{ color:#B7791F; }
+    .word-counter.over, .word-counter.over b{ color:#e74c3c; }
     .field-error{ display:flex; align-items:center; gap:5px; color:#e74c3c; font-size:12.5px; margin-top:6px; }
 
     .notice{ margin-top:16px; display:flex; align-items:flex-start; gap:8px; background: var(--canvas,#F6F7FB); border-radius:10px; padding:10px 12px; }

@@ -11,6 +11,12 @@ use Illuminate\Validation\Rule;
  */
 class MandatoryDisclosureRequest extends FormRequest
 {
+    /** Allowed document types (extension => label). Change here only. */
+    public const FILE_TYPES = ['pdf', 'doc', 'docx'];
+
+    /** Max upload size in KB (10MB). */
+    public const FILE_MAX_KB = 10240;
+
     public function authorize(): bool
     {
         return true;
@@ -40,10 +46,19 @@ class MandatoryDisclosureRequest extends FormRequest
                 }),
             ],
 
-            // Required when creating (POST); optional when updating (PUT) — keeps the current PDF.
-            'file'        => [
+            // PDF or Word. Required when creating (POST); optional when updating (PUT) — keeps the current file.
+            'file' => [
                 $this->isMethod('post') ? 'required' : 'nullable',
-                'file', 'mimes:pdf', 'max:10240',
+                'file',
+                // File name must end in .pdf / .doc / .docx
+                'extensions:' . implode(',', self::FILE_TYPES),
+                // …and the content must really be a PDF or Word file
+                'mimetypes:application/pdf,'
+                    . 'application/msword,'
+                    . 'application/vnd.openxmlformats-officedocument.wordprocessingml.document,'
+                    . 'application/x-ole-storage,application/CDFV2,'   // how some servers detect old .doc files
+                    . 'application/zip',                                // how some servers detect .docx files
+                'max:' . self::FILE_MAX_KB,
             ],
 
             'issued_by'   => ['nullable', 'string', 'max:255'],
@@ -61,9 +76,10 @@ class MandatoryDisclosureRequest extends FormRequest
             'category.required'          => 'Please choose a category.',
             'category.integer'           => 'Please choose a valid category.',
             'category.exists'            => 'The selected category no longer exists. Please choose another.',
-            'file.required'              => 'Please upload the PDF document.',
-            'file.mimes'                 => 'The document must be a PDF file.',
-            'file.max'                   => 'The PDF must not be larger than 10MB.',
+            'file.required'              => 'Please upload the document (PDF or Word).',
+            'file.extensions'            => 'The document must be a PDF, DOC or DOCX file.',
+            'file.mimetypes'             => 'The file does not look like a valid PDF or Word document.',
+            'file.max'                   => 'The document must not be larger than 10MB.',
             'issue_date.date'            => 'Please enter a valid issue date.',
             'valid_until.date'           => 'Please enter a valid expiry date.',
             'valid_until.after_or_equal' => 'Valid Until must be on or after the Issue Date.',

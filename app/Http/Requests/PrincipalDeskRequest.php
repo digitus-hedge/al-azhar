@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class PrincipalDeskRequest extends FormRequest
 {
@@ -14,12 +16,28 @@ class PrincipalDeskRequest extends FormRequest
         return true;
     }
 
+    /** Trim text inputs so "   " counts as empty. */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'heading' => trim((string) $this->input('heading')),
+            'name'    => preg_replace('/\s+/', ' ', trim((string) $this->input('name'))),
+        ]);
+    }
+
     public function rules(): array
     {
+        // Photo is required when there is no saved photo yet (Add),
+        // or when the saved one is removed without choosing a new one (Edit).
+        $current     = collect($this->route()?->parameters() ?? [])->first(fn ($p) => $p instanceof Model);
+        $hasSaved    = (bool) $current?->photo;
+        $photoNeeded = ! $hasSaved || $this->boolean('remove_photo');
+
         return [
             'heading'        => ['required', 'string', 'max:255'],
             'name'           => ['required', 'string', 'max:255'],
-            'photo'          => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo'          => [Rule::requiredIf($photoNeeded), 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_photo'   => ['nullable', 'boolean'],
             'avatar_initial' => ['nullable', 'string', 'max:2'],
 
             // Excerpt is HTML from TinyMCE, so count WORDS of the visible text, not characters.
@@ -45,10 +63,27 @@ class PrincipalDeskRequest extends FormRequest
         ];
     }
 
+    public function messages(): array
+    {
+        return [
+            'heading.required'  => 'Please enter the heading.',
+            'heading.max'       => 'The heading may not be longer than 255 characters.',
+            'name.required'     => "Please enter the principal's name.",
+            'name.max'          => "The principal's name may not be longer than 255 characters.",
+            'excerpt.required'  => 'Please enter the short excerpt.',
+            'excerpt.max'       => 'The short excerpt is too long.',
+            'photo.required'    => "Please upload the principal's photo.",
+            'photo.image'       => 'The photo must be an image.',
+            'photo.mimes'       => 'The photo must be a JPG, PNG or WEBP file.',
+            'photo.max'         => 'The photo must not be larger than 2MB.',
+        ];
+    }
+
     public function attributes(): array
     {
         return [
             'heading' => 'heading',
+            'name'    => "principal's name",
             'excerpt' => 'short excerpt',
             'message' => 'full message',
         ];

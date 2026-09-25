@@ -112,36 +112,89 @@
             </div>
         </div>
 
-        {{-- Attachment --}}
-        <div class="card">
+        {{-- Cover Image --}}
+        <div class="card" id="imageSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-paperclip"></i></span> Attachment</h2>
+                <h2><span class="icon"><i class="bi bi-image"></i></span> Cover Image</h2>
+                <span class="field-hint">Optional</span>
             </div>
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p>Optional PDF file (e.g. the circular document) &middot; up to 10MB.</p>
+                <p>Shown on the website news card &middot; landscape recommended (1200&times;675px) &middot; JPG, PNG, WEBP &middot; up to 2MB.</p>
+            </div>
+
+            <div class="img-drop {{ $newsNotice->image ? 'filled' : '' }}" id="imageDrop" onclick="document.getElementById('imageInput').click()">
+                <img id="imagePreview" src="{{ $newsNotice->image_url }}" alt="" style="{{ $newsNotice->image ? '' : 'display:none;' }}">
+
+                <div class="img-empty" id="imageEmpty" style="{{ $newsNotice->image ? 'display:none;' : '' }}">
+                    <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
+                    <div class="drop-title">Click to upload image</div>
+                    <div class="drop-sub">JPG, PNG, WEBP &middot; up to 2MB</div>
+                </div>
+
+                <button type="button" class="remove-img-btn" id="removeImageBtn" title="Remove image"
+                        onclick="removeImage(event)" style="{{ $newsNotice->image ? '' : 'display:none;' }}">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+            <input type="file" name="image" id="imageInput" accept="image/jpeg,image/png,image/webp" hidden>
+            <input type="hidden" name="remove_image" id="removeImageInput" value="0">
+            <span class="img-info" id="imageInfo"></span>
+            @error('image')
+                <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+            @enderror
+        </div>
+
+        {{-- Attachment (PDF / Word) --}}
+        <div class="card" id="attachmentSection">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-paperclip"></i></span> Attachment (PDF / Word)</h2>
+                <span class="field-hint">Optional</span>
+            </div>
+            <div class="notice caution">
+                <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
+                <p><b>PDF, DOC or DOCX</b> &middot; up to 10MB (e.g. the circular document) — PDF is preferred, as it opens in every browser.</p>
             </div>
 
             @if ($newsNotice->attachment)
-                <div class="attachment-current">
-                    <i class="bi bi-file-earmark-pdf"></i>
-                    <a href="{{ Storage::url($newsNotice->attachment) }}" target="_blank" rel="noopener">
-                        {{ basename($newsNotice->attachment) }}
+                @php
+                    $attExt    = strtolower(pathinfo($newsNotice->attachment, PATHINFO_EXTENSION));
+                    $attIsWord = in_array($attExt, ['doc', 'docx'], true);
+                    $attSize   = \Illuminate\Support\Facades\Storage::disk('public')->exists($newsNotice->attachment)
+                                    ? \Illuminate\Support\Facades\Storage::disk('public')->size($newsNotice->attachment) : null;
+                    $attSizeLabel = $attSize ? ($attSize >= 1048576 ? number_format($attSize / 1048576, 2) . ' MB' : number_format($attSize / 1024) . ' KB') : '';
+                @endphp
+                <div class="current-file" id="currentAttachment">
+                    <div class="file-ico {{ $attIsWord ? 'is-word' : '' }}">
+                        <i class="bi {{ $attIsWord ? 'bi-file-earmark-word-fill' : 'bi-file-earmark-pdf-fill' }}"></i>
+                    </div>
+                    <div class="file-meta">
+                        <b>{{ basename($newsNotice->attachment) }}</b>
+                        <small>Current file &middot; {{ strtoupper($attExt) }}{{ $attSizeLabel ? ' · ' . $attSizeLabel : '' }}</small>
+                    </div>
+                    <a href="{{ $newsNotice->attachment_url }}" target="_blank" rel="noopener" class="file-view" {{ $attIsWord ? 'download' : '' }}>
+                        <i class="bi {{ $attIsWord ? 'bi-download' : 'bi-box-arrow-up-right' }}"></i> {{ $attIsWord ? 'Download' : 'View' }}
                     </a>
-                    <button type="button" class="remove-attachment-btn" onclick="removeAttachment()">
+                    <button type="button" class="remove-attachment-btn" onclick="removeAttachment()" title="Remove attachment">
                         <i class="bi bi-x-lg"></i>
                     </button>
-                    <input type="hidden" name="remove_attachment" id="remove-attachment" value="0">
                 </div>
             @endif
+            <input type="hidden" name="remove_attachment" id="remove-attachment" value="0">
 
-            <div class="field" style="margin-top: {{ $newsNotice->attachment ? '12px' : '0' }};">
-                <input type="file" name="attachment" id="attachmentInput" accept="application/pdf"
-                       class="{{ $errors->has('attachment') ? 'input-error' : '' }}">
-                @error('attachment')
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                @enderror
-            </div>
+            <label class="file-drop {{ $errors->has('attachment') ? 'input-error' : '' }}" id="attachmentDrop" for="attachmentInput">
+                <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
+                <div class="drop-title" id="attachmentDropTitle">
+                    {{ $newsNotice->attachment ? 'Click to replace the attachment' : 'Click to upload PDF or Word file' }}
+                </div>
+                <div class="drop-sub" id="attachmentDropSub">or drag &amp; drop here</div>
+            </label>
+            <input type="file" name="attachment" id="attachmentInput" hidden
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+            <span class="file-size-info" id="attachmentInfo"></span>
+            @error('attachment')
+                <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+            @enderror
         </div>
 
 
@@ -228,9 +281,116 @@
 </div>
 
 <script>
+/* ---------- Cover image: preview, validate, remove ---------- */
+const MAX_IMAGE_MB = 2;
+
+document.getElementById('imageInput').addEventListener('change', function () {
+    const file = this.files[0];
+    const info = document.getElementById('imageInfo');
+    info.textContent = '';
+    info.classList.remove('size-error');
+    if (!file) return;
+
+    const sizeMB = file.size / (1024 * 1024);
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+        info.textContent = 'Only JPG, PNG or WEBP images are allowed.';
+        info.classList.add('size-error');
+        this.value = '';
+        return;
+    }
+    if (sizeMB > MAX_IMAGE_MB) {
+        info.textContent = `${sizeMB.toFixed(2)} MB — exceeds the ${MAX_IMAGE_MB}MB limit.`;
+        info.classList.add('size-error');
+        this.value = '';
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const img = document.getElementById('imagePreview');
+        img.src = e.target.result;
+        img.style.display = '';
+        document.getElementById('imageEmpty').style.display = 'none';
+        document.getElementById('removeImageBtn').style.display = '';
+        document.getElementById('imageDrop').classList.add('filled');
+        document.getElementById('imageDrop').classList.remove('input-error');
+        document.getElementById('removeImageInput').value = '0';
+        info.textContent = `${file.name} · ${sizeMB.toFixed(2)} MB — ready`;
+    };
+    reader.readAsDataURL(file);
+});
+
+function removeImage(e) {
+    e.stopPropagation();
+    document.getElementById('imageInput').value = '';
+    const img = document.getElementById('imagePreview');
+    img.src = ''; img.style.display = 'none';
+    document.getElementById('imageEmpty').style.display = '';
+    document.getElementById('removeImageBtn').style.display = 'none';
+    document.getElementById('imageDrop').classList.remove('filled');
+    document.getElementById('removeImageInput').value = '1';
+    document.getElementById('imageInfo').textContent = 'Image will be removed when you save.';
+}
+
+/* ---------- Attachment (PDF / DOC / DOCX): pick, drag & drop, remove ---------- */
+const MAX_ATTACHMENT_MB = 10;
+const ATTACHMENT_EXTS   = ['pdf', 'doc', 'docx'];
+const attachmentInput   = document.getElementById('attachmentInput');
+const attachmentDrop    = document.getElementById('attachmentDrop');
+
+function checkAttachment(file) {
+    if (!file) return null;
+    const ext = file.name.split('.').pop().toLowerCase();
+    if (!ATTACHMENT_EXTS.includes(ext)) return 'The attachment must be a PDF, DOC or DOCX file.';
+    if (file.size > MAX_ATTACHMENT_MB * 1024 * 1024) return `The attachment must not be larger than ${MAX_ATTACHMENT_MB}MB.`;
+    return null;
+}
+
+function showPickedAttachment(file) {
+    const info = document.getElementById('attachmentInfo');
+    info.textContent = '';
+    info.classList.remove('size-error');
+    if (!file) return;
+
+    const ext    = file.name.split('.').pop().toLowerCase();
+    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    const error  = checkAttachment(file);
+
+    document.getElementById('attachmentDropTitle').textContent = file.name;
+    document.getElementById('attachmentDropSub').textContent   = 'Click to choose a different file';
+    attachmentDrop.classList.remove('input-error');
+
+    if (error) {
+        attachmentDrop.classList.remove('picked');
+        info.innerHTML = `<i class="bi bi-exclamation-triangle"></i> ${error}`;
+        info.classList.add('size-error');
+    } else {
+        attachmentDrop.classList.add('picked');
+        info.innerHTML = `<i class="bi bi-check-circle"></i> ${ext.toUpperCase()} · ${sizeMB} MB — ready to upload`;
+    }
+}
+
+attachmentInput.addEventListener('change', () => showPickedAttachment(attachmentInput.files[0]));
+
+['dragenter', 'dragover'].forEach(ev => attachmentDrop.addEventListener(ev, e => {
+    e.preventDefault(); attachmentDrop.classList.add('dragging');
+}));
+['dragleave', 'drop'].forEach(ev => attachmentDrop.addEventListener(ev, e => {
+    e.preventDefault(); attachmentDrop.classList.remove('dragging');
+}));
+attachmentDrop.addEventListener('drop', e => {
+    if (e.dataTransfer.files.length) {
+        attachmentInput.files = e.dataTransfer.files;
+        showPickedAttachment(attachmentInput.files[0]);
+    }
+});
+
 function removeAttachment() {
     document.getElementById('remove-attachment').value = '1';
-    document.querySelector('.attachment-current').style.display = 'none';
+    const row = document.getElementById('currentAttachment');
+    if (row) row.style.display = 'none';
+    document.getElementById('attachmentDropTitle').textContent = 'Click to upload PDF or Word file';
+    document.getElementById('attachmentInfo').textContent = 'Attachment will be removed when you save.';
 }
 
 document.getElementById('noticeForm').addEventListener('submit', function (e) {
@@ -240,6 +400,14 @@ document.getElementById('noticeForm').addEventListener('submit', function (e) {
 
 function submitNoticeForm() {
     const form = document.getElementById('noticeForm');
+
+    const attachmentError = checkAttachment(attachmentInput.files[0]);
+    if (attachmentError) {
+        form.querySelectorAll('.field-error').forEach(el => el.remove());
+        showValidationErrors({ attachment: [attachmentError] });
+        return;
+    }
+
     const formData = new FormData(form);
     const submitBtn = form.querySelector('.btn-save');
     const originalBtnHtml = submitBtn.innerHTML;
@@ -302,7 +470,8 @@ function showValidationErrors(errors) {
         type: f => f.querySelector('[name="type"]'),
         published_at: f => f.querySelector('[name="published_at"]'),
         description: f => f.querySelector('[name="description"]'),
-        attachment: f => document.getElementById('attachmentInput'),
+        image: f => document.getElementById('imageDrop'),
+        attachment: f => document.getElementById('attachmentDrop'),
         link: f => f.querySelector('[name="link"]'),
     };
 
@@ -384,19 +553,59 @@ function showValidationErrors(errors) {
     .notice.caution i{ color:#B7791F; }
     .notice.caution p{ color:#8A6116; }
 
-    .attachment-current{
-        display:flex; align-items:center; gap:8px; background: var(--canvas,#F6F7FB);
-        border:1px solid var(--line,#E9EBF2); border-radius:10px; padding:10px 12px; font-size:13.5px;
+    /* Cover image */
+    .img-drop{
+        position:relative; width:100%; max-width:420px; aspect-ratio:16/9; border-radius:12px; overflow:hidden; cursor:pointer;
+        border:2px dashed var(--input-border,#DBDFEA); background:#FAFBFD;
+        display:flex; align-items:center; justify-content:center; text-align:center; transition:border-color .15s, background .15s;
     }
-    .attachment-current i.bi-file-earmark-pdf{ color:#e74c3c; font-size:16px; }
-    .attachment-current a{ color: var(--ink,#171B2C); text-decoration:none; font-weight:500; }
-    .attachment-current a:hover{ text-decoration:underline; }
+    .img-drop:hover{ border-color: var(--orange,#BF0001); background: var(--orange-tint,#FFF8F3); }
+    .img-drop.filled{ border:2px solid var(--line,#E9EBF2); background:#0F1220; }
+    .img-drop.input-error{ border:2px dashed #e74c3c !important; }
+    .img-drop img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .img-empty{ display:flex; flex-direction:column; align-items:center; }
+    .ico-circle{ width:40px; height:40px; border-radius:999px; background:#EEF0F6; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
+    .drop-title{ font-size:12.5px; font-weight:600; color: var(--muted,#667085); }
+    .drop-sub{ font-size:11px; color:#B0B5C4; margin-top:2px; }
+    .remove-img-btn{
+        position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:999px; background:rgba(0,0,0,0.6);
+        border:none; color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:12px; z-index:2;
+    }
+    .remove-img-btn:hover{ background:rgba(0,0,0,0.85); }
+    .img-info{ display:block; font-size:12px; color:#1e8449; margin-top:6px; }
+    .img-info.size-error{ color:#e74c3c; font-weight:600; }
+
+    /* Attachment: current file row */
+    .current-file{
+        display:flex; align-items:center; gap:12px; padding:12px 14px; margin-bottom:12px;
+        border:1px solid var(--line,#E9EBF2); border-radius:10px; background: var(--canvas,#F6F7FB);
+    }
+    .file-ico{ width:38px; height:38px; border-radius:9px; background:#FEECEC; color:#D92D20;
+               display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .file-ico.is-word{ background:#E8F0FE; color:#185ABC; }
+    .file-meta{ display:flex; flex-direction:column; min-width:0; flex:1; }
+    .file-meta b{ font-size:13px; color: var(--ink,#171B2C); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .file-meta small{ font-size:11.5px; color: var(--faint,#9AA1B2); }
+    .file-view{ font-size:12.5px; font-weight:600; color: var(--orange,#BF0001); text-decoration:none; display:flex; align-items:center; gap:5px; white-space:nowrap; }
     .remove-attachment-btn{
-        margin-left:auto; width:26px; height:26px; border-radius:999px; border:none;
+        width:28px; height:28px; border-radius:999px; border:none; flex-shrink:0;
         background:#fdecea; color:#e74c3c; cursor:pointer; display:flex; align-items:center; justify-content:center;
         transition:background .15s;
     }
     .remove-attachment-btn:hover{ background:#f8d3d0; }
+
+    /* Attachment: drop zone */
+    .file-drop{
+        display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
+        padding:26px 16px; border:2px dashed var(--input-border,#DBDFEA); border-radius:12px; background:#FAFBFD;
+        cursor:pointer; transition:border-color .15s, background .15s;
+    }
+    .file-drop:hover, .file-drop.dragging{ border-color: var(--orange,#BF0001); background: var(--orange-tint,#FFF8F3); }
+    .file-drop.picked{ border-style:solid; border-color:#A6D8B8; background:#F3FBF6; }
+    .file-drop.input-error{ border:2px dashed #e74c3c !important; background:#fff8f8; }
+    .file-drop .drop-title{ font-size:13px; font-weight:600; color: var(--ink,#171B2C); word-break:break-all; }
+    .file-size-info{ display:block; font-size:12px; color:#1e8449; margin-top:6px; }
+    .file-size-info.size-error{ color:#e74c3c; font-weight:600; }
 
     .toggle-row{ display:flex; align-items:center; gap:12px; cursor:pointer; }
     .toggle-row input[type="checkbox"]{ position:absolute; opacity:0; width:0; height:0; }

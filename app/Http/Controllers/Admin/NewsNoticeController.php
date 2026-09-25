@@ -88,6 +88,11 @@ class NewsNoticeController extends Controller
     public function store(NewsNoticeRequest $request)
     {
         $validated = $request->validated();
+        unset($validated['remove_image'], $validated['remove_attachment']);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('news-notices/images', 'public');
+        }
 
         if ($request->hasFile('attachment')) {
             $validated['attachment'] = $request->file('attachment')->store('news-notices', 'public');
@@ -127,6 +132,22 @@ class NewsNoticeController extends Controller
     public function update(NewsNoticeRequest $request, NewsNotice $newsNotice)
     {
         $validated = $request->validated();
+        unset($validated['remove_image'], $validated['remove_attachment']);
+
+        // Cover image: replace, remove, or keep
+        if ($request->hasFile('image')) {
+            if ($newsNotice->image) {
+                Storage::disk('public')->delete($newsNotice->image);
+            }
+            $validated['image'] = $request->file('image')->store('news-notices/images', 'public');
+        } elseif ($request->boolean('remove_image')) {
+            if ($newsNotice->image) {
+                Storage::disk('public')->delete($newsNotice->image);
+            }
+            $validated['image'] = null;
+        } else {
+            unset($validated['image']); // keep current image
+        }
 
         if ($request->hasFile('attachment')) {
             if ($newsNotice->attachment) {
@@ -138,10 +159,18 @@ class NewsNoticeController extends Controller
                 Storage::disk('public')->delete($newsNotice->attachment);
             }
             $validated['attachment'] = null;
+        } else {
+            unset($validated['attachment']); // keep current attachment
         }
 
-        $validated['is_pinned'] = $request->boolean('is_pinned');
-        $validated['is_active'] = $request->boolean('is_active');
+        // Only change pin / visibility when the form actually sends them
+        // (the Visibility card is hidden, so otherwise editing would unpublish the notice).
+        if ($request->has('is_pinned')) {
+            $validated['is_pinned'] = $request->boolean('is_pinned');
+        }
+        if ($request->has('is_active')) {
+            $validated['is_active'] = $request->boolean('is_active');
+        }
 
         $newsNotice->update($validated);
 

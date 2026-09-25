@@ -24,8 +24,8 @@
         <div>
             <h1>{{ $disclosure->exists ? 'Edit Document' : 'Add Document' }}</h1>
             <p>{{ $disclosure->exists
-                ? 'Update this document. Upload a new PDF only if you want to replace the current one.'
-                : 'Upload a statutory document (PDF) for the Mandatory Disclosure page.' }}</p>
+                ? 'Update this document. Upload a new file only if you want to replace the current one.'
+                : 'Upload a statutory document (PDF or Word) for the Mandatory Disclosure page.' }}</p>
         </div>
     </div>
 
@@ -42,7 +42,7 @@
                 <h2><span class="icon"><i class="bi bi-file-earmark-text"></i></span> Document Title <span class="req">*</span></h2>
             </div>
             <div class="field">
-                <input type="text" name="title" value="{{ old('title', $disclosure->title) }}"
+                <input type="text" name="title" maxlength="255" value="{{ old('title', $disclosure->title) }}"
                        class="{{ $errors->has('title') ? 'input-error' : '' }}"
                        placeholder="e.g. Fire Safety Certificate">
                 @error('title')
@@ -52,7 +52,7 @@
         </div>
 
         {{-- Category --}}
-            {{-- Category (from disclosure_categories table) --}}
+     
         <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-folder2"></i></span> Category <span class="req">*</span></h2>
@@ -87,66 +87,36 @@
         </div>
 
         {{-- Issue details --}}
-        <!-- <div class="card">
-            <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-patch-check"></i></span> Issue Details</h2>
-            </div>
 
-            <div class="field">
-                <div class="field-top"><label class="field-label">Issued By</label></div>
-                <input type="text" name="issued_by" value="{{ old('issued_by', $disclosure->issued_by) }}"
-                       class="{{ $errors->has('issued_by') ? 'input-error' : '' }}"
-                       placeholder="e.g. Kerala Fire & Rescue Services">
-                @error('issued_by')
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                @enderror
-            </div>
 
-            <div class="field-row">
-                <div class="field">
-                    <div class="field-top"><label class="field-label">Issue Date</label></div>
-                    <input type="date" name="issue_date"
-                           value="{{ old('issue_date', optional($disclosure->issue_date)->format('Y-m-d')) }}"
-                           class="{{ $errors->has('issue_date') ? 'input-error' : '' }}">
-                    @error('issue_date')
-                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="field">
-                    <div class="field-top"><label class="field-label">Valid Until</label></div>
-                    <input type="date" name="valid_until"
-                           value="{{ old('valid_until', optional($disclosure->valid_until)->format('Y-m-d')) }}"
-                           class="{{ $errors->has('valid_until') ? 'input-error' : '' }}">
-                    @error('valid_until')
-                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                    @enderror
-                </div>
-            </div>
-            <span class="field-hint" style="margin-top:10px;">Leave "Valid Until" empty for documents that don't expire (e.g. affiliation letter, trust registration).</span>
-        </div> -->
-
-        {{-- PDF --}}
+        {{-- Document file (PDF / Word) --}}
         <div class="card" id="fileSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-file-earmark-pdf"></i></span> PDF File
+                <h2><span class="icon"><i class="bi bi-file-earmark-arrow-up"></i></span> Document File (PDF / Word)
                     @if (! $disclosure->exists) <span class="req">*</span> @endif
                 </h2>
             </div>
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>PDF only</b> &middot; up to 10MB. Upload the signed / stamped copy.</p>
+                <p><b>PDF, DOC or DOCX</b> &middot; up to 10MB. Upload the signed / stamped copy — PDF is preferred, as it opens in every browser.</p>
             </div>
 
             @if ($disclosure->file)
+                @php
+                    $ext    = strtolower(pathinfo($disclosure->original_name ?: $disclosure->file, PATHINFO_EXTENSION));
+                    $isWord = in_array($ext, ['doc', 'docx'], true);
+                @endphp
                 <div class="current-file" id="currentFile">
-                    <div class="pdf-ico"><i class="bi bi-file-earmark-pdf-fill"></i></div>
+                    <div class="pdf-ico {{ $isWord ? 'is-word' : '' }}">
+                        <i class="bi {{ $isWord ? 'bi-file-earmark-word-fill' : 'bi-file-earmark-pdf-fill' }}"></i>
+                    </div>
                     <div class="pdf-meta">
                         <b>{{ $disclosure->original_name ?: basename($disclosure->file) }}</b>
                         <small>Current file {{ $disclosure->file_size_label ? '· ' . $disclosure->file_size_label : '' }}</small>
                     </div>
-                    <a href="{{ $disclosure->file_url }}" target="_blank" class="pdf-view">
-                        <i class="bi bi-box-arrow-up-right"></i> View
+                    <a href="{{ $disclosure->file_url }}" target="_blank" class="pdf-view" {{ $isWord ? 'download' : '' }}>
+                        <i class="bi {{ $isWord ? 'bi-download' : 'bi-box-arrow-up-right' }}"></i> {{ $isWord ? 'Download' : 'View' }}
                     </a>
                 </div>
             @endif
@@ -154,11 +124,12 @@
             <label class="pdf-drop {{ $errors->has('file') ? 'input-error' : '' }}" id="pdfDrop" for="fileInput">
                 <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
                 <div class="drop-title" id="pdfDropTitle">
-                    {{ $disclosure->file ? 'Click to replace the PDF' : 'Click to upload PDF' }}
+                  {{ $disclosure->file ? 'Click to replace the document' : 'Click to upload PDF or Word file' }}
                 </div>
                 <div class="drop-sub" id="pdfDropSub">or drag &amp; drop here</div>
             </label>
-            <input type="file" name="file" id="fileInput" accept="application/pdf,.pdf" hidden>
+            <input type="file" name="file" id="fileInput" hidden
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
             <span class="file-size-info" id="fileSizeInfo"></span>
 
             @error('file')
@@ -166,36 +137,8 @@
             @enderror
         </div>
 
-        {{-- Order & Visibility --}}
+   
         
-
-        <!-- <div class="card">
-            <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-toggles"></i></span> Order &amp; Visibility</h2>
-            </div>
-
-            <div class="field">
-                <div class="field-top"><label class="field-label">Display Order</label></div>
-                <input type="number" name="sort_order" min="0"
-                       value="{{ old('sort_order', $disclosure->sort_order ?? 0) }}"
-                       class="{{ $errors->has('sort_order') ? 'input-error' : '' }}"
-                       style="max-width:160px;">
-                @error('sort_order')
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                @enderror
-                <span class="field-hint">Lower numbers appear first within the category.</span>
-            </div>
-
-            <label class="toggle-row">
-                <input type="hidden" name="is_active" value="0">
-                <input type="checkbox" name="is_active" value="1"
-                       {{ old('is_active', $disclosure->exists ? $disclosure->is_active : true) ? 'checked' : '' }}>
-                <span class="toggle-switch"></span>
-                <span class="toggle-label">Show on website</span>
-            </label>
-        </div> -->
-        
-
         <div class="savebar">
             <div class="savebar-inner">
                 <span class="savebar-status">Changes save to the live Mandatory Disclosure page</span>
@@ -212,8 +155,9 @@
 </div>
 
 <script>
-    /* ---------- PDF picker: preview name + size, drag & drop ---------- */
-    const MAX_MB    = 10;
+    /* ---------- File picker (PDF / DOC / DOCX): preview name + size, drag & drop ---------- */
+    const MAX_MB       = 10;
+    const ALLOWED_EXTS = ['pdf', 'doc', 'docx'];
     const fileInput = document.getElementById('fileInput');
     const pdfDrop   = document.getElementById('pdfDrop');
 
@@ -225,20 +169,21 @@
         if (!file) { info.textContent = ''; return; }
 
         const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-        const isPdf  = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
+        const ext     = file.name.split('.').pop().toLowerCase();
+        const isValid = ALLOWED_EXTS.includes(ext);
 
         title.textContent = file.name;
         sub.textContent   = 'Click to choose a different file';
         pdfDrop.classList.add('picked');
 
-        if (!isPdf) {
-            info.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Only PDF files are allowed.';
+        if (!isValid) {
+            info.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Only PDF, DOC or DOCX files are allowed.';
             info.classList.add('size-error');
         } else if (sizeMB > MAX_MB) {
             info.innerHTML = `<i class="bi bi-exclamation-triangle"></i> ${sizeMB} MB — exceeds ${MAX_MB}MB limit!`;
             info.classList.add('size-error');
         } else {
-            info.innerHTML = `<i class="bi bi-check-circle"></i> ${sizeMB} MB — ready to upload`;
+            info.innerHTML = `<i class="bi bi-check-circle"></i> ${ext.toUpperCase()} · ${sizeMB} MB — ready to upload`;
             info.classList.remove('size-error');
         }
     }
@@ -266,6 +211,23 @@
 
     function submitDisclosureForm() {
         const form      = document.getElementById('disclosureForm');
+
+        // Stop early if the chosen file is the wrong type or too big
+        const picked = fileInput.files[0];
+        if (picked) {
+            const ext = picked.name.split('.').pop().toLowerCase();
+            if (!ALLOWED_EXTS.includes(ext)) {
+                form.querySelectorAll('.field-error').forEach(el => el.remove());
+                showDisclosureErrors({ file: ['The document must be a PDF, DOC or DOCX file.'] });
+                return;
+            }
+            if (picked.size > MAX_MB * 1024 * 1024) {
+                form.querySelectorAll('.field-error').forEach(el => el.remove());
+                showDisclosureErrors({ file: [`The document must not be larger than ${MAX_MB}MB.`] });
+                return;
+            }
+        }
+
         const formData  = new FormData(form);
         const submitBtn = form.querySelector('.btn-save');
         const original  = submitBtn.innerHTML;
@@ -289,7 +251,7 @@
                 return;
             }
             if (response.status === 413) {
-                showDisclosureErrors({ file: ['The PDF is too large for the server to accept.'] });
+                showDisclosureErrors({ file: ['The file is too large for the server to accept.'] });
                 return;
             }
             if (!response.ok) throw new Error('Request failed');
@@ -397,12 +359,13 @@
     }
     .pdf-ico{ width:38px; height:38px; border-radius:9px; background:#FEECEC; color:#D92D20;
               display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .pdf-ico.is-word{ background:#E8F0FE; color:#185ABC; }
     .pdf-meta{ display:flex; flex-direction:column; min-width:0; flex:1; }
     .pdf-meta b{ font-size:13px; color: var(--ink,#171B2C); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .pdf-meta small{ font-size:11.5px; color: var(--faint,#9AA1B2); }
     .pdf-view{ font-size:12.5px; font-weight:600; color: var(--orange,#BF0001); text-decoration:none; display:flex; align-items:center; gap:5px; }
 
-    /* PDF drop zone */
+    /* File drop zone */
     .pdf-drop{
         display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
         padding:26px 16px; border:2px dashed var(--input-border,#DBDFEA); border-radius:12px; background:#FAFBFD;

@@ -50,7 +50,7 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Title</label></div>
+                <div class="field-top"><label class="field-label">Title <span class="req">*</span></label></div>
                 <input type="text" name="title" value="{{ old('title', $about->title) }}"
                        class="{{ $errors->has('title') ? 'input-error' : '' }}"
                        placeholder="e.g. About Al-Azhar School">
@@ -60,7 +60,7 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Short Description</label></div>
+                <div class="field-top"><label class="field-label">Short Description <span class="req">*</span></label></div>
                 <textarea name="description" id="description-input" rows="4"
                           class="{{ $errors->has('description') ? 'input-error' : '' }}"
                           placeholder="A short intro paragraph shown under the title...">{{ old('description', $about->description) }}</textarea>
@@ -77,7 +77,7 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Vision</label></div>
+                <div class="field-top"><label class="field-label">Vision <span class="req">*</span></label></div>
                 <textarea name="vision" id="vision-input" rows="4"
                           class="{{ $errors->has('vision') ? 'input-error' : '' }}"
                           placeholder="What the school aspires to be...">{{ old('vision', $about->vision) }}</textarea>
@@ -87,7 +87,7 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Mission</label></div>
+                <div class="field-top"><label class="field-label">Mission <span class="req">*</span></label></div>
                 <textarea name="mission" id="mission-input" rows="4"
                           class="{{ $errors->has('mission') ? 'input-error' : '' }}"
                           placeholder="How the school works to achieve its vision...">{{ old('mission', $about->mission) }}</textarea>
@@ -104,7 +104,7 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">History</label></div>
+                <div class="field-top"><label class="field-label">History <span class="req">*</span></label></div>
                 <textarea name="history" id="history-input" rows="6"
                           class="{{ $errors->has('history') ? 'input-error' : '' }}"
                           placeholder="The story of how the school was founded and has grown...">{{ old('history', $about->history) }}</textarea>
@@ -114,7 +114,7 @@
             </div>
 
             <div class="field">
-                <div class="field-top"><label class="field-label">Values</label></div>
+                <div class="field-top"><label class="field-label">Values <span class="req">*</span></label></div>
                 <textarea name="values" id="values-input" rows="4"
                           class="{{ $errors->has('values') ? 'input-error' : '' }}"
                           placeholder="The core values the school stands for...">{{ old('values', $about->values) }}</textarea>
@@ -127,12 +127,12 @@
         {{-- Image --}}
         <div class="card" id="imageSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span> About Image</h2>
+                <h2><span class="icon"><i class="bi bi-image"></i></span> About Image <span class="req">*</span></h2>
             </div>
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p>Optional &middot; recommended 900&times;700px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+                <p><b>Required</b> &middot; recommended 900&times;700px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
             </div>
 
             @error('image')
@@ -173,6 +173,7 @@
         <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-search"></i></span> SEO Meta</h2>
+                <span class="field-hint">Optional</span>
             </div>
             <p class="section-sub" style="margin:0 0 16px;">Used for search engine results and social share previews.</p>
 
@@ -226,6 +227,7 @@ document.getElementById('aboutForm').addEventListener('submit', function (e) {
 
 function submitAboutForm() {
     const form = document.getElementById('aboutForm');
+    if (window.tinymce) tinymce.triggerSave();   // copy editor content into the textareas first
     const formData = new FormData(form);
     const submitBtn = form.querySelector('.btn-save');
     const originalBtnHtml = submitBtn.innerHTML;
@@ -233,6 +235,7 @@ function submitAboutForm() {
     form.querySelectorAll('.field-error').forEach(el => el.remove());
     form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
     form.querySelectorAll('.notice.caution.dynamic-error').forEach(el => el.remove());
+    document.querySelectorAll('.tox-tinymce.input-error').forEach(el => el.classList.remove('input-error'));
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
@@ -305,11 +308,16 @@ function showValidationErrors(errors) {
             notice.style.marginBottom = '16px';
             notice.innerHTML = `<i class="bi bi-exclamation-circle" style="margin-top:1px;"></i><p>${message}</p>`;
             imageSection.querySelector('.section-title').insertAdjacentElement('afterend', notice);
+            document.getElementById('imageDrop').classList.add('input-error');
             return;
         }
 
-        const target = fieldMap[field] ? fieldMap[field](form) : null;
+        let target = fieldMap[field] ? fieldMap[field](form) : null;
         if (!target) return;
+
+        // TinyMCE fields: mark the visible editor box, and put the error below it
+        const editor = window.tinymce && target.id ? tinymce.get(target.id) : null;
+        if (editor) target = editor.getContainer();
 
         target.classList.add('input-error');
 
@@ -399,6 +407,16 @@ function showValidationErrors(errors) {
             editor.on('change keyup blur', function () {
                 editor.save();
             });
+            editor.on('init', function () {
+                const textarea = editor.getElement();
+                const next = textarea.nextElementSibling;           // server-side error message span, if any
+                if (textarea.classList.contains('input-error')) {
+                    editor.getContainer().classList.add('input-error');
+                }
+                if (next && next.classList.contains('field-error')) {
+                    editor.getContainer().insertAdjacentElement('afterend', next);
+                }
+            });
         }
     });
 
@@ -446,6 +464,8 @@ function showValidationErrors(errors) {
     }
     textarea{ resize:vertical; line-height:1.5; }
     .input-error{ border-color:#e74c3c !important; background:#fff8f8; }
+    .tox.tox-tinymce.input-error{ border:1px solid #e74c3c !important; }
+    .drop.input-error{ border:2px dashed #e74c3c !important; }
     .field-error{ display:flex; align-items:center; gap:5px; color:#e74c3c; font-size:12.5px; margin-top:6px; }
 
     .notice{ margin-top:16px; display:flex; align-items:flex-start; gap:8px; background: var(--canvas,#F6F7FB); border-radius:10px; padding:10px 12px; }
@@ -504,6 +524,9 @@ function showValidationErrors(errors) {
     }
     .btn-save:hover{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(15,21,38,0.5); }
 
+.req {
+    color: #BF0001;
+}
 
 
 
