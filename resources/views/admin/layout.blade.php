@@ -827,6 +827,7 @@
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
     $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*');
     $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*');
+    $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*');
 @endphp
 
 <nav class="nav">
@@ -958,7 +959,8 @@
     @endif
 
     {{-- Admission Enquiries --}}
-    @if ($can('enquiries'))
+
+    <!-- @if ($can('enquiries'))
         <div class="nav-group">
             <a class="nav-item {{ request()->routeIs('admin.admission-enquiries*') ? 'active' : '' }}"
                href="{{ route('admin.admission-enquiries') }}">
@@ -966,6 +968,49 @@
             </a>
         </div>
     @endif
+
+
+    @if ($isAdmin)
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.contacts*') ? 'active' : '' }}"
+           href="{{ route('admin.contacts') }}">
+            <i class="bi bi-envelope nav-ico"></i> Contact Messages
+            
+        </a>
+    </div>
+@endif -->
+
+
+    {{-- Enquiries (Admission Enquiries + Contact Messages) --}}
+    @if ($can('enquiries') || $isAdmin)
+        <div class="nav-group {{ $enquiriesOpen ? 'expanded' : '' }}">
+            <a class="nav-item {{ $enquiriesOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
+                <i class="bi bi-inboxes nav-ico"></i>
+                Enquiries
+                <i class="bi bi-chevron-right chev"></i>
+            </a>
+            <ul class="submenu">
+                @if ($can('enquiries'))
+                    <li>
+                        <a class="nav-item {{ request()->routeIs('admin.admission-enquiries*') ? 'active' : '' }}"
+                           href="{{ route('admin.admission-enquiries') }}">
+                            <i class="bi bi-person-lines-fill nav-ico"></i> Admission Enquiries
+                        </a>
+                    </li>
+                @endif
+                @if ($isAdmin)
+                    <li>
+                        <a class="nav-item {{ request()->routeIs('admin.contacts*') ? 'active' : '' }}"
+                           href="{{ route('admin.contacts') }}">
+                            <i class="bi bi-envelope nav-ico"></i> Contact Messages
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </div>
+    @endif
+
+
 
     @if ($isAdmin)
         {{-- Activity Logs --}}
