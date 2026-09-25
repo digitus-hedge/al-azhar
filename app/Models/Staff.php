@@ -2,18 +2,19 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Concerns\LogsActivity;
 
 class Staff extends Model
 {
-    use HasFactory, SoftDeletes,LogsActivity;
+    use HasFactory, SoftDeletes, LogsActivity;
 
     protected $fillable = [
         'name',
-        'designation',
+        'designation_id',   // was 'designation' (text) → now management_designations.id (type = staff)
         'department_id',
         'class_id',
         'description',
@@ -26,21 +27,28 @@ class Staff extends Model
     ];
 
     protected $casts = [
+        'designation_id'   => 'integer',
         'is_head_of_staff' => 'boolean',
-        'show_on_home'      => 'boolean',
-        'has_login'         => 'boolean',
-        'sort_order'        => 'integer',
+        'show_on_home'     => 'boolean',
+        'has_login'        => 'boolean',
+        'sort_order'       => 'integer',
     ];
 
-    // public function department()
-    // {
-    //     return $this->belongsTo(Department::class);
-    // }
+    /* ---------- Relations ---------- */
+
+    /**
+     * The staff designation (Master > Designations, type = staff).
+     * withTrashed: keeps showing the name even if the designation is deleted later.
+     */
+    public function staffDesignation(): BelongsTo
+    {
+        return $this->belongsTo(ManagementDesignation::class, 'designation_id')->withTrashed();
+    }
 
     public function department()
-{
-    return $this->belongsTo(Department::class, 'department_id');
-}
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
 
     public function schoolClass()
     {
@@ -55,6 +63,20 @@ class Staff extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /* ---------- Accessors ---------- */
+
+    /**
+     * Designation NAME, e.g. "Principal".
+     * Keeps every existing view working: {{ $staff->designation }} still prints the name,
+     * even though the table now stores designation_id.
+     */
+    public function getDesignationAttribute(): string
+    {
+        return $this->staffDesignation?->name ?? '';
+    }
+
+    /* ---------- Scopes ---------- */
 
     public function scopeHeadOfStaff($query)
     {
@@ -74,5 +96,11 @@ class Staff extends Model
     public function scopeInDepartment($query, $departmentId)
     {
         return $query->where('department_id', $departmentId);
+    }
+
+    /** Staff with a given designation: Staff::withDesignation($id)->get() */
+    public function scopeWithDesignation($query, $designationId)
+    {
+        return $query->where('designation_id', $designationId);
     }
 }

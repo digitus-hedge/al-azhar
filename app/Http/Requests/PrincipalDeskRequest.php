@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class PrincipalDeskRequest extends FormRequest
 {
     /** Change the excerpt word limit here only. The form reads it from this constant. */
-    public const EXCERPT_MAX_WORDS = 300;
+    public const EXCERPT_MAX_WORDS = 600;
 
     public function authorize(): bool
     {

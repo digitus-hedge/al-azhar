@@ -54,15 +54,32 @@
         <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-briefcase"></i></span> Designation <span class="req">*</span></h2>
+                <a href="{{ route('admin.designations.create', ['type' => 'staff']) }}" target="_blank" class="add-link">
+                    <i class="bi bi-plus-lg"></i> New designation
+                </a>
             </div>
 
             <div class="field">
-                <input type="text" name="designation" value="{{ old('designation', $staffMember->designation) }}"
-                       class="{{ $errors->has('designation') ? 'input-error' : '' }}"
-                       placeholder="e.g. Principal, Head Teacher, Administrator">
-                @error('designation')
+                <select name="designation_id" id="designation_id"
+                        class="{{ $errors->has('designation_id') ? 'input-error' : '' }}"
+                        {{ $designations->isEmpty() ? 'disabled' : '' }}>
+                    <option value="">— Select Designation —</option>
+                    @foreach ($designations as $designation)
+                        <option value="{{ $designation->id }}"
+                            @selected((string) old('designation_id', $staffMember->designation_id) === (string) $designation->id)>
+                            {{ $designation->name }}{{ $designation->trashed() ? ' (deleted)' : '' }}
+                        </option>
+                    @endforeach
+                </select>
+                @error('designation_id')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                 @enderror
+                @if ($designations->isEmpty())
+                    <span class="field-hint" style="display:block;margin-top:6px;color:#B7791F;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        No Staff designations yet. Add them under Master &rsaquo; Designations (Type: Staff), then reload this page.
+                    </span>
+                @endif
             </div>
         </div>
 
@@ -87,7 +104,7 @@
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                 @enderror
                 @if($departments->isEmpty())
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> No departments exist yet — add one first.</span>
+                    <!-- <span class="field-error"><i class="bi bi-exclamation-circle"></i> No departments exist yet — add one first.</span> -->
                 @endif
             </div>
         </div>
@@ -632,7 +649,7 @@ function showStaffValidationErrors(errors) {
 
     const fieldMap = {
         name: f => f.querySelector('[name="name"]'),
-        designation: f => f.querySelector('[name="designation"]'),
+        designation_id: f => f.querySelector('[name="designation_id"]'),
         department_id: f => f.querySelector('[name="department_id"]'),
         class_id: f => f.querySelector('[name="class_id"]'),
         photo: f => document.getElementById('drop-photo'),
@@ -803,6 +820,9 @@ function showStaffValidationErrors(errors) {
     .btn-save:hover{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(15,21,38,0.5); }
 
     .req { color: #BF0001; }
+
+    .add-link{ display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; color: var(--orange,#BF0001); text-decoration:none; }
+    .add-link:hover{ text-decoration:underline; }
 
     div#show-on-home-card {
     margin-top: 15px;

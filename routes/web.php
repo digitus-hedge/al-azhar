@@ -17,6 +17,8 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdmissionEnquiryController;
 use App\Http\Controllers\Admin\DisclosureCategoryController;
 use App\Http\Controllers\Admin\MandatoryDisclosureController;
+use App\Http\Controllers\Admin\ManagementMemberController;
+use App\Http\Controllers\Admin\ManagementDesignationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\web\HomeController;
 use App\Http\Controllers\web\DepartmentController as WebDepartmentController;
@@ -131,6 +133,25 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'update'])->name('mandatory-disclosures.update');
             Route::delete('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'destroy'])->name('mandatory-disclosures.destroy');
             Route::patch('mandatory-disclosures/{disclosure}/toggle', [MandatoryDisclosureController::class, 'toggle'])->name('mandatory-disclosures.toggle');
+
+
+                        // Master > Management Designations
+            Route::get('designations',                  [ManagementDesignationController::class, 'index'])->name('designations');
+            Route::get('designations/create',           [ManagementDesignationController::class, 'create'])->name('designations.create');
+            Route::post('designations',                 [ManagementDesignationController::class, 'store'])->name('designations.store');
+            Route::get('designations/{designation}/edit', [ManagementDesignationController::class, 'edit'])->name('designations.edit');
+            Route::put('designations/{designation}',    [ManagementDesignationController::class, 'update'])->name('designations.update');
+            Route::delete('designations/{designation}', [ManagementDesignationController::class, 'destroy'])->name('designations.destroy');
+            Route::patch('designations/{id}/restore',   [ManagementDesignationController::class, 'restore'])->name('designations.restore')->whereNumber('id');
+
+            // School Management (committee, trustees, leadership)
+            Route::get('school-management',                   [ManagementMemberController::class, 'index'])->name('school-management');
+            Route::get('school-management/create',            [ManagementMemberController::class, 'create'])->name('school-management.create');
+            Route::post('school-management',                  [ManagementMemberController::class, 'store'])->name('school-management.store');
+            Route::get('school-management/{member}/edit',     [ManagementMemberController::class, 'edit'])->name('school-management.edit');
+            Route::put('school-management/{member}',          [ManagementMemberController::class, 'update'])->name('school-management.update');
+            Route::patch('school-management/{member}/toggle', [ManagementMemberController::class, 'toggle'])->name('school-management.toggle');
+            Route::delete('school-management/{member}',       [ManagementMemberController::class, 'destroy'])->name('school-management.destroy');
 
 
             // Master > Disclosure Categories
