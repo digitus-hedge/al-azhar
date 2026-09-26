@@ -55,9 +55,26 @@ class ManagementDesignation extends Model
     {
         $term = trim((string) $term);
 
-        return $term === ''
-            ? $query
-            : $query->where('name', 'like', '%' . $term . '%');
+        if ($term === '') {
+            return $query;
+        }
+
+        $lower = mb_strtolower($term);
+
+        // Match against type keys and labels, e.g. "man" / "management" → management, "staff" → staff
+        $typeMatches = collect(self::TYPES)
+            ->filter(fn($label, $key) => str_contains(mb_strtolower($label), $lower)
+                || str_contains(mb_strtolower($key), $lower))
+            ->keys()
+            ->all();
+
+        return $query->where(function ($q) use ($term, $typeMatches) {
+            $q->where('name', 'like', '%' . $term . '%');
+
+            if (! empty($typeMatches)) {
+                $q->orWhereIn('type', $typeMatches);
+            }
+        });
     }
 
     /** Filter by type: ManagementDesignation::ofType('staff')->get(). Null or unknown = all. */
