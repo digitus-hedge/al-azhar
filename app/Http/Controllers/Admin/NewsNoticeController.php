@@ -25,7 +25,7 @@ class NewsNoticeController extends Controller
     /**
      * Display a listing of news & notices.
      */
- public function index(Request $request)
+public function index(Request $request)
 {
     $search  = trim((string) $request->query('q', ''));
     $sortBy  = $request->query('sort', 'id');
@@ -44,10 +44,32 @@ class NewsNoticeController extends Controller
     $query = NewsNotice::query();
 
     if ($search !== '') {
-        $query->where(function ($q) use ($search) {
+        $term = mb_strtolower($search);
+
+        // Match the search word against type labels/keys, e.g. "circ" → circular
+        $typeMatches = collect(NewsNotice::TYPES)
+            ->filter(fn ($label, $key) => str_contains(mb_strtolower($label), $term)
+                || str_contains(mb_strtolower($key), $term))
+            ->keys()
+            ->all();
+
+        // Match the search word against priority labels/keys, e.g. "urg" → urgent
+        $priorityMatches = collect(NewsNotice::PRIORITIES)
+            ->filter(fn ($label, $key) => str_contains(mb_strtolower($label), $term)
+                || str_contains(mb_strtolower($key), $term))
+            ->keys()
+            ->all();
+
+        $query->where(function ($q) use ($search, $typeMatches, $priorityMatches) {
             $q->where('title', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%")
-              ->orWhere('type', 'like', "%{$search}%");
+              ->orWhere('description', 'like', "%{$search}%");
+
+            if (! empty($typeMatches)) {
+                $q->orWhereIn('type', $typeMatches);
+            }
+            if (! empty($priorityMatches)) {
+                $q->orWhereIn('priority', $priorityMatches);
+            }
         });
     }
 

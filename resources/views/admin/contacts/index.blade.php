@@ -106,11 +106,11 @@
                                 <td class="muted-sub">{{ $contacts->firstItem() + $loop->index }}</td>
                                 <td class="nowrap"><b>{{ $c->name }}</b></td>
                                 <td class="nowrap">
-                                    <a href="mailto:{{ $c->email }}" class="muted-link">{{ $c->email }}</a>
+                                 {{ $c->email }}
                                 </td>
                                 <td class="nowrap">
                                     @if ($c->phone)
-                                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $c->phone) }}" class="muted-link">{{ $c->phone }}</a>
+                                   {{ $c->phone }}
                                     @else
                                         <span class="muted-sub">—</span>
                                     @endif
