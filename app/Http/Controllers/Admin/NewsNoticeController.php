@@ -25,49 +25,58 @@ class NewsNoticeController extends Controller
     /**
      * Display a listing of news & notices.
      */
-    public function index(Request $request)
-    {
-        $search  = trim((string) $request->query('q', ''));
-        $sortBy  = $request->query('sort', 'sort_order');
-        $sortDir = strtolower($request->query('dir', 'asc')) === 'desc' ? 'desc' : 'asc';
-        $perPage = (int) $request->query('per_page', 10);
+ public function index(Request $request)
+{
+    $search  = trim((string) $request->query('q', ''));
+    $sortBy  = $request->query('sort', 'id');
+    $sortDir = strtolower($request->query('dir', $sortBy === 'id' ? 'desc' : 'asc')) === 'desc' ? 'desc' : 'asc';
+    $perPage = (int) $request->query('per_page', 10);
 
-        if (! in_array($sortBy, $this->sortable, true)) {
-            $sortBy = 'sort_order';
-        }
-
-        if (! in_array($perPage, $this->perPageOptions, true)) {
-            $perPage = 10;
-        }
-
-        $query = NewsNotice::query();
-
-        if ($search !== '') {
-            $query->where(function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('description', 'like', "%{$search}%")
-                  ->orWhere('type', 'like', "%{$search}%");
-            });
-        }
-
-        if ($sortBy === 'sort_order') {
-            $query->orderByDesc('is_pinned')->orderBy('sort_order')->orderByDesc('published_at');
-        } else {
-            $query->orderBy($sortBy, $sortDir);
-        }
-
-        $newsNotices = $query->paginate($perPage)->appends($request->query());
-
-        return view('admin.news-notice.index', [
-            'newsNotices'    => $newsNotices,
-            'search'         => $search,
-            'sortBy'         => $sortBy,
-            'sortDir'        => $sortDir,
-            'perPage'        => $perPage,
-            'perPageOptions' => $this->perPageOptions,
-            'types'          => NewsNotice::TYPES,
-        ]);
+    if (! in_array($sortBy, $this->sortable, true)) {
+        $sortBy  = 'id';
+        $sortDir = 'desc';
     }
+
+    if (! in_array($perPage, $this->perPageOptions, true)) {
+        $perPage = 10;
+    }
+
+    $query = NewsNotice::query();
+
+    if ($search !== '') {
+        $query->where(function ($q) use ($search) {
+            $q->where('title', 'like', "%{$search}%")
+              ->orWhere('description', 'like', "%{$search}%")
+              ->orWhere('type', 'like', "%{$search}%");
+        });
+    }
+
+    if ($sortBy === 'priority') {
+        // Sort by importance, not alphabetically (normal → important → urgent)
+        $query->orderByRaw(
+            "CASE priority WHEN 'urgent' THEN 3 WHEN 'important' THEN 2 ELSE 1 END {$sortDir}"
+        );
+    } else {
+        $query->orderBy($sortBy, $sortDir);
+    }
+
+    // Tie-breaker: newest first when values are equal
+    if ($sortBy !== 'id') {
+        $query->orderByDesc('id');
+    }
+
+    $newsNotices = $query->paginate($perPage)->appends($request->query());
+
+    return view('admin.news-notice.index', [
+        'newsNotices'    => $newsNotices,
+        'search'         => $search,
+        'sortBy'         => $sortBy,
+        'sortDir'        => $sortDir,
+        'perPage'        => $perPage,
+        'perPageOptions' => $this->perPageOptions,
+        'types'          => NewsNotice::TYPES,
+    ]);
+}
 
     /**
      * Show the form for creating a new notice.

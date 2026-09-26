@@ -115,7 +115,7 @@
         {{-- Cover Image --}}
         <div class="card" id="imageSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span>Image</h2>
+                <h2><span class="icon"><i class="bi bi-image"></i></span>Image <span class="req">*</span></h2>
                 <!-- <span class="field-hint">Optional</span> -->
             </div>
             <div class="notice caution">
@@ -286,7 +286,10 @@
 
 <script>
 /* ---------- Cover image: preview, validate, remove ---------- */
-const MAX_IMAGE_MB = 2;
+const MAX_IMAGE_MB = 5;
+
+// true when editing a notice that already has an image
+let hasSavedImage = {{ $newsNotice->image ? 'true' : 'false' }};
 
 document.getElementById('imageInput').addEventListener('change', function () {
     const file = this.files[0];
@@ -318,6 +321,7 @@ document.getElementById('imageInput').addEventListener('change', function () {
         document.getElementById('removeImageBtn').style.display = '';
         document.getElementById('imageDrop').classList.add('filled');
         document.getElementById('imageDrop').classList.remove('input-error');
+        document.querySelectorAll('#imageSection .field-error').forEach(el => el.remove());
         document.getElementById('removeImageInput').value = '0';
         info.textContent = `${file.name} · ${sizeMB.toFixed(2)} MB — ready`;
     };
@@ -334,6 +338,7 @@ function removeImage(e) {
     document.getElementById('imageDrop').classList.remove('filled');
     document.getElementById('removeImageInput').value = '1';
     document.getElementById('imageInfo').textContent = 'Image will be removed when you save.';
+    hasSavedImage = false; // the saved image no longer counts
 }
 
 /* ---------- Attachment (PDF / DOC / DOCX): pick, drag & drop, remove ---------- */
@@ -363,6 +368,7 @@ function showPickedAttachment(file) {
     document.getElementById('attachmentDropTitle').textContent = file.name;
     document.getElementById('attachmentDropSub').textContent   = 'Click to choose a different file';
     attachmentDrop.classList.remove('input-error');
+    document.querySelectorAll('#attachmentSection .field-error').forEach(el => el.remove());
 
     if (error) {
         attachmentDrop.classList.remove('picked');
@@ -397,6 +403,18 @@ function removeAttachment() {
     document.getElementById('attachmentInfo').textContent = 'Attachment will be removed when you save.';
 }
 
+/* ---------- Clear a field's error as soon as the user fixes it ---------- */
+document.querySelectorAll('#noticeForm input[name="title"], #noticeForm textarea[name="description"], #noticeForm select[name="type"], #noticeForm input[name="published_at"]')
+    .forEach(el => {
+        const evt = el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input';
+        el.addEventListener(evt, () => {
+            el.classList.remove('input-error');
+            const next = el.nextElementSibling;
+            if (next && next.classList.contains('field-error')) next.remove();
+        });
+    });
+
+/* ---------- Submit ---------- */
 document.getElementById('noticeForm').addEventListener('submit', function (e) {
     e.preventDefault();
     submitNoticeForm();
@@ -405,9 +423,20 @@ document.getElementById('noticeForm').addEventListener('submit', function (e) {
 function submitNoticeForm() {
     const form = document.getElementById('noticeForm');
 
+    // Clear old errors first
+    form.querySelectorAll('.field-error').forEach(el => el.remove());
+    form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
+
+    // Image required: a newly picked file, or a saved image that wasn't removed
+    const imageInput  = document.getElementById('imageInput');
+    const hasNewImage = imageInput.files && imageInput.files.length > 0;
+    if (!hasNewImage && !hasSavedImage) {
+        showValidationErrors({ image: ['Please upload an image.'] });
+        return;
+    }
+
     const attachmentError = checkAttachment(attachmentInput.files[0]);
     if (attachmentError) {
-        form.querySelectorAll('.field-error').forEach(el => el.remove());
         showValidationErrors({ attachment: [attachmentError] });
         return;
     }
@@ -415,9 +444,6 @@ function submitNoticeForm() {
     const formData = new FormData(form);
     const submitBtn = form.querySelector('.btn-save');
     const originalBtnHtml = submitBtn.innerHTML;
-
-    form.querySelectorAll('.field-error').forEach(el => el.remove());
-    form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
 
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
@@ -467,35 +493,39 @@ function submitNoticeForm() {
     });
 }
 
+/* ---------- Show errors next to each field ---------- */
 function showValidationErrors(errors) {
     const form = document.getElementById('noticeForm');
     const fieldMap = {
-        title: f => f.querySelector('[name="title"]'),
-        type: f => f.querySelector('[name="type"]'),
-        published_at: f => f.querySelector('[name="published_at"]'),
-        description: f => f.querySelector('[name="description"]'),
-        image: f => document.getElementById('imageDrop'),
-        attachment: f => document.getElementById('attachmentDrop'),
-        link: f => f.querySelector('[name="link"]'),
+        title:        () => form.querySelector('[name="title"]'),
+        type:         () => form.querySelector('[name="type"]'),
+        priority:     () => form.querySelector('.priority-options'),
+        published_at: () => form.querySelector('[name="published_at"]'),
+        description:  () => form.querySelector('[name="description"]'),
+        image:        () => document.getElementById('imageDrop'),
+        attachment:   () => document.getElementById('attachmentDrop'),
+        link:         () => form.querySelector('[name="link"]'),
     };
 
     Object.keys(errors).forEach(field => {
-        const message = errors[field][0];
-        const target = fieldMap[field] ? fieldMap[field](form) : null;
+        const target = fieldMap[field] ? fieldMap[field]() : null;
         if (!target) return;
 
         target.classList.add('input-error');
 
         const errorEl = document.createElement('span');
         errorEl.className = 'field-error';
-        errorEl.innerHTML = `<i class="bi bi-exclamation-circle"></i> ${message}`;
-        target.insertAdjacentElement('afterend', errorEl);
+        errorEl.innerHTML = `<i class="bi bi-exclamation-circle"></i> ${errors[field][0]}`;
+
+        // Image / attachment: put the message under the info line, below the upload box
+        const anchor = field === 'image'      ? document.getElementById('imageInfo')
+                     : field === 'attachment' ? document.getElementById('attachmentInfo')
+                     : target;
+        anchor.insertAdjacentElement('afterend', errorEl);
     });
 
-    const firstErrorField = form.querySelector('.input-error');
-    if (firstErrorField) {
-        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
+    const first = form.querySelector('.input-error');
+    if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 </script>
 
