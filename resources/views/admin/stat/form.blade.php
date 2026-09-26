@@ -13,7 +13,7 @@
 
 @if (session('success'))
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
         Swal.fire({
             icon: 'success',
             title: 'Saved!',
@@ -27,9 +27,9 @@
 @endif
 
 @php
-    // Fixed set of stats — the admin only fills in value + description, the label is preset.
-    $presetLabels = ['Year of Excellence', 'Students Enrolled', 'Faculty Strength', 'Pass Percentage'];
-    $existingByLabel = collect(old('items', $stat->items ?? []))->keyBy('label');
+// Fixed set of stats — the admin only fills in value + description, the label is preset.
+$presetLabels = ['Year of Excellence', 'Students Enrolled', 'Faculty Strength', 'Pass Percentage'];
+$existingByLabel = collect(old('items', $stat->items ?? []))->keyBy('label');
 @endphp
 
 <div class="wrap">
@@ -42,7 +42,7 @@
     <div class="header">
         <div>
             <h1>Stats Section</h1>
-            <p>The numbers strip shown on your homepage — 4 fixed stats, each with a value and short description.</p>
+            <p>The numbers strip shown on your homepage — 4 fixed stats, each with a value.</p>
         </div>
     </div>
 
@@ -58,38 +58,53 @@
             <div class="stats-table-header">
                 <span>Stat</span>
                 <span>Value</span>
-                <span>Description</span>
+                <!-- <span>Description</span> -->
             </div>
+
+
+            @php
+            $placeholders = [
+            'Year of Excellence' => ['value' => 'e.g. 25+', 'desc' => 'e.g. Years of academic excellence'],
+            'Students Enrolled' => ['value' => 'e.g. 1,200+', 'desc' => 'e.g. Students currently enrolled'],
+            'Faculty Strength' => ['value' => 'e.g. 80+', 'desc' => 'e.g. Qualified teaching staff'],
+            'Pass Percentage' => ['value' => 'e.g. 100%', 'desc' => 'e.g. SSLC / Plus Two pass rate'],
+            ];
+            @endphp
 
             <div id="statsRows">
                 @foreach ($presetLabels as $index => $label)
-                    @php $item = $existingByLabel->get($label, []); @endphp
-                    <div class="stats-row-wrapper">
-                        <div class="stats-row">
-                            <div class="input-group-cell" data-label="Stat">
-                                <div class="stat-label-display">{{ $label }}</div>
-                                <input type="hidden" name="items[{{ $index }}][label]" value="{{ $label }}">
-                            </div>
-                            <div class="input-group-cell" data-label="Value">
-                                <input type="text" name="items[{{ $index }}][value]" maxlength="10"
-                                       value="{{ old("items.$index.value", $item['value'] ?? '') }}"
-                                       placeholder="e.g. 100K"
-                                       class="{{ $errors->has("items.$index.value") ? 'input-error' : '' }}">
-                                @error("items.$index.value")
-                                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="input-group-cell" data-label="Description">
-                                <input type="text" name="items[{{ $index }}][description]" maxlength="45"
-                                       value="{{ old("items.$index.description", $item['description'] ?? '') }}"
-                                       placeholder="e.g. Held & managed"
-                                       class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">
-                                @error("items.$index.description")
-                                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                                @enderror
-                            </div>
+
+                @php
+                $item = $existingByLabel->get($label, []);
+                $ph = $placeholders[$label] ?? ['value' => 'e.g. 100+', 'desc' => 'Short description'];
+                @endphp
+        
+                <div class="stats-row-wrapper">
+                    <div class="stats-row">
+                        <div class="input-group-cell" data-label="Stat">
+                            <div class="stat-label-display">{{ $label }}</div>
+                            <input type="hidden" name="items[{{ $index }}][label]" value="{{ $label }}">
                         </div>
+                        <div class="input-group-cell" data-label="Value">
+                            <input type="text" name="items[{{ $index }}][value]" maxlength="10"
+                                value="{{ old("items.$index.value", $item['value'] ?? '') }}"
+                                  placeholder="{{ $ph['value'] }}"
+                                class="{{ $errors->has("items.$index.value") ? 'input-error' : '' }}">
+                            @error("items.$index.value")
+                            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                            @enderror
+                        </div>
+                        <!-- <div class="input-group-cell" data-label="Description">
+                            <input type="text" name="items[{{ $index }}][description]" maxlength="45"
+                                value="{{ old("items.$index.description", $item['description'] ?? '') }}"
+                               placeholder="{{ $ph['desc'] }}"
+                                class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">
+                            @error("items.$index.description")
+                            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                            @enderror
+                        </div> -->
                     </div>
+                </div>
                 @endforeach
             </div>
         </div>
@@ -110,80 +125,268 @@
 </div>
 
 <style>
-    .crumbs{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--faint,#9AA1B2); margin-bottom:10px; }
-    .crumbs b{ color: var(--ink,#171B2C); font-weight:600; }
-    .crumbs span:first-child{ cursor:pointer; transition:color .15s; }
-    .crumbs span:first-child:hover{ color: var(--orange,#BF0001); }
-
-    .header{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:32px; gap:16px; flex-wrap:wrap; }
-    .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
-    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; line-height:1.55; }
-
-    .section-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:6px; }
-    .section-title h2{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; margin:0; color: var(--ink,#171B2C); }
-    .icon{ display:inline-flex; color: var(--orange,#BF0001); }
-    .section-sub{ font-size:12px; color: var(--faint,#9AA1B2); }
-
-    .stats-table-header{
-        display:grid; grid-template-columns:1fr 1fr 2fr; gap:12px;
-        font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;
-        color: var(--faint,#9AA1B2); padding:0 4px 10px; border-bottom:1px solid var(--line,#E9EBF2); margin-bottom:14px;
+    .crumbs {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        color: var(--faint, #9AA1B2);
+        margin-bottom: 10px;
     }
 
-    .stats-row{ display:grid; grid-template-columns:1fr 1fr 2fr; gap:12px; align-items:flex-start; margin-bottom:12px; }
-    .input-group-cell{ display:flex; flex-direction:column; }
-
-    .stat-label-display{
-        display:flex; align-items:center; height:40px; padding:0 12px;
-        border:1px solid var(--line,#E9EBF2); border-radius:8px; background: var(--canvas,#F6F7FB);
-        font-size:13.5px; font-weight:600; color: var(--ink,#171B2C);
+    .crumbs b {
+        color: var(--ink, #171B2C);
+        font-weight: 600;
     }
 
-    .stats-row input{
-        padding:10px 12px; border:1px solid var(--input-border,#DBDFEA); border-radius:8px;
-        font-size:14px; outline:none; width:100%; font-family:inherit; color: var(--ink,#171B2C);
-        transition:box-shadow .15s, border-color .15s;
+    .crumbs span:first-child {
+        cursor: pointer;
+        transition: color .15s;
     }
-    .stats-row input:focus{ border-color: var(--orange,#BF0001); box-shadow:0 0 0 4px var(--orange-tint-strong,#FFE9D8); }
-    .stats-row input.input-error{ border-color:#e74c3c; background:#fff8f8; }
 
-    .field-error{ display:flex; align-items:center; gap:5px; color:#e74c3c; font-size:12px; margin-top:6px; }
+    .crumbs span:first-child:hover {
+        color: var(--orange, #BF0001);
+    }
 
-    .notice{ display:flex; align-items:flex-start; gap:8px; background: var(--canvas,#F6F7FB); border-radius:10px; padding:10px 12px; }
-    .notice.caution{ background:#FFF8E8; border:1px solid #F5E3B3; }
-    .notice.caution i{ color:#B7791F; }
-    .notice.caution p{ color:#8A6116; margin:0; font-size:12px; }
+    .header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        margin-bottom: 32px;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
 
-    .savebar{
-        position:sticky; bottom:0; border-top:1px solid var(--line,#E9EBF2);
-        background:rgba(255,255,255,0.92); backdrop-filter:blur(6px);
-        margin:24px -32px -32px; padding:0 32px;
-        box-shadow:0 -4px 16px -8px rgba(15,21,38,0.06);
+    .header h1 {
+        font-size: 25px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin: 0;
+        color: var(--ink, #171B2C);
     }
-    .savebar-inner{ padding:16px 0; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
-    .savebar-status{ font-size:12px; color: var(--faint,#9AA1B2); }
-    .btn-group{ display:flex; align-items:center; gap:12px; }
-    .btn-cancel{
-        font-size:13px; font-weight:600; color: var(--muted,#667085); background:none; border:none;
-        padding:10px 16px; border-radius:8px; cursor:pointer; text-decoration:none; transition:color .15s, background .15s;
-    }
-    .btn-cancel:hover{ color: var(--ink,#171B2C); background: var(--canvas,#F6F7FB); }
-    .btn-save{
-        display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#fff;
-        background:linear-gradient(135deg, #0F1526, #1D2439); border:none;
-        padding:11px 22px; border-radius:9px; cursor:pointer;
-        box-shadow:0 4px 12px -4px rgba(15,21,38,0.4);
-        transition:transform .12s ease, box-shadow .12s ease;
-    }
-    .btn-save:hover{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(15,21,38,0.5); }
 
-    @media (max-width:700px){
-        .stats-table-header{ display:none; }
-        .stats-row{ grid-template-columns:1fr; }
-        .input-group-cell::before{ content: attr(data-label); font-size:11px; font-weight:600; color: var(--faint,#9AA1B2); margin-bottom:4px; }
+    .header p {
+        font-size: 13.5px;
+        color: var(--muted, #667085);
+        margin: 7px 0 0;
+        line-height: 1.55;
     }
-        .req { color: #BF0001; }
-   
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .section-title h2 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--ink, #171B2C);
+    }
+
+    .icon {
+        display: inline-flex;
+        color: var(--orange, #BF0001);
+    }
+
+    .section-sub {
+        font-size: 12px;
+        color: var(--faint, #9AA1B2);
+    }
+
+    .stats-table-header {
+        display: grid;
+        grid-template-columns: 1fr 1fr 2fr;
+        gap: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--faint, #9AA1B2);
+        padding: 0 4px 10px;
+        border-bottom: 1px solid var(--line, #E9EBF2);
+        margin-bottom: 14px;
+    }
+
+    .stats-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr 2fr;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+
+    .input-group-cell {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .stat-label-display {
+        display: flex;
+        align-items: center;
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid var(--line, #E9EBF2);
+        border-radius: 8px;
+        background: var(--canvas, #F6F7FB);
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--ink, #171B2C);
+    }
+
+    .stats-row input {
+        padding: 10px 12px;
+        border: 1px solid var(--input-border, #DBDFEA);
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        width: 100%;
+        font-family: inherit;
+        color: var(--ink, #171B2C);
+        transition: box-shadow .15s, border-color .15s;
+    }
+
+    .stats-row input:focus {
+        border-color: var(--orange, #BF0001);
+        box-shadow: 0 0 0 4px var(--orange-tint-strong, #FFE9D8);
+    }
+
+    .stats-row input.input-error {
+        border-color: #e74c3c;
+        background: #fff8f8;
+    }
+
+    .field-error {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        color: #e74c3c;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .notice {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: var(--canvas, #F6F7FB);
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .notice.caution {
+        background: #FFF8E8;
+        border: 1px solid #F5E3B3;
+    }
+
+    .notice.caution i {
+        color: #B7791F;
+    }
+
+    .notice.caution p {
+        color: #8A6116;
+        margin: 0;
+        font-size: 12px;
+    }
+
+    .savebar {
+        position: sticky;
+        bottom: 0;
+        border-top: 1px solid var(--line, #E9EBF2);
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(6px);
+        margin: 24px -32px -32px;
+        padding: 0 32px;
+        box-shadow: 0 -4px 16px -8px rgba(15, 21, 38, 0.06);
+    }
+
+    .savebar-inner {
+        padding: 16px 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .savebar-status {
+        font-size: 12px;
+        color: var(--faint, #9AA1B2);
+    }
+
+    .btn-group {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .btn-cancel {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--muted, #667085);
+        background: none;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: color .15s, background .15s;
+    }
+
+    .btn-cancel:hover {
+        color: var(--ink, #171B2C);
+        background: var(--canvas, #F6F7FB);
+    }
+
+    .btn-save {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        background: linear-gradient(135deg, #0F1526, #1D2439);
+        border: none;
+        padding: 11px 22px;
+        border-radius: 9px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px -4px rgba(15, 21, 38, 0.4);
+        transition: transform .12s ease, box-shadow .12s ease;
+    }
+
+    .btn-save:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px -6px rgba(15, 21, 38, 0.5);
+    }
+
+    @media (max-width:700px) {
+        .stats-table-header {
+            display: none;
+        }
+
+        .stats-row {
+            grid-template-columns: 1fr;
+        }
+
+        .input-group-cell::before {
+            content: attr(data-label);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--faint, #9AA1B2);
+            margin-bottom: 4px;
+        }
+    }
+
+    .req {
+        color: #BF0001;
+    }
 </style>
 
 @endsection

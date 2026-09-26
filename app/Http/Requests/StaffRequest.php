@@ -53,7 +53,7 @@ class StaffRequest extends FormRequest
                 $this->isMethod('post') ? 'required' : 'nullable',
                 'image',
                 'mimes:jpg,jpeg,png,webp',
-                'max:10240',
+                'max:5120',
             ],
 
             'is_head_of_staff' => [

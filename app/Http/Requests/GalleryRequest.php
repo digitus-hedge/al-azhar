@@ -45,14 +45,17 @@ class GalleryRequest extends FormRequest
         ];
     }
 
-    public function withValidator($validator): void
-    {
-        $validator->after(function ($v) {
-            if ($this->hasFile('media') && filled($this->input('video_url'))) {
-                $v->errors()->add('video_url', 'Upload a file or paste a link, not both.');
-            }
-        });
-    }
+  public function withValidator($validator): void
+{
+    $validator->after(function ($v) {
+        $bothSent = $this->hasFile('media') && filled($this->input('video_url'));
+
+        // On update the link field is pre-filled, so an upload simply replaces it
+        if ($bothSent && $this->isMethod('post')) {
+            $v->errors()->add('video_url', 'Upload a file or paste a link, not both.');
+        }
+    });
+}
 
     public function messages(): array
     {

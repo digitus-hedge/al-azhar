@@ -38,7 +38,7 @@ class ManagementDesignationRequest extends FormRequest
                 'required',
                 'string',
                 'min:2',
-                'max:150',
+                'max:35',
                 // Unique within the SAME type among non-deleted rows, ignoring the row being edited.
                 // So "Principal" can exist once as Management and once as Staff.
                 Rule::unique('management_designations', 'name')
@@ -79,7 +79,7 @@ class ManagementDesignationRequest extends FormRequest
             'type.in'       => 'Please choose a valid designation type.',
             'name.required' => 'Please enter a designation name.',
             'name.min'      => 'Designation name must be at least 2 characters.',
-            'name.max'      => 'Designation name may not be longer than 150 characters.',
+            'name.max'      => 'Designation name may not be longer than 35 characters.',
             'name.unique'   => 'This designation already exists for the selected type.',
         ];
     }

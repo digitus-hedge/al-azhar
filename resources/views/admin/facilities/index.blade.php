@@ -55,7 +55,7 @@
 
     <div class="card list-card">
         {{-- Toolbar --}}
-        <form method="GET" action="{{ route('admin.facilities') }}" class="toolbar">
+  <form method="GET" action="{{ route('admin.facilities') }}" class="toolbar" id="facSearchForm">
             @if ($category)
                 <input type="hidden" name="category" value="{{ $category }}">
             @endif
@@ -64,7 +64,8 @@
 
             <div class="search-box">
                 <i class="bi bi-search"></i>
-                <input type="text" name="q" value="{{ $search }}" placeholder="Search title, description, location…">
+              <input type="text" name="q" id="facSearchInput" value="{{ $search }}"
+       placeholder="Search title, description, location…" autocomplete="off">
                 @if ($search !== '')
                     <a href="{{ request()->fullUrlWithQuery(['q' => null, 'page' => null]) }}" class="clear-search" title="Clear">
                         <i class="bi bi-x-lg"></i>
@@ -197,6 +198,27 @@
 </div>
 
 <script>
+
+    // Search as you type (same as the other list pages)
+(function () {
+    const input = document.getElementById('facSearchInput');
+    const form  = document.getElementById('facSearchForm');
+    if (!input || !form) return;
+
+    // Keep the cursor at the end of the text after the page reloads
+    if (input.value) {
+        input.focus();
+        const len = input.value.length;
+        input.setSelectionRange(len, len);
+    }
+
+    let timer = null;
+    input.addEventListener('input', function () {
+        clearTimeout(timer);
+        timer = setTimeout(function () { form.submit(); }, 450);
+    });
+})();
+
 function confirmDeleteFacility(id, title) {
     Swal.fire({
         icon: 'warning',

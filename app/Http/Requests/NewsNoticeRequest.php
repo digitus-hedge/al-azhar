@@ -20,12 +20,12 @@ class NewsNoticeRequest extends FormRequest
     {
         return [
             'title'             => ['required', 'string', 'max:255'],
-            'description'       => ['nullable', 'string', 'max:2000'],
+            'description'       => ['required', 'string', 'max:2000'],
             'type'              => ['required', Rule::in(array_keys(NewsNotice::TYPES))],
             'priority'          => ['required', Rule::in(array_keys(NewsNotice::PRIORITIES))],
 
             // Cover image (optional)
-            'image'             => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'image'             => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_image'      => ['nullable', 'boolean'],
 
             // PDF or Word document (optional)
@@ -59,7 +59,7 @@ class NewsNoticeRequest extends FormRequest
             'priority.in'           => 'Please choose a valid priority.',
             'image.image'           => 'The image must be a picture file.',
             'image.mimes'           => 'The image must be a JPG, PNG or WEBP file.',
-            'image.max'             => 'The image must not be larger than 2MB.',
+            'image.max'             => 'The image must not be larger than 5MB.',
             'attachment.extensions' => 'The attachment must be a PDF, DOC or DOCX file.',
             'attachment.mimetypes'  => 'The attachment does not look like a valid PDF or Word document.',
             'attachment.max'        => 'The attachment must not be larger than 10MB.',

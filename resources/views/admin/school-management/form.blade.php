@@ -48,7 +48,7 @@
                         <input type="text" id="name" name="name" maxlength="150"
                                value="{{ old('name', $member->name) }}"
                                class="{{ $errors->has('name') ? 'input-error' : '' }}"
-                               placeholder="e.g. Dr. Ahmed Khan">
+                               placeholder="e.g.Ahmed Khan">
                         @error('name') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
                     </div>
 
@@ -84,7 +84,7 @@
 
                 <div class="card">
                     <div class="section-title">
-                        <h2><span class="icon"><i class="bi bi-card-text"></i></span> Brief Bio</h2>
+                        <h2><span class="icon"><i class="bi bi-card-text"></i></span> Brief Bio <span class="req">*</span></h2>
                         <span class="field-hint"><b id="bioCount">0</b> / {{ $bioMax }} characters</span>
                     </div>
                     <div class="field">
@@ -101,7 +101,7 @@
             <div class="form-side">
                 <div class="card" id="photoSection">
                     <div class="section-title">
-                        <h2><span class="icon"><i class="bi bi-image"></i></span> Photo</h2>
+                        <h2><span class="icon"><i class="bi bi-image"></i></span> Photo </h2>
                         <span class="field-hint">Optional</span>
                     </div>
 
@@ -113,7 +113,7 @@
                             <span class="initials" id="photoInitials">{{ $member->exists ? $member->initials : '' }}</span>
                             <i class="bi bi-camera" id="photoCam" style="{{ $member->exists ? 'display:none;' : '' }}"></i>
                             <div class="drop-title">Upload photo</div>
-                            <div class="drop-sub">JPG, PNG, WEBP · up to 2MB</div>
+                            <div class="drop-sub">Recommended:304×335px JPG, PNG, WEBP · up to 2MB</div>
                         </div>
 
                         <button type="button" class="remove-img-btn" id="removePhotoBtn" title="Remove photo"
@@ -123,7 +123,7 @@
                     </div>
                     <input type="file" name="photo" id="photoInput" accept="image/jpeg,image/png,image/webp" hidden>
                     <input type="hidden" name="remove_photo" id="removePhotoInput" value="0">
-                    <span class="field-hint" id="photoInfo">Square photo recommended. If empty, initials are shown.</span>
+                    <span class="field-hint" id="photoInfo">Profile photo recommended. If empty, initials are shown.</span>
                     @error('photo') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
                 </div>
 
@@ -319,7 +319,7 @@
 
     /* Photo */
     .photo-drop{
-        position:relative; width:180px; height:180px; margin:0 auto; border-radius:999px; overflow:hidden; cursor:pointer;
+        position:relative; width:180px; height:180px; margin:0 auto; border-radius:0px; overflow:hidden; cursor:pointer;
         border:2px dashed var(--input-border,#DBDFEA); background:#FAFBFD;
         display:flex; align-items:center; justify-content:center; text-align:center; transition:border-color .15s, background .15s;
     }

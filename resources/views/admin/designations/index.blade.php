@@ -76,9 +76,6 @@
         </a>
     </div>
 
-    {{-- Active / Trash tabs --}}
-   
-
     {{-- Type tabs: All / Management / Staff --}}
     <div class="tabs">
         <a href="{{ $listUrl(['type' => null, 'page' => null]) }}" class="tab {{ ! $type ? 'on' : '' }}">
@@ -87,7 +84,9 @@
         </a>
         @foreach ($types as $key => $label)
             <a href="{{ $listUrl(['type' => $key, 'page' => null]) }}" class="tab {{ $type === $key ? 'on' : '' }}">
-                <i class="bi {{ $key === 'staff' ? 'bi-briefcase' : 'bi-person-badge' }}"></i> {{ $label }}
+                <i class="bi {{ $key === 'staff' ? 'bi-briefcase' : 'bi-person-badge' }}"></i>
+                <span class="tab-label-full">{{ $label }}</span>
+                <span class="tab-label-short">{{ \Illuminate\Support\Str::before($label, ' ') }}</span>
                 <span class="tab-count">{{ $typeCounts[$key] ?? 0 }}</span>
             </a>
         @endforeach
@@ -116,19 +115,19 @@
                 @if ($search !== '') for "<b>{{ $search }}</b>" @endif
             </div>
             <form action="{{ route('admin.designations') }}" method="GET" class="perpage-form">
-                    @if ($search !== '') <input type="hidden" name="q" value="{{ $search }}"> @endif
-                    @if ($trashed) <input type="hidden" name="trashed" value="1"> @endif
-                    @if ($type) <input type="hidden" name="type" value="{{ $type }}"> @endif
-                    @if ($sortBy !== 'name') <input type="hidden" name="sort" value="{{ $sortBy }}"> @endif
-                    @if ($sortDir !== 'asc') <input type="hidden" name="dir" value="{{ $sortDir }}"> @endif
-                    <label for="desPerPageSelect">Show</label>
-                    <select name="per_page" id="desPerPageSelect" onchange="this.form.submit()">
-                        @foreach ($perPageOptions as $option)
-                            <option value="{{ $option }}" @selected($perPage === $option)>{{ $option }}</option>
-                        @endforeach
-                    </select>
-                    <span>per page</span>
-                </form>
+                @if ($search !== '') <input type="hidden" name="q" value="{{ $search }}"> @endif
+                @if ($trashed) <input type="hidden" name="trashed" value="1"> @endif
+                @if ($type) <input type="hidden" name="type" value="{{ $type }}"> @endif
+                @if ($sortBy !== 'name') <input type="hidden" name="sort" value="{{ $sortBy }}"> @endif
+                @if ($sortDir !== 'asc') <input type="hidden" name="dir" value="{{ $sortDir }}"> @endif
+                <label for="desPerPageSelect">Show</label>
+                <select name="per_page" id="desPerPageSelect" onchange="this.form.submit()">
+                    @foreach ($perPageOptions as $option)
+                        <option value="{{ $option }}" @selected($perPage === $option)>{{ $option }}</option>
+                    @endforeach
+                </select>
+                <span>per page</span>
+            </form>
         </div>
     </div>
 
@@ -149,83 +148,74 @@
                 @endif
             </div>
         @else
-            <table class="news-table">
-                <thead>
-                    <tr>
-                        <th style="width:70px;">#</th>
-                        <th>{!! $sortLink('name', 'Designation Name') !!}</th>
-                        <th>{!! $sortLink('type', 'Type') !!}</th>
-                        @unless ($trashed)
-                            <!-- <th style="width:120px;">Profiles</th> -->
-                        @endunless
-                        @if ($trashed)
-                            <!-- <th>Deleted On</th> -->
-                        @else
-                            <th>{!! $sortLink('updated_at', 'Last Updated') !!}</th>
-                        @endif
-                        <th style="width:130px;text-align:right;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($designations as $designation)
+            <div class="table-scroll">
+                <table class="news-table">
+                    <thead>
                         <tr>
-                            <td class="muted-sub">{{ $designations->firstItem() + $loop->index }}</td>
-                            <td>
-                                <div class="cat-name">
-                                    <span class="cat-ico"><i class="bi {{ $designation->type === 'staff' ? 'bi-briefcase' : 'bi-person-badge' }}"></i></span>
-                                    <b>{{ $designation->name }}</b>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="type-pill t-{{ $designation->type }}">{{ $designation->type_label }}</span>
-                            </td>
+                            <th style="width:70px;">#</th>
+                            <th>{!! $sortLink('name', 'Designation Name') !!}</th>
+                            <th>{!! $sortLink('type', 'Type') !!}</th>
                             @unless ($trashed)
-                                <!-- <td><span class="count-pill">{{ ($designation->members_count ?? 0) + ($designation->staff_count ?? 0) }}</span></td> -->
+                                <th>{!! $sortLink('updated_at', 'Last Updated') !!}</th>
                             @endunless
-                            <td>
-                                @if ($trashed)
-                                    <!-- {{ optional($designation->deleted_at)->format('d M Y') }}
-                                    <br><span class="muted-sub">{{ optional($designation->deleted_at)->format('h:i A') }}</span> -->
-                                @else
-                                    {{ optional($designation->updated_at)->format('d M Y') }}
-                                    <br><span class="muted-sub">{{ optional($designation->updated_at)->diffForHumans() }}</span>
-                                @endif
-                            </td>
-                            <td style="text-align:right;white-space:nowrap;">
-                                @if ($trashed)
-                                    <button type="button" class="icon-btn" title="Restore"
-                                            onclick="confirmRestore({{ $designation->id }}, @js($designation->name))">
-                                        <i class="bi bi-arrow-counterclockwise"></i>
-                                    </button>
-                                    <form id="restore-form-{{ $designation->id }}"
-                                          action="{{ route('admin.designations.restore', $designation->id) }}"
-                                          method="POST" style="display:none;">
-                                        @csrf
-                                        @method('PATCH')
-                                    </form>
-                                @else
-                                    <a href="{{ route('admin.designations.edit', $designation) }}" class="icon-btn" title="Edit">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-
-                                    @if ($isAdmin)
-                                        <button type="button" class="icon-btn icon-btn-danger" title="Delete"
-                                                onclick="confirmDelete({{ $designation->id }}, @js($designation->name))">
-                                            <i class="bi bi-trash"></i>
+                            <th style="width:130px;text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($designations as $designation)
+                            <tr>
+                                <td data-label="#" class="muted-sub">{{ $designations->firstItem() + $loop->index }}</td>
+                                <td data-label="Name">
+                                    <div class="cat-name">
+                                        <span class="cat-ico"><i class="bi {{ $designation->type === 'staff' ? 'bi-briefcase' : 'bi-person-badge' }}"></i></span>
+                                        <b>{{ $designation->name }}</b>
+                                    </div>
+                                </td>
+                                <td data-label="Type">
+                                    <span class="type-pill t-{{ $designation->type }}">{{ $designation->type_label }}</span>
+                                </td>
+                                @unless ($trashed)
+                                    <td data-label="Updated">
+                                        {{ optional($designation->updated_at)->format('d M Y') }}
+                                        <br><span class="muted-sub">{{ optional($designation->updated_at)->diffForHumans() }}</span>
+                                    </td>
+                                @endunless
+                                <td data-label="Actions" style="text-align:right;white-space:nowrap;">
+                                    @if ($trashed)
+                                        <button type="button" class="icon-btn" title="Restore"
+                                                onclick="confirmRestore({{ $designation->id }}, @js($designation->name))">
+                                            <i class="bi bi-arrow-counterclockwise"></i>
                                         </button>
-                                        <form id="delete-form-{{ $designation->id }}"
-                                              action="{{ route('admin.designations.destroy', $designation) }}"
+                                        <form id="restore-form-{{ $designation->id }}"
+                                              action="{{ route('admin.designations.restore', $designation->id) }}"
                                               method="POST" style="display:none;">
                                             @csrf
-                                            @method('DELETE')
+                                            @method('PATCH')
                                         </form>
+                                    @else
+                                        <a href="{{ route('admin.designations.edit', $designation) }}" class="icon-btn" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+
+                                        @if ($isAdmin)
+                                            <button type="button" class="icon-btn icon-btn-danger" title="Delete"
+                                                    onclick="confirmDelete({{ $designation->id }}, @js($designation->name))">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                            <form id="delete-form-{{ $designation->id }}"
+                                                  action="{{ route('admin.designations.destroy', $designation) }}"
+                                                  method="POST" style="display:none;">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @endif
                                     @endif
-                                @endif
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 
@@ -241,9 +231,9 @@
 
         <nav class="pager" role="navigation" aria-label="Pagination">
             <div class="pager-status">
-                    Showing <b>{{ $designations->firstItem() }}</b> to <b>{{ $designations->lastItem() }}</b>
-                    of <b>{{ $designations->total() }}</b> {{ \Illuminate\Support\Str::plural('result', $designations->total()) }}
-                </div>
+                Showing <b>{{ $designations->firstItem() }}</b> to <b>{{ $designations->lastItem() }}</b>
+                of <b>{{ $designations->total() }}</b> {{ \Illuminate\Support\Str::plural('result', $designations->total()) }}
+            </div>
 
             @if ($designations->hasPages())
                 <div class="pager-links">
@@ -327,14 +317,14 @@ function confirmRestore(id, name) {
 </script>
 
 <style>
-    .crumbs{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--faint,#9AA1B2); margin-bottom:10px; }
+    .crumbs{ display:flex; align-items:center; gap:8px; font-size:13px; color: var(--faint,#9AA1B2); margin-bottom:10px; flex-wrap:wrap; }
     .crumbs b{ color: var(--ink,#171B2C); font-weight:600; }
     .crumbs span:first-child{ cursor:pointer; transition:color .15s; }
     .crumbs span:first-child:hover{ color: var(--orange,#BF0001); }
 
     .header{ display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:24px; gap:16px; flex-wrap:wrap; }
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
-    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0;  line-height:1.55; }
+    .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; line-height:1.55; }
 
     .btn-save{
         display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#fff;
@@ -345,7 +335,7 @@ function confirmRestore(id, name) {
     }
     .btn-save:hover{ transform:translateY(-1px); box-shadow:0 8px 18px -6px rgba(15,21,38,0.5); }
 
-    .tabs{ display:flex; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--line,#E9EBF2); overflow-x:auto; }
+    .tabs{ display:flex; gap:6px; margin-bottom:16px; border-bottom:1px solid var(--line,#E9EBF2); }
     .tab{
         display:inline-flex; align-items:center; gap:7px; padding:10px 14px; font-size:13px; font-weight:600;
         color: var(--muted,#667085); text-decoration:none; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap;
@@ -353,6 +343,7 @@ function confirmRestore(id, name) {
     .tab:hover{ color: var(--ink,#171B2C); }
     .tab.on{ color: var(--ink,#171B2C); border-bottom-color: var(--orange,#BF0001); }
     .tab-count{ font-size:11px; font-weight:700; background:#EEF0F6; color: var(--muted,#667085); padding:2px 7px; border-radius:999px; }
+    .tab-label-short{ display:none; }
 
     .toolbar{ display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px; flex-wrap:wrap; }
     .search-form{ position:relative; display:flex; align-items:center; flex:1; min-width:240px; max-width:380px; }
@@ -379,10 +370,11 @@ function confirmRestore(id, name) {
     .sort-link i{ font-size:11px; color: var(--faint,#9AA1B2); }
     .sort-link.active i{ color: var(--orange,#BF0001); }
 
+    .table-scroll{ overflow-x:auto; }
     .news-table{ width:100%; border-collapse:collapse; }
     .news-table th{
         text-align:left; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
-        color: var(--faint,#9AA1B2); padding:14px 20px; border-bottom:1px solid var(--line,#E9EBF2); background:#FAFBFD;
+        color: var(--faint,#9AA1B2); padding:14px 20px; border-bottom:1px solid var(--line,#E9EBF2); background:#FAFBFD; white-space:nowrap;
     }
     .news-table td{ padding:12px 20px; border-bottom:1px solid var(--line,#E9EBF2); font-size:13.5px; color: var(--ink,#171B2C); vertical-align:middle; }
     .news-table tbody tr:last-child td{ border-bottom:none; }
@@ -393,7 +385,6 @@ function confirmRestore(id, name) {
     .type-pill{ display:inline-flex; align-items:center; font-size:12px; font-weight:600; padding:4px 10px; border-radius:999px; white-space:nowrap; }
     .type-pill.t-management{ background:#EEF2FF; color:#3538CD; }
     .type-pill.t-staff{ background:#ECFDF3; color:#067647; }
-    .count-pill{ display:inline-flex; min-width:26px; justify-content:center; font-size:12px; font-weight:700; padding:3px 9px; border-radius:999px; background:#EEF0F6; color:#5B6378; }
     .cat-ico{ width:32px; height:32px; border-radius:8px; background:#EEF0F6; color:#8A92A6; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
 
     .icon-btn{
@@ -415,7 +406,6 @@ function confirmRestore(id, name) {
 
     /* Pager — same as Events */
     .pager{ display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:20px; }
-    .pager-left{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
     .pager-status{ font-size:12.5px; color: var(--faint,#9AA1B2); }
     .pager-status b{ color: var(--ink,#171B2C); font-weight:600; }
     .pager-links{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
@@ -442,6 +432,90 @@ function confirmRestore(id, name) {
         background-repeat:no-repeat; background-position:right 10px center;
     }
     .perpage-form select:focus{ border-color: var(--orange,#BF0001); }
+
+    /* ================= Responsive ================= */
+
+    /* ---------- Tablet ---------- */
+    @media (max-width: 900px){
+        .toolbar{ flex-direction:column; align-items:stretch; }
+        .search-form{ max-width:none; min-width:0; }
+        .toolbar-right{ justify-content:space-between; }
+        .news-table th, .news-table td{ padding:12px 14px; }
+    }
+
+    /* ---------- Phone ---------- */
+    @media (max-width: 640px){
+        .header{ flex-direction:column; align-items:stretch; margin-bottom:18px; }
+        .header h1{ font-size:21px; }
+        .header p{ font-size:13px; }
+        .header .btn-save{ justify-content:center; width:100%; }
+
+        /* Tabs: three equal tabs, short labels (All / Management / Staff) */
+        .tabs{ gap:0; }
+        .tab{ flex:1; justify-content:center; padding:10px 6px; font-size:12.5px; gap:5px; }
+        .tab-label-full{ display:none; }
+        .tab-label-short{ display:inline; }
+
+        .toolbar-right{ gap:10px; }
+        .toolbar-meta{ white-space:normal; }
+
+        /* Table → cards
+           [01] [icon Name ......... actions]
+           [01] [Type pill]    [updated]      */
+        .table-scroll{ overflow-x:visible; }
+        .news-table thead{ display:none; }
+        .news-table, .news-table tbody{ display:block; width:100%; }
+        .news-table tr{
+            display:grid;
+            grid-template-columns:34px 1fr auto;
+            grid-template-areas:
+                "sl name    actions"
+                "sl meta    meta";
+            gap:8px 12px; align-items:center;
+            padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2);
+        }
+        .news-table tbody tr:last-child{ border-bottom:none; }
+        .news-table td{ display:block; padding:0; border:none; }
+
+        .news-table td[data-label="#"]{
+            grid-area:sl; align-self:start;
+            width:34px; height:34px; border-radius:9px; background:#EEF0F6;
+            display:flex; align-items:center; justify-content:center;
+            font-size:12px; font-weight:700; color: var(--muted,#667085);
+        }
+        .news-table td[data-label="Name"]{ grid-area:name; min-width:0; }
+        .news-table td[data-label="Name"] .cat-ico{ display:none; } /* type pill already shows it */
+        .news-table td[data-label="Name"] b{ font-size:14px; line-height:1.35; word-break:break-word; }
+        .news-table td[data-label="Actions"]{ grid-area:actions; align-self:start; }
+
+        /* Type pill + last updated share one line */
+        .news-table td[data-label="Type"]{ grid-area:meta; justify-self:start; }
+        .news-table td[data-label="Updated"]{
+            grid-area:meta; justify-self:end; text-align:right;
+            font-size:11.5px; color: var(--faint,#9AA1B2);
+        }
+        .news-table td[data-label="Updated"] br{ display:none; }
+        .news-table td[data-label="Updated"] .muted-sub::before{ content:'· '; }
+        .type-pill{ font-size:11px; padding:3px 9px; }
+
+        .icon-btn{ width:38px; height:38px; margin-left:4px; }
+
+        .pager{ flex-direction:column; align-items:center; gap:12px; }
+        .pager-links{ justify-content:center; }
+        .pager-btn{ min-width:36px; height:36px; }
+
+        .empty-state{ padding:44px 16px; }
+    }
+
+    /* ---------- Very small phones ---------- */
+    @media (max-width: 380px){
+        .perpage-form span{ display:none; }
+        .toolbar-right{ flex-direction:column; align-items:flex-start; }
+        .perpage-form{ width:100%; }
+        .tab i.bi{ display:none; } /* keep text + count only */
+        /* Hide the relative time so pill + date fit */
+        .news-table td[data-label="Updated"] .muted-sub{ display:none; }
+    }
 </style>
 
 @endsection

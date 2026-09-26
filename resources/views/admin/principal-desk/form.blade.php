@@ -119,7 +119,8 @@
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>Required</b> &middot; square photo recommended &middot; JPG, PNG, WEBP &middot; up to 2MB.</p>
+                <p><b>Required</b> &middot; recommended 730&times;720px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+
             </div>
 
             @error('photo')

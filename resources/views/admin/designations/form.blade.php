@@ -16,7 +16,7 @@
     $isEdit      = $designation->exists;
     $types       = \App\Models\ManagementDesignation::TYPES;
     // Add: type set by the controller (?type=staff preselects Staff). Edit: the saved type.
-    $currentType = old('type', $designation->type ?? 'management');
+  $currentType = old('type', $designation->type);
     // Type is locked once School Management profiles or Staff use this designation
     $inUse       = $isEdit && $designation->isInUse();
 @endphp
@@ -49,11 +49,11 @@
         <div class="field">
             <label for="type">Designation Type <span class="req">*</span></label>
             <select id="type" name="type" class="{{ $errors->has('type') ? 'is-invalid' : '' }}" {{ $inUse ? 'disabled' : '' }}>
-                <option value="">— Select Type —</option>
-                @foreach ($types as $key => $label)
-                    <option value="{{ $key }}" @selected($currentType === $key)>{{ $label }}</option>
-                @endforeach
-            </select>
+    <option value="" disabled @selected(blank($currentType))>— Select Type —</option>
+    @foreach ($types as $key => $label)
+        <option value="{{ $key }}" @selected($currentType === $key)>{{ $label }}</option>
+    @endforeach
+</select>
             @if ($inUse)
                 {{-- A disabled select is not submitted, so send the saved type --}}
                 <input type="hidden" name="type" value="{{ $designation->type }}">
@@ -76,7 +76,7 @@
         {{-- Designation Name --}}
         <div class="field" style="margin-top:20px;">
             <label for="name">Designation Name <span class="req">*</span></label>
-            <input type="text" id="name" name="name" maxlength="150" autofocus
+            <input type="text" id="name" name="name" maxlength="35" autofocus
                    value="{{ old('name', $designation->name) }}"
                    placeholder="{{ $currentType === 'staff' ? 'e.g. PGT, Librarian' : 'e.g. Chairman' }}"
                    class="{{ $errors->has('name') ? 'is-invalid' : '' }}">
@@ -86,7 +86,7 @@
                 @else
                     <span class="hint">Shown under the person's name on the website.</span>
                 @enderror
-                <span class="counter"><span id="nameCount">{{ mb_strlen(old('name', $designation->name ?? '')) }}</span>/150</span>
+                <span class="counter"><span id="nameCount">{{ mb_strlen(old('name', $designation->name ?? '')) }}</span>/35</span>
             </div>
         </div>
 
@@ -104,15 +104,23 @@
     const input = document.getElementById('name');
     const count = document.getElementById('nameCount');
     if (input && count) {
-        input.addEventListener('input', () => { count.textContent = input.value.length; });
+        input.addEventListener('input', () => { count.textContent = [...input.value].length; });
     }
 
     // Placeholder follows the chosen type
+    const placeholders = {
+        staff: 'e.g. Principal, Librarian',
+        management: 'e.g. Chairman',
+    };
+    const defaultPlaceholder = 'e.g. Chairman, PGT';
+
     const type = document.getElementById('type');
     if (type && input) {
-        type.addEventListener('change', function () {
-            input.placeholder = this.value === 'staff' ? 'e.g. PGT, Librarian' : 'e.g. Chairman';
-        });
+        const setPlaceholder = () => {
+            input.placeholder = placeholders[type.value] || defaultPlaceholder;
+        };
+        type.addEventListener('change', setPlaceholder);
+        setPlaceholder(); // correct it on page load too (e.g. after a validation error)
     }
 })();
 </script>
@@ -127,7 +135,7 @@
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
     .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; max-width:560px; line-height:1.55; }
 
-    .form-card{ max-width:640px; padding:24px; }
+.form-card{ width:100%; max-width:none; padding:24px; box-sizing:border-box; }
 
     .field label{ display:block; font-size:13px; font-weight:600; color: var(--ink,#171B2C); margin-bottom:8px; }
     .req{ color:#e74c3c; }

@@ -43,7 +43,7 @@ class ManagementDesignationController extends Controller
         }
 
         $designations = ManagementDesignation::query()
-            ->when($trashed, fn ($q) => $q->onlyTrashed())
+            ->when($trashed, fn($q) => $q->onlyTrashed())
             ->ofType($type)
             ->search($search)
             ->orderBy($sortBy, $sortDir)
@@ -56,7 +56,7 @@ class ManagementDesignationController extends Controller
 
         // Counts for the type tabs (respecting the Active / Trash view)
         $typeCounts = ManagementDesignation::query()
-            ->when($trashed, fn ($q) => $q->onlyTrashed())
+            ->when($trashed, fn($q) => $q->onlyTrashed())
             ->selectRaw('type, COUNT(*) as total')
             ->groupBy('type')
             ->pluck('total', 'type');
@@ -80,9 +80,18 @@ class ManagementDesignationController extends Controller
     public function create(Request $request): View
     {
         // Pre-select the type when coming from a filtered tab (?type=staff)
+
+        // $type = array_key_exists((string) $request->query('type'), ManagementDesignation::TYPES)
+        //     ? $request->query('type')
+        //     : 'management';
+
+        // return view('admin.designations.form', [
+        //     'designation' => new ManagementDesignation(['type' => $type]),
+        // ]);
+
         $type = array_key_exists((string) $request->query('type'), ManagementDesignation::TYPES)
             ? $request->query('type')
-            : 'management';
+            : null;
 
         return view('admin.designations.form', [
             'designation' => new ManagementDesignation(['type' => $type]),

@@ -111,7 +111,7 @@
                         <tr>
                             <th>{!! $sortLink('name', 'Name') !!}</th>
                             <th>{!! $sortLink('designation', 'Designation') !!}</th>
-                            <!-- <th>{!! $sortLink('is_active', 'Visible') !!}</th> -->
+                      
                             <th style="width:110px;text-align:right;">Actions</th>
                         </tr>
                     </thead>
@@ -137,13 +137,7 @@
                                     <span class="{{ $m->designation?->trashed() ? 'is-deleted' : '' }}">{{ $m->designation_name }}</span>
                                 </td>
 
-                                <!-- <td>
-                                    <label class="mini-toggle" title="Show / hide on website">
-                                        <input type="checkbox" @checked($m->is_active)
-                                               onchange="toggleMember(this, '{{ route('admin.school-management.toggle', $m) }}')">
-                                        <span></span>
-                                    </label>
-                                </td> -->
+                         
 
                                 <td style="text-align:right;white-space:nowrap;">
                                     <a href="{{ route('admin.school-management.edit', $m) }}" class="icon-btn" title="Edit">
@@ -386,6 +380,65 @@ function toggleMember(checkbox, url) {
     .pager-btn-active:hover{ color:#fff; }
     .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
     .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+    /* ---------- Tablet ---------- */
+@media (max-width: 900px){
+    .toolbar{ flex-direction:column; align-items:stretch; }
+    .search-form{ max-width:none; min-width:0; }
+    .toolbar-right{ justify-content:space-between; }
+    .person-meta small{ max-width:220px; }
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 640px){
+    .header{ flex-direction:column; align-items:stretch; margin-bottom:18px; }
+    .header h1{ font-size:21px; }
+    .header p{ font-size:13px; }
+    .header .btn-save{ justify-content:center; width:100%; }
+
+    .toolbar-right{ gap:10px; }
+    .toolbar-meta{ white-space:normal; }
+
+    /* Table → cards */
+    .table-scroll{ overflow-x:visible; }
+    .news-table thead{ display:none; }
+    .news-table, .news-table tbody, .news-table tr, .news-table td{ display:block; width:100%; }
+    .news-table tr{
+        padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2);
+        display:grid; grid-template-columns:1fr auto; gap:10px 12px; align-items:center;
+    }
+    .news-table tbody tr:last-child{ border-bottom:none; }
+    .news-table td{ padding:0; border:none; }
+
+    /* Name spans the full row */
+    .news-table td[data-label="Name"]{ grid-column:1 / -1; }
+    .person{ min-width:0; }
+    .person-meta b{ font-size:14px; }
+    .person-meta small{ max-width:100%; white-space:normal;
+        display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+    .avatar{ width:44px; height:44px; }
+
+    /* Designation shown as a small labelled pill */
+    .news-table td[data-label="Designation"]{ font-size:12.5px; color: var(--muted,#667085); }
+    .news-table td[data-label="Designation"]::before{
+        content:'Designation'; display:block; font-size:10.5px; font-weight:700;
+        text-transform:uppercase; letter-spacing:.04em; color: var(--faint,#9AA1B2); margin-bottom:2px;
+    }
+
+    /* Bigger tap targets */
+    .icon-btn{ width:38px; height:38px; }
+
+    /* Pager */
+    .pager{ flex-direction:column; align-items:center; gap:12px; }
+    .pager-links{ justify-content:center; }
+    .pager-btn{ min-width:36px; height:36px; }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 380px){
+    .perpage-form span{ display:none; }  /* hide "per page" text */
+    .toolbar-right{ flex-direction:column; align-items:flex-start; }
+}
 </style>
 
 @endsection

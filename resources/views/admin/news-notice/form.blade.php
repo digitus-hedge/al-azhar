@@ -100,7 +100,7 @@
         {{-- Description --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Description</h2>
+                <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Description <span class="req">*</span></h2>
             </div>
             <div class="field">
                 <textarea name="description" rows="5"
@@ -115,12 +115,16 @@
         {{-- Cover Image --}}
         <div class="card" id="imageSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span> Cover Image</h2>
-                <span class="field-hint">Optional</span>
+                <h2><span class="icon"><i class="bi bi-image"></i></span>Image</h2>
+                <!-- <span class="field-hint">Optional</span> -->
             </div>
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p>Shown on the website news card &middot; landscape recommended (1200&times;675px) &middot; JPG, PNG, WEBP &middot; up to 2MB.</p>
+              
+     <!-- <p>Shown on the website news card &middot; landscape recommended (1200&times;675px) &middot; JPG, PNG, WEBP &middot; up to 2MB.</p> -->
+          
+        <p><b>Required</b> &middot; recommended 414&times; 233px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+
             </div>
 
             <div class="img-drop {{ $newsNotice->image ? 'filled' : '' }}" id="imageDrop" onclick="document.getElementById('imageInput').click()">
@@ -129,7 +133,7 @@
                 <div class="img-empty" id="imageEmpty" style="{{ $newsNotice->image ? 'display:none;' : '' }}">
                     <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
                     <div class="drop-title">Click to upload image</div>
-                    <div class="drop-sub">JPG, PNG, WEBP &middot; up to 2MB</div>
+                    <div class="drop-sub">JPG, PNG, WEBP &middot; up to 5MB</div>
                 </div>
 
                 <button type="button" class="remove-img-btn" id="removeImageBtn" title="Remove image"

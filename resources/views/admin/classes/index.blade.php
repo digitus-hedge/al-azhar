@@ -19,6 +19,11 @@
 </script>
 @endif
 
+@php
+    // Works whether the controller passes '' or null when no department is chosen
+    $hasDept = filled($departmentId);
+@endphp
+
 <div class="wrap">
     <div class="crumbs">
         <span onclick="window.location='{{ route('admin.dashboard') }}'">Home</span>
@@ -50,14 +55,14 @@
             if ($sortBy === $column) {
                 $icon = $sortDir === 'asc' ? 'bi-sort-up' : 'bi-sort-down';
             }
-            return '<a href="' . $url . '" class="sort-link' . ($sortBy === $column ? ' active' : '') . '">'
+            return '<a href="' . e($url) . '" class="sort-link' . ($sortBy === $column ? ' active' : '') . '">'
                 . e($label) . ' <i class="bi ' . $icon . '"></i></a>';
         };
     @endphp
 
     <div class="toolbar">
         <form action="{{ route('admin.classes') }}" method="GET" class="search-form" id="classSearchForm">
-            @if ($departmentId !== '') <input type="hidden" name="department_id" value="{{ $departmentId }}"> @endif
+            @if ($hasDept) <input type="hidden" name="department_id" value="{{ $departmentId }}"> @endif
             @if ($sortBy !== 'name') <input type="hidden" name="sort" value="{{ $sortBy }}"> @endif
             @if ($sortDir !== 'asc') <input type="hidden" name="dir" value="{{ $sortDir }}"> @endif
             @if ($perPage !== 10) <input type="hidden" name="per_page" value="{{ $perPage }}"> @endif
@@ -94,7 +99,7 @@
 
             <form action="{{ route('admin.classes') }}" method="GET" class="perpage-form" id="classPerPageForm">
                 @if ($search !== '') <input type="hidden" name="q" value="{{ $search }}"> @endif
-                @if ($departmentId !== '') <input type="hidden" name="department_id" value="{{ $departmentId }}"> @endif
+                @if ($hasDept) <input type="hidden" name="department_id" value="{{ $departmentId }}"> @endif
                 @if ($sortBy !== 'name') <input type="hidden" name="sort" value="{{ $sortBy }}"> @endif
                 @if ($sortDir !== 'asc') <input type="hidden" name="dir" value="{{ $sortDir }}"> @endif
                 <label for="classPerPageSelect">Show</label>
@@ -114,7 +119,7 @@
                 <div class="ico-circle" style="width:52px;height:52px;margin:0 auto 12px;">
                     <i class="bi bi-collection" style="color:#AEB4C4;font-size:22px;"></i>
                 </div>
-                @if ($search !== '' || $departmentId !== '')
+                @if ($search !== '' || $hasDept)
                     <p>No sections match your search/filter.</p>
                     <a href="{{ route('admin.classes') }}" class="choose-btn" style="display:inline-block;width:auto;padding:9px 20px;text-decoration:none;">Clear search &amp; filter</a>
                 @else
@@ -123,39 +128,40 @@
                 @endif
             </div>
         @else
-            <table class="news-table">
-                <thead>
-                    <tr>
-                        <th>Sl No</th>
-                        <th>{!! $sortLink('name', 'Name') !!}</th>
-                        <th>{!! $sortLink('department', 'Department') !!}</th>
-                        <th style="text-align:right;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($items as $item)
+            <div class="table-scroll">
+                <table class="news-table">
+                    <thead>
                         <tr>
-                            <td>{{ $loop->iteration + ($items->currentPage() - 1) * $items->perPage() }}</td>
-                            <td><b>{{ $item->name }}</b></td>
-                            <td>{{ $item->department?->name ?? '—' }}</td>
-                            <td style="text-align:right;">
-                                <a href="{{ route('admin.classes.edit', $item) }}" class="icon-btn" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-
-                                <form action="{{ route('admin.classes.destroy', $item) }}" method="POST"
-                                      class="d-inline delete-form" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="button" class="icon-btn icon-btn-danger delete-btn" title="Delete">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
+                            <th>Sl No</th>
+                            <th>{!! $sortLink('name', 'Name') !!}</th>
+                            <th>{!! $sortLink('department', 'Department') !!}</th>
+                            <th style="text-align:right;">Actions</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach ($items as $item)
+                            <tr>
+                                <td data-label="Sl No">{{ $items->firstItem() + $loop->index }}</td>
+                                <td data-label="Name"><b>{{ $item->name }}</b></td>
+                                <td data-label="Department">{{ $item->department?->name ?? '—' }}</td>
+                                <td data-label="Actions" style="text-align:right;white-space:nowrap;">
+                                    <a href="{{ route('admin.classes.edit', $item) }}" class="icon-btn" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <form action="{{ route('admin.classes.destroy', $item) }}" method="POST"
+                                          class="delete-form" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="icon-btn icon-btn-danger delete-btn" title="Delete">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         @endif
     </div>
 
@@ -320,6 +326,7 @@ document.querySelectorAll('.delete-btn').forEach(function (btn) {
     .sort-link i{ font-size:11px; color: var(--faint,#9AA1B2); }
     .sort-link.active i{ color: var(--orange,#BF0001); }
 
+    .table-scroll{ overflow-x:auto; }
     .news-table{ width:100%; border-collapse:collapse; }
     .news-table th{
         text-align:left; font-size:11.5px; font-weight:700; text-transform:uppercase; letter-spacing:.04em;
@@ -364,6 +371,75 @@ document.querySelectorAll('.delete-btn').forEach(function (btn) {
     .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
     .pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
     .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+    /* ================= Responsive ================= */
+
+    /* ---------- Tablet ---------- */
+    @media (max-width: 900px){
+        .toolbar{ flex-direction:column; align-items:stretch; }
+        .search-form{ max-width:none; min-width:0; }
+        .toolbar-right{ justify-content:space-between; }
+        .news-table th, .news-table td{ padding:12px 14px; }
+    }
+
+    /* ---------- Phone ---------- */
+    @media (max-width: 640px){
+        .header{ flex-direction:column; align-items:stretch; margin-bottom:18px; }
+        .header h1{ font-size:21px; }
+        .header p{ font-size:13px; }
+        .header .btn-save{ justify-content:center; width:100%; }
+
+        /* Toolbar: search → department filter (full width) → count + per page */
+        .toolbar-right{ gap:10px; }
+        .filter-form{ flex:1 1 100%; }
+        .filter-form select{ width:100%; min-width:0; padding-top:10px; padding-bottom:10px; font-size:13.5px; }
+        .toolbar-meta{ white-space:normal; }
+
+        /* Table → cards
+           [01] [Name ......... actions]
+           [01] [Department]             */
+        .table-scroll{ overflow-x:visible; }
+        .news-table thead{ display:none; }
+        .news-table, .news-table tbody{ display:block; width:100%; }
+        .news-table tr{
+            display:grid;
+            grid-template-columns:34px 1fr auto;
+            grid-template-areas:
+                "sl name actions"
+                "sl dept actions";
+            gap:2px 12px; align-items:center;
+            padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2);
+        }
+        .news-table tbody tr:last-child{ border-bottom:none; }
+        .news-table td{ display:block; padding:0; border:none; }
+
+        .news-table td[data-label="Sl No"]{
+            grid-area:sl; align-self:center;
+            width:34px; height:34px; border-radius:9px; background:#EEF0F6;
+            display:flex; align-items:center; justify-content:center;
+            font-size:12px; font-weight:700; color: var(--muted,#667085);
+        }
+        .news-table td[data-label="Name"]{ grid-area:name; min-width:0; font-size:14px; line-height:1.35; word-break:break-word; }
+        .news-table td[data-label="Department"]{ grid-area:dept; min-width:0; font-size:12.5px; color: var(--muted,#667085); }
+        .news-table td[data-label="Department"]::before{ content:'Department: '; color: var(--faint,#9AA1B2); }
+        .news-table td[data-label="Actions"]{ grid-area:actions; }
+
+        .icon-btn{ width:38px; height:38px; margin-left:4px; }
+
+        /* Pager */
+        .pager{ flex-direction:column; align-items:center; gap:12px; }
+        .pager-links{ flex-wrap:wrap; justify-content:center; }
+        .pager-btn{ min-width:36px; height:36px; }
+
+        .empty-state{ padding:44px 16px; }
+    }
+
+    /* ---------- Very small phones ---------- */
+    @media (max-width: 380px){
+        .perpage-form span{ display:none; }
+        .toolbar-right{ flex-direction:column; align-items:flex-start; }
+        .perpage-form{ width:100%; }
+    }
 </style>
 
 @endsection

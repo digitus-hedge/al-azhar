@@ -18,7 +18,7 @@ class StatRequest extends FormRequest
             'items'               => 'required|array|size:4',
             'items.*.value'       => 'required|string|max:10',
             'items.*.label'       => 'required|string|max:45',
-            'items.*.description' => 'required|string|max:45',
+            // 'items.*.description' => 'nullable|string|max:45',
         ];
     }
 
@@ -34,8 +34,8 @@ class StatRequest extends FormRequest
             'items.*.label.required' => 'The label field is required for item #:position.',
             'items.*.label.max'      => 'The label cannot exceed 45 characters for item #:position.',
 
-            'items.*.description.required' => 'The description field is required for item #:position.',
-            'items.*.description.max'      => 'The description cannot exceed 45 characters for item #:position.',
+            // 'items.*.description.required' => 'The description field is required for item #:position.',
+            // 'items.*.description.max'      => 'The description cannot exceed 45 characters for item #:position.',
         ];
     }
 

@@ -23,7 +23,7 @@
     <div class="header">
         <div>
             <h1>{{ $event->exists ? 'Edit Event' : 'Add Event' }}</h1>
-            <p>{{ $event->exists ? 'Update this event.' : 'Add a new upcoming event shown on the homepage.' }}</p>
+            <p>{{ $event->exists ? 'Update this event.' : 'Add a new upcoming or past event shown on the homepage.' }}</p>
         </div>
     </div>
 
@@ -65,7 +65,7 @@
                     @enderror
                 </div>
                 <div class="field">
-                    <div class="field-top"><label class="field-label">Event Time</label></div>
+                    <div class="field-top"><label class="field-label">Event Time <span class="req">*</span></label></div>
                     <input type="time" name="event_time"
                            value="{{ old('event_time', optional($event->event_time)->format('H:i')) }}"
                            class="{{ $errors->has('event_time') ? 'input-error' : '' }}">
@@ -75,7 +75,7 @@
                 </div>
             </div>
             <div class="field" style="margin-top:28px;">
-                <div class="field-top"><label class="field-label">Venue</label></div>
+                <div class="field-top"><label class="field-label">Venue <span class="req">*</span></label></div>
                 <input type="text" name="venue" value="{{ old('venue', $event->venue) }}"
                        class="{{ $errors->has('venue') ? 'input-error' : '' }}"
                        placeholder="e.g. Main Auditorium">
@@ -88,7 +88,7 @@
         {{-- Description --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Description</h2>
+                <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Description <span class="req">*</span></h2>
             </div>
             <div class="field">
                 <textarea name="description" rows="5"
@@ -103,12 +103,13 @@
         {{-- Image --}}
         <div class="card" id="imageSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span> Event Image</h2>
+                <h2><span class="icon"><i class="bi bi-image"></i></span> Event Image <span class="req">*</span></h2>
             </div>
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p>Optional &middot; recommended 800&times;500px landscape &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+                <p><b>Required</b> &middot; recommended 416&times;260px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+
             </div>
 
             @error('image')
@@ -255,44 +256,75 @@ function submitEventForm() {
 
 function showValidationErrors(errors) {
     const form = document.getElementById('eventForm');
+
+    // Which element to highlight for each field
     const fieldMap = {
-        title: f => f.querySelector('[name="title"]'),
-        event_date: f => f.querySelector('[name="event_date"]'),
-        event_time: f => f.querySelector('[name="event_time"]'),
-        venue: f => f.querySelector('[name="venue"]'),
-        description: f => f.querySelector('[name="description"]'),
-        link: f => f.querySelector('[name="link"]'),
+        title:       () => form.querySelector('[name="title"]'),
+        event_date:  () => form.querySelector('[name="event_date"]'),
+        event_time:  () => form.querySelector('[name="event_time"]'),
+        venue:       () => form.querySelector('[name="venue"]'),
+        description: () => form.querySelector('[name="description"]'),
+        link:        () => form.querySelector('[name="link"]'),
+        image:       () => document.getElementById('imageDrop'),
     };
 
     Object.keys(errors).forEach(field => {
-        const message = errors[field][0];
-
-        if (field === 'image') {
-            const imageSection = document.getElementById('imageSection');
-            const notice = document.createElement('div');
-            notice.className = 'notice caution dynamic-error';
-            notice.style.marginBottom = '16px';
-            notice.innerHTML = `<i class="bi bi-exclamation-circle" style="margin-top:1px;"></i><p>${message}</p>`;
-            imageSection.querySelector('.section-title').insertAdjacentElement('afterend', notice);
-            return;
-        }
-
-        const target = fieldMap[field] ? fieldMap[field](form) : null;
+        const target = fieldMap[field] ? fieldMap[field]() : null;
         if (!target) return;
 
         target.classList.add('input-error');
 
         const errorEl = document.createElement('span');
         errorEl.className = 'field-error';
-        errorEl.innerHTML = `<i class="bi bi-exclamation-circle"></i> ${message}`;
-        target.insertAdjacentElement('afterend', errorEl);
+        errorEl.dataset.for = field;
+        errorEl.innerHTML = `<i class="bi bi-exclamation-circle"></i> ${errors[field][0]}`;
+
+        // Image: put the message under the upload box; others: right after the input
+        const anchor = field === 'image' ? target.closest('.image-slot') : target;
+        anchor.insertAdjacentElement('afterend', errorEl);
     });
 
-    const firstErrorField = form.querySelector('.input-error');
-    if (firstErrorField) {
-        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    // Top banner
+    if (!form.querySelector('.form-error-banner')) {
+        const banner = document.createElement('div');
+        banner.className = 'notice caution form-error-banner';
+        banner.innerHTML = '<i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i><p>Please fill in the highlighted fields below before submitting.</p>';
+        form.insertAdjacentElement('afterbegin', banner);
+    }
+
+    scrollToFirstError();
+}
+
+function scrollToFirstError() {
+    const first = document.querySelector('#eventForm .input-error'); // first in page order
+    if (!first) return;
+
+    first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    first.classList.add('error-flash');
+    setTimeout(() => first.classList.remove('error-flash'), 1500);
+
+    // Focus text inputs after the scroll (not the image box)
+    if (first.matches('input, textarea, select')) {
+        setTimeout(() => first.focus({ preventScroll: true }), 400);
     }
 }
+
+// Clear a field's error as soon as the user fixes it
+function clearFieldError(el, field) {
+    el.classList.remove('input-error');
+    document.querySelectorAll(`#eventForm .field-error[data-for="${field}"]`).forEach(e => e.remove());
+    if (!document.querySelector('#eventForm .input-error')) {
+        document.querySelectorAll('.form-error-banner').forEach(b => b.remove());
+    }
+}
+
+document.querySelectorAll('#eventForm input[name], #eventForm textarea[name]').forEach(el => {
+    const evt = el.type === 'file' ? 'change' : 'input';
+    el.addEventListener(evt, () => {
+        const target = el.type === 'file' ? document.getElementById('imageDrop') : el;
+        clearFieldError(target, el.name);
+    });
+});
 </script>
 
 <script>

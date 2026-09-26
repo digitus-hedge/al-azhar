@@ -38,9 +38,9 @@
 
         <div class="field">
             <label for="name">Category Name <span class="req">*</span></label>
-            <input type="text" id="name" name="name" maxlength="150" autofocus
+            <input type="text" id="name" name="name" maxlength="35" autofocus
                    value="{{ old('name', $category->name) }}"
-                   placeholder="e.g. Fire Safety Certificates"
+                   placeholder="e.g. CBSE Affiliation, NOC, Trust Deed and Safety Certificates..."
                    class="{{ $errors->has('name') ? 'is-invalid' : '' }}">
             <div class="field-foot">
                 @error('name')
@@ -48,7 +48,7 @@
                 @else
                     <span class="hint">Shown as a heading on the public Mandatory Disclosure page.</span>
                 @enderror
-                <span class="counter"><span id="nameCount">{{ mb_strlen(old('name', $category->name ?? '')) }}</span>/150</span>
+                <span class="counter"><span id="nameCount">{{ mb_strlen(old('name', $category->name ?? '')) }}</span>/35</span>
             </div>
         </div>
 
@@ -85,7 +85,7 @@
     .header h1{ font-size:25px; font-weight:700; letter-spacing:-0.02em; margin:0; color: var(--ink,#171B2C); }
     .header p{ font-size:13.5px; color: var(--muted,#667085); margin:7px 0 0; max-width:560px; line-height:1.55; }
 
-    .form-card{ max-width:640px; padding:24px; }
+   .form-card{ width:100%; max-width:none; padding:24px; box-sizing:border-box; }
 
     .field label{ display:block; font-size:13px; font-weight:600; color: var(--ink,#171B2C); margin-bottom:8px; }
     .req{ color:#e74c3c; }

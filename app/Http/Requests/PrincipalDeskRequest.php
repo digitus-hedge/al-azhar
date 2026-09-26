@@ -36,7 +36,7 @@ class PrincipalDeskRequest extends FormRequest
         return [
             'heading'        => ['required', 'string', 'max:255'],
             'name'           => ['required', 'string', 'max:255'],
-            'photo'          => [Rule::requiredIf($photoNeeded), 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'photo'          => [Rule::requiredIf($photoNeeded), 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_photo'   => ['nullable', 'boolean'],
             'avatar_initial' => ['nullable', 'string', 'max:2'],
 

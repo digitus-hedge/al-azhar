@@ -93,6 +93,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('staff', [StaffController::class, 'store'])->name('staff.store');
             Route::get('staff/{staffMember}/edit', [StaffController::class, 'edit'])->name('staff.edit');
             Route::put('staff/{staffMember}', [StaffController::class, 'update'])->name('staff.update');
+            Route::get('staff/{staffMember}', [StaffController::class, 'show'])->name('staff.show');
             Route::delete('staff/{staffMember}', [StaffController::class, 'destroy'])->name('staff.destroy');
 
 

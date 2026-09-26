@@ -232,7 +232,9 @@
                     @error('login_password')
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
-                    <span class="field-hint" style="display:block;margin-top:6px;">Minimum 8 characters.</span>
+                 <span class="field-hint pw-hint" id="pwHint" style="margin-top:6px;">
+    <i class="bi bi-info-circle"></i> Minimum 8 characters.
+</span>
                 </div>
 
                 {{-- Role --}}
@@ -300,7 +302,7 @@
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>Recommended size:</b> 400 &times; 400px &middot; JPG, PNG, WEBP &middot; up to 10MB.</p>
+                <p><b>Recommended size:</b> 400 &times; 400px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
             </div>
 
             <div class="image-slot" style="max-width:220px;">
@@ -539,13 +541,7 @@
             firstErrorMsg.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
 
-        // const hasLoginToggle = document.getElementById('has_login');
-        // const loginFields = document.getElementById('login-fields');
-        // if (hasLoginToggle && loginFields) {
-        //     hasLoginToggle.addEventListener('change', function () {
-        //         loginFields.style.display = this.checked ? 'block' : 'none';
-        //     });
-        // }
+     
 
         const hasLoginToggle  = document.getElementById('has_login');
 const loginFields     = document.getElementById('login-fields');
@@ -577,6 +573,22 @@ if (hasLoginToggle && loginFields) {
         }
         if (roleAdmin) roleAdmin.addEventListener('change', togglePermissionsField);
         if (roleStaff) roleStaff.addEventListener('change', togglePermissionsField);
+
+            // ---- Password hint: live "Minimum 8 characters" check ----
+    const pwHint = document.getElementById('pwHint');
+    if (loginPassword && pwHint) {
+        loginPassword.addEventListener('input', function () {
+            const len = [...this.value].length;
+            pwHint.classList.toggle('ok', len >= 8);
+            pwHint.classList.toggle('short', len > 0 && len < 8);
+            pwHint.innerHTML = len === 0
+                ? '<i class="bi bi-info-circle"></i> Minimum 8 characters.'
+                : len < 8
+                    ? `<i class="bi bi-exclamation-circle"></i> ${8 - len} more character${8 - len === 1 ? '' : 's'} needed`
+                    : '<i class="bi bi-check-circle"></i> Looks good';
+        });
+    }
+    
     });
 </script>
 
@@ -839,6 +851,12 @@ function showStaffValidationErrors(errors) {
 }
 .toggle-password:hover{ color: var(--ink,#171B2C); background: var(--canvas,#F6F7FB); }
 
+.field-hint{ display:block; font-size:12px; color: var(--faint,#9AA1B2); line-height:1.45; }
+.field-hint i{ margin-right:3px; }
+
+.pw-hint{ transition:color .15s; }
+.pw-hint.ok{ color:#1E8E4E; }
+.pw-hint.short{ color:#B7791F; }
 </style>
 
 @endsection
