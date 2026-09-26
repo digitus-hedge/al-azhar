@@ -22,6 +22,8 @@ class PrincipalDeskRequest extends FormRequest
         $this->merge([
             'heading' => trim((string) $this->input('heading')),
             'name'    => preg_replace('/\s+/', ' ', trim((string) $this->input('name'))),
+            'meta_title'       => $this->filled('meta_title') ? trim((string) $this->input('meta_title')) : null,
+            'meta_description' => $this->filled('meta_description') ? trim((string) $this->input('meta_description')) : null,
         ]);
     }
 
@@ -29,7 +31,7 @@ class PrincipalDeskRequest extends FormRequest
     {
         // Photo is required when there is no saved photo yet (Add),
         // or when the saved one is removed without choosing a new one (Edit).
-        $current     = collect($this->route()?->parameters() ?? [])->first(fn ($p) => $p instanceof Model);
+        $current     = collect($this->route()?->parameters() ?? [])->first(fn($p) => $p instanceof Model);
         $hasSaved    = (bool) $current?->photo;
         $photoNeeded = ! $hasSaved || $this->boolean('remove_photo');
 
@@ -58,6 +60,8 @@ class PrincipalDeskRequest extends FormRequest
             ],
 
             'message'    => ['nullable', 'string'],
+            'meta_title'       => ['nullable', 'string', 'max:70'],
+            'meta_description' => ['nullable', 'string', 'max:160'],
             'is_active'  => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ];
@@ -75,7 +79,10 @@ class PrincipalDeskRequest extends FormRequest
             'photo.required'    => "Please upload the principal's photo.",
             'photo.image'       => 'The photo must be an image.',
             'photo.mimes'       => 'The photo must be a JPG, PNG or WEBP file.',
-            'photo.max'         => 'The photo must not be larger than 2MB.',
+            'photo.max'         => 'The photo must not be larger than 5MB.',
+
+            'meta_title.max'       => 'Meta title should be 70 characters or fewer.',
+            'meta_description.max' => 'Meta description should be 160 characters or fewer.',
         ];
     }
 
