@@ -22,16 +22,20 @@
     $hdMenu = [
         ['Home', url('/'), request()->is('/'), []],
         ['About Us', url('/about-us'), request()->is('about-us*') || request()->routeIs('principal-message', 'school-management', 'mandatory-disclosure'), [
-            ['About the School',     url('/about-us')],
+            ['About Us',     url('/about-us')],
             ["Principal's Message",  $hdLink('principal-message')],
             ['School Management',    $hdLink('school-management')],
             ['Mandatory Disclosure', $hdLink('mandatory-disclosure')],
         ]],
-        ['Departments', $hdLink('departments.index'), request()->routeIs('departments.*'), []],
-        ['Campus Life', $hdLink('facilities.index'), request()->routeIs('facilities.*', 'gallery.*', 'events.*'), [
-            ['Facilities', $hdLink('facilities.index')],
-            ['Gallery',    $hdLink('gallery.index')],
-            ['Events',     $hdLink('events.index')],
+        ['Departments', $hdLink('departments.index'), request()->routeIs('departments.*', 'academics'), [
+            ['Departments', $hdLink('departments.index')],
+            ['Academics',       $hdLink('academics')],
+        ]],
+        ['Campus Life', $hdLink('facilities.index'), request()->routeIs('facilities.*', 'gallery.*', 'events.*', 'boarding'), [
+            ['Facilities',      $hdLink('facilities.index')],
+            ['Boarding & Fees', $hdLink('boarding')],
+            ['Gallery',         $hdLink('gallery.index')],
+            ['Events',          $hdLink('events.index')],
         ]],
         ['News & Notices', $hdLink('news-notices.index'), request()->routeIs('news-notices.*'), []],
         ['Contact Us', $hdLink('contact.index'), request()->routeIs('contact.*'), []],

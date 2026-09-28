@@ -15,14 +15,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">Events</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Events</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Events</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -55,7 +52,7 @@
         <div class="container">
 
             {{-- Filter tabs --}}
-            <div class="event_tabs td_mb_40">
+            <div class="event_tabs td_mb_40 wow fadeInUp" data-wow-duration="0.9s" data-wow-delay="0.2s">
                 @foreach (['all' => 'All Events', 'upcoming' => 'Upcoming', 'past' => 'Past Events'] as $key => $text)
                     <a href="{{ $key === 'all' ? route('events.index') : route('events.index', ['type' => $key]) }}"
                         class="event_tab {{ $type === $key ? 'active' : '' }}">{{ $text }}</a>
@@ -70,8 +67,9 @@
                         $isPast   = $date && $date->isBefore(today());
                         $link     = route('events.show', $event);
                     @endphp
-                    <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-duration="1s"
-                        data-wow-delay="{{ 0.1 + ($loop->index % 3) * 0.1 }}s">
+                    {{-- Cards come in from the left, bottom and right across each row of three --}}
+                    <div class="col-lg-4 col-md-6 wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$loop->index % 3] }}"
+                        data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($loop->index % 3) * 0.12 }}s">
                         <div class="td_post td_style_1 event_card">
                             <a href="{{ $link }}" class="td_post_thumb d-block">
                                 <img src="{{ $event->image ? asset('storage/' . $event->image) : $eventPlaceholder }}"
@@ -115,16 +113,20 @@
                                 <p class="td_post_subtitle td_mb_24 td_heading_color td_opacity_7">
                                     {{ \Illuminate\Support\Str::limit(strip_tags($event->description), 110) }}
                                 </p>
-                                <a href="{{ $link }}" class="td_btn td_style_1 td_type_3 td_radius_30 td_medium">
-                                    <span class="td_btn_in td_accent_color">
-                                        <span>Read More</span>
+                                <a href="{{ $link }}" class="event_more">
+                                    <span>Read More</span>
+                                    <span class="event_more_icon">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                            stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M5 12h14M12 5l7 7-7 7" />
+                                        </svg>
                                     </span>
                                 </a>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <div class="col-12 text-center event_empty">
+                    <div class="col-12 text-center event_empty wow zoomIn" data-wow-delay="0.2s">
                         <h3 class="td_fs_24 td_mb_10">No events found</h3>
                         <p class="td_opacity_7 mb-0">
                             @if ($type === 'upcoming')
@@ -142,7 +144,7 @@
             {{-- Pagination --}}
             @if ($events->hasPages())
                 <div class="td_height_60 td_height_lg_40"></div>
-                <ul class="event_pagination">
+                <ul class="event_pagination wow fadeInUp" data-wow-delay="0.1s">
                     <li class="{{ $events->onFirstPage() ? 'disabled' : '' }}">
                         <a href="{{ $events->previousPageUrl() ?? 'javascript:;' }}" aria-label="Previous">&lsaquo;</a>
                     </li>
@@ -165,6 +167,9 @@
 
 @push('styles')
 <style>
+    /* Page heading: fix the theme's breadcrumb separator (same as other pages) */
+    .td_page_heading .breadcrumb-item + .breadcrumb-item::before { content: "/" !important; color: #fff; padding: 0 8px; }
+
     /* Tabs */
     .event_tabs { display: flex; justify-content: center; flex-wrap: wrap; gap: 10px; }
     .event_tab {
@@ -198,5 +203,27 @@
         background: var(--accent-color); border-color: var(--accent-color); color: #fff;
     }
     .event_pagination li.disabled a { opacity: .4; pointer-events: none; }
+    /* Read More button */
+.event_more {
+    display: inline-flex; align-items: center; gap: 12px;
+    padding: 6px 6px 6px 22px; border-radius: 30px;
+    border: 1px solid var(--heading-color, #00539B);
+    color: var(--heading-color, #00539B); font-weight: 600; font-size: 15px;
+    background: #fff; transition: background .3s ease, color .3s ease, box-shadow .3s ease;
+}
+.event_more_icon {
+    width: 36px; height: 36px; border-radius: 50%; flex: none;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--heading-color, #00539B); color: #fff;
+    transition: background .3s ease, color .3s ease, transform .3s ease;
+}
+.event_more:hover {
+    background: var(--heading-color, #00539B); color: #fff;
+    box-shadow: 0 12px 24px -12px rgba(0, 83, 155, .6);
+}
+.event_more:hover .event_more_icon {
+    background: #fff; color: var(--heading-color, #00539B);
+    transform: translateX(4px) rotate(-45deg);
+}
 </style>
 @endpush

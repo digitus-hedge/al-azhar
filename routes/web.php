@@ -32,6 +32,10 @@ use App\Http\Controllers\Web\WebGalleryController;
 use App\Http\Controllers\Web\WebNewsNoticeController;
 use App\Http\Controllers\Web\WebMandatoryDisclosureController;
 use App\Http\Controllers\web\WebManagementController;
+use App\Http\Controllers\Admin\BoardingController;
+use App\Http\Controllers\Web\WebBoardingController;
+
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -67,7 +71,12 @@ Route::get('/news-notices/{newsNotice}/{slug?}', [WebNewsNoticeController::class
 Route::get('/mandatory-disclosure', [WebMandatoryDisclosureController::class, 'index'])->name('mandatory-disclosure');
 Route::get('/about-us/school-management', [WebManagementController::class, 'index'])->name('school-management');
 
+Route::view('/academics', 'web.academics')->name('academics');
 
+Route::get('/boarding', WebBoardingController::class)->name('boarding');
+
+
+//admin panel
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Guest routes (login)
@@ -126,6 +135,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
             Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
 
+             // Boarding & Fees (single page)
+            Route::get('boarding', [BoardingController::class, 'edit'])->name('boarding');
+            Route::post('boarding', [BoardingController::class, 'update'])->name('boarding.update');
 
             Route::get('mandatory-disclosures', [MandatoryDisclosureController::class, 'index'])->name('mandatory-disclosures');
             Route::get('mandatory-disclosures/create', [MandatoryDisclosureController::class, 'create'])->name('mandatory-disclosures.create');

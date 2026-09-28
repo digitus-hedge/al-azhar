@@ -27,19 +27,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10 nn_heading_title">{{ $isDetail ? $notice->title : 'News & Notices' }}</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    @if ($isDetail)
-                        <li class="breadcrumb-item"><a href="{{ route('news-notices.index') }}">News &amp; Notices</a></li>
-                        <li class="breadcrumb-item active">{{ $types[$notice->type] ?? 'Notice' }}</li>
-                    @else
-                        <li class="breadcrumb-item active">News &amp; Notices</li>
-                    @endif
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 nn_heading_title wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">{{ $isDetail ? $notice->title : 'News & Notices' }}</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -72,7 +64,7 @@
 
             @unless ($isDetail)
                 {{-- ================= SEARCH BAR ================= --}}
-                <form action="{{ route('news-notices.index') }}" method="GET" class="nn_search" role="search">
+                <form action="{{ route('news-notices.index') }}" method="GET" class="nn_search wow zoomIn" data-wow-duration="0.8s" data-wow-delay="0.2s" role="search">
                     <div class="nn_search_field nn_search_q">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         <input type="search" name="q" value="{{ $search }}" placeholder="Search notices, circulars, announcements…" aria-label="Search">
@@ -97,7 +89,7 @@
                 </form>
 
                 {{-- Type chips --}}
-                <div class="nn_chips">
+                <div class="nn_chips wow fadeInUp" data-wow-delay="0.35s">
                     <a href="{{ route('news-notices.index', array_filter(['q' => $search, 'year' => $year ?: null])) }}"
                         class="nn_chip {{ $type === '' ? 'is-active' : '' }}">All <span>{{ $totalPublished }}</span></a>
                     @foreach ($types as $key => $label)
@@ -111,13 +103,14 @@
                 {{-- ================= PRIORITY STRIP ================= --}}
                 @if ($highlights->isNotEmpty())
                     <div class="nn_highlights">
-                        <div class="nn_block_title">
+                        <div class="nn_block_title wow fadeInLeft" data-wow-delay="0.1s">
                             <span class="nn_pulse"></span>
                             <h2 class="td_fs_24 td_semibold mb-0">Priority Notices</h2>
                         </div>
                         <div class="row td_gap_y_24">
                             @foreach ($highlights as $h)
-                                <div class="col-lg-4 col-md-6">
+                                <div class="col-lg-4 col-md-6 wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$loop->index % 3] }}"
+                                    data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($loop->index % 3) * 0.12 }}s">
                                     <a href="{{ $urlOf($h) }}" class="nn_hcard nn_p_{{ $h->priority ?: 'normal' }} {{ $h->image_url ? 'has-img' : '' }}">
                                         @if ($h->image_url)
                                             <div class="nn_hcard_img">
@@ -159,7 +152,7 @@
                             $shareUrl = url()->current();
                         @endphp
 
-                        <article class="nn_article">
+                        <article class="nn_article wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
                             <div class="nn_article_head">
                                 <div class="nn_date">
                                     <strong>{{ $d->format('d') }}</strong>
@@ -182,7 +175,7 @@
                             </div>
 
                             @if ($notice->image_url)
-                                <a href="{{ $notice->image_url }}" target="_blank" rel="noopener" class="nn_cover">
+                                <a href="{{ $notice->image_url }}" target="_blank" rel="noopener" class="nn_cover wow zoomIn" data-wow-duration="1s" data-wow-delay="0.3s">
                                     <img src="{{ $notice->image_url }}" alt="{{ $notice->title }}">
                                 </a>
                             @endif
@@ -206,7 +199,7 @@
                             @endif
 
                             @if ($attUrl || $notice->link)
-                                <div class="nn_attach">
+                                <div class="nn_attach wow fadeInUp" data-wow-delay="0.2s">
                                     @if ($attUrl)
                                         <div class="nn_attach_file">
                                             <span class="nn_attach_icon">{{ strtoupper($attExt ?: 'FILE') }}</span>
@@ -246,7 +239,7 @@
 
                         {{-- Prev / next --}}
                         @if ($newer || $older)
-                            <div class="nn_pager">
+                            <div class="nn_pager wow fadeInUp" data-wow-delay="0.1s">
                                 @if ($older)
                                     <a href="{{ $urlOf($older) }}" class="nn_pager_item">
                                         <small>← Previous</small>
@@ -269,7 +262,7 @@
 
                     @else
                         {{-- ---------- LIST ---------- --}}
-                        <div class="nn_list_head">
+                        <div class="nn_list_head wow fadeInLeft" data-wow-delay="0.1s">
                             <h2 class="td_fs_24 td_semibold mb-0">
                                 @if ($filtering)
                                     {{ $notices->total() }} {{ \Illuminate\Support\Str::plural('result', $notices->total()) }}
@@ -285,7 +278,8 @@
 
                         @forelse ($notices as $n)
                             @php $d = $dateOf($n); @endphp
-                            <article class="nn_item nn_p_{{ $n->priority ?: 'normal' }} {{ $n->is_pinned ? 'is-pinned' : '' }} {{ $n->image_url ? 'has-img' : '' }}">
+                            <article class="nn_item nn_p_{{ $n->priority ?: 'normal' }} {{ $n->is_pinned ? 'is-pinned' : '' }} {{ $n->image_url ? 'has-img' : '' }} wow fadeInRight"
+                                data-wow-duration="0.8s" data-wow-delay="0.1s">
                                 @if ($n->image_url)
                                     <a href="{{ $urlOf($n) }}" class="nn_item_img" aria-hidden="true" tabindex="-1">
                                         <img src="{{ $n->image_url }}" alt="" loading="lazy">
@@ -332,7 +326,7 @@
                                 </div>
                             </article>
                         @empty
-                            <div class="nn_empty">
+                            <div class="nn_empty wow zoomIn">
                                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M8 11h6"/></svg>
                                 <h3 class="td_fs_20 td_semibold">No notices found</h3>
                                 <p class="mb-0">Try a different keyword, type or year.</p>
@@ -347,7 +341,7 @@
                                 $from = max(1, $cur - 2);
                                 $to   = min($last, $cur + 2);
                             @endphp
-                            <ul class="td_page_pagination td_mp_0 td_fs_18 td_semibold nn_pagination">
+                            <ul class="td_page_pagination td_mp_0 td_fs_18 td_semibold nn_pagination wow fadeInUp">
                                 @if ($cur > 1)
                                     <li><a class="td_page_pagination_item td_center" href="{{ $notices->previousPageUrl() }}" aria-label="Previous">‹</a></li>
                                 @endif
@@ -367,7 +361,7 @@
                     <div class="nn_sidebar">
 
                         @if ($isDetail)
-                            <div class="nn_widget">
+                            <div class="nn_widget wow fadeInRight" data-wow-delay="0.2s">
                                 <h3 class="nn_widget_title">Search Notices</h3>
                                 <form action="{{ route('news-notices.index') }}" method="GET" class="nn_side_search">
                                     <input type="search" name="q" placeholder="Search…" aria-label="Search">
@@ -378,7 +372,7 @@
                             </div>
                         @endif
 
-                        <div class="nn_widget">
+                        <div class="nn_widget wow fadeInRight" data-wow-delay="0.3s">
                             <h3 class="nn_widget_title">Categories</h3>
                             <ul class="nn_cat_list td_mp_0">
                                 @foreach ($types as $key => $label)
@@ -395,7 +389,7 @@
                         </div>
 
                         @if ($years->isNotEmpty())
-                            <div class="nn_widget">
+                            <div class="nn_widget wow fadeInRight" data-wow-delay="0.4s">
                                 <h3 class="nn_widget_title">Archive</h3>
                                 <div class="nn_years">
                                     @foreach ($years as $y => $count)
@@ -409,7 +403,7 @@
                         @endif
 
                         @if ($recent->isNotEmpty())
-                            <div class="nn_widget">
+                            <div class="nn_widget wow fadeInRight" data-wow-delay="0.4s">
                                 <h3 class="nn_widget_title">Recent Updates</h3>
                                 <ul class="nn_recent td_mp_0">
                                     @foreach ($recent as $r)
@@ -430,7 +424,7 @@
                         @endif
 
                         {{-- TODO: replace with your real phone / email --}}
-                        <div class="nn_help">
+                        <div class="nn_help wow zoomIn" data-wow-delay="0.3s">
                             <h3 class="td_fs_20 td_semibold td_white_color td_mb_10">Have a question?</h3>
                             <p class="td_white_color td_opacity_8 td_mb_20">Contact the school office for any clarification about a notice.</p>
                             <a href="{{ route('contact.index') }}" class="nn_btn nn_btn_white">Contact Us</a>

@@ -20,14 +20,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">Facilities</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Facilities</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Facilities</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -64,7 +61,7 @@
             @else
 
                 {{-- Top bar: tabs (one row) + count --}}
-                <div class="td_section_head_2 fac_head">
+                <div class="td_section_head_2 fac_head wow fadeInUp" data-wow-duration="0.9s" data-wow-delay="0.2s">
                     <ul class="td_tab_links td_style_2 td_mp_0 td_medium td_heading_color fac_tabs">
                         <li class="{{ $active === '' ? 'active' : '' }}">
                             <a href="{{ route('facilities.index') }}" data-filter="">
@@ -94,8 +91,8 @@
                         @php $url = route('facilities.show', $facility); @endphp
                         <div class="col-lg-4 col-md-6 fac_item {{ $active !== '' && $facility->category !== $active ? 'd-none' : '' }}"
                             data-category="{{ $facility->category }}">
-                            <div class="td_card td_style_3 d-block td_radius_10 fac_card">
-
+                            <div class="td_card td_style_3 d-block td_radius_10 fac_card wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$loop->index % 3] }}"
+                                data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($loop->index % 3) * 0.12 }}s">
                                 @if ($facility->photo_count > 1)
                                     <span class="td_cart_wishlist_icon fac_photo_badge" title="{{ $facility->photo_count }} photos">
                                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -104,7 +101,7 @@
                                     </span>
                                 @endif
 
-                                <a href="{{ $url }}" class="td_card_thumb">
+                                <a href="{{ $url }}" class="td_card_thumb wow zoomIn" data-wow-duration="1s" data-wow-delay="{{ 0.2 + ($loop->index % 3) * 0.12 }}s">
                                     <img src="{{ $facility->image_url ?: $placeholder }}" alt="{{ $facility->title }}" loading="lazy">
                                 </a>
 
@@ -276,6 +273,11 @@
                 $('html, body').animate({ scrollTop: $('.fac_head').offset().top - 140 }, 400);
             }
         });
+
+        history.replaceState(null, '', href);
+
+        // Let WOW reveal cards that just became visible through a tab
+        window.dispatchEvent(new Event('scroll'));
     });
 </script>
 @endpush

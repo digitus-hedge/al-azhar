@@ -30,15 +30,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">{{ $facility->title }}</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item"><a href="{{ route('facilities.index') }}">Facilities</a></li>
-                    <li class="breadcrumb-item active">{{ $facility->title }}</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">{{ $facility->title }}</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -79,19 +75,19 @@
         {{-- Right: heading + accordion --}}
         <div class="td_faq_1_right">
             <div class="td_section_heading td_style_1 td_mb_30">
-                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
+                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color wow fadeInDown" data-wow-delay="0.2s">
                     {{ $facility->category_label }}
                 </p>
-                <h2 class="td_section_title td_fs_48 mb-0">{{ $facility->title }}</h2>
+                <h2 class="td_section_title td_fs_48 mb-0 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.35s">{{ $facility->title }}</h2>
                 @if ($facility->short_description)
-                    <p class="td_section_subtitle td_fs_18 mb-0">{{ $facility->short_description }}</p>
+                    <p class="td_section_subtitle td_fs_18 mb-0 wow fadeInUp" data-wow-delay="0.45s">{{ $facility->short_description }}</p>
                 @endif
             </div>
 
             @php $firstOpen = true; @endphp
             <div class="td_accordians td_style_1 td_type_2 td_mb_40 fac_acc">
                 @if (filled($description))
-                    <div class="td_accordian {{ $firstOpen ? 'active' : '' }}">
+                    <div class="td_accordian {{ $firstOpen ? 'active' : '' }} wow fadeInRight" data-wow-delay="0.5s">
                         <div class="td_accordian_head">
                             <h2 class="td_accordian_title td_fs_24">About this Facility</h2>
                             <span class="td_accordian_toggle"></span>
@@ -108,7 +104,7 @@
                 @endif
 
                 @if (! empty($facility->features))
-                    <div class="td_accordian {{ $firstOpen ? 'active' : '' }}">
+                    <div class="td_accordian {{ $firstOpen ? 'active' : '' }} wow fadeInRight" data-wow-delay="0.65s">
                         <div class="td_accordian_head">
                             <h2 class="td_accordian_title td_fs_24">Highlights</h2>
                             <span class="td_accordian_toggle"></span>
@@ -129,7 +125,7 @@
                 @endif
 
                 @if ($details->isNotEmpty())
-                    <div class="td_accordian {{ $firstOpen ? 'active' : '' }}">
+                    <div class="td_accordian {{ $firstOpen ? 'active' : '' }} wow fadeInRight" data-wow-delay="0.8s">
                         <div class="td_accordian_head">
                             <h2 class="td_accordian_title td_fs_24">Facility Details</h2>
                             <span class="td_accordian_toggle"></span>
@@ -154,7 +150,7 @@
                 @endif
             </div>
 
-            <a href="{{ route('contact.index') }}" class="td_btn td_style_2 td_type_2 td_heading_color td_medium">
+            <a href="{{ route('contact.index') }}" class="td_btn td_style_2 td_type_2 td_heading_color td_medium wow zoomIn" data-wow-delay="0.9s">
                 Get In Touch
                 <i>
                     @for ($i = 0; $i < 2; $i++)
@@ -174,7 +170,7 @@
         <section>
             <div class="td_height_100 td_height_lg_50"></div>
             <div class="container">
-                <div class="td_section_heading td_style_1 text-center">
+                <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
                     <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
                         <i></i> Gallery <i></i>
                     </p>
@@ -183,7 +179,8 @@
                 <div class="td_height_50 td_height_lg_40"></div>
                 <div class="fac_gallery">
                     @foreach ($photos as $i => $photo)
-                        <button type="button" class="fac_gallery_item" data-index="{{ $i }}"
+                       <button type="button" class="fac_gallery_item wow zoomIn" data-index="{{ $i }}"
+                            data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($i % 4) * 0.1 }}s"
                             aria-label="Open photo {{ $i + 1 }} of {{ $photos->count() }}">
                             <img src="{{ $photo }}" alt="{{ $facility->title }} photo {{ $i + 1 }}" loading="lazy">
                             <span class="fac_gallery_zoom td_center">
@@ -215,7 +212,7 @@
         <section>
             <div class="td_height_100 td_height_lg_50"></div>
             <div class="container">
-                <div class="td_section_heading td_style_1 td_type_1">
+                <div class="td_section_heading td_style_1 td_type_1 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
                     <div class="td_section_heading_left">
                         <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">More to explore</p>
                         <h2 class="td_section_title td_fs_48 mb-0">Other Facilities</h2>
@@ -230,7 +227,8 @@
                 <div class="row td_gap_y_30 td_row_gap_30">
                     @foreach ($related as $item)
                         @php $url = route('facilities.show', $item); @endphp
-                        <div class="col-xl-3 col-lg-4 col-md-6 d-flex">
+                        <div class="col-xl-3 col-lg-4 col-md-6 d-flex wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInRight'][$loop->index % 4] }}"
+                            data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($loop->index % 4) * 0.1 }}s">
                             <div class="td_card td_style_3 d-block td_radius_10 fac_rel_card">
                                 <a href="{{ $url }}" class="td_card_thumb">
                                     <img src="{{ $item->image_url ?: $placeholder }}" alt="{{ $item->title }}" loading="lazy">
@@ -318,7 +316,7 @@
     /* Related cards */
     .fac_rel_card { width: 100%; background-color: #fff; }
     .fac_rel_card .td_card_thumb img { aspect-ratio: 16 / 11; object-fit: cover; }
-
+    .fac_detail { overflow-x: clip; }
     /* ---------- Responsive ---------- */
     @media (max-width: 1199px) {
         .fac_gallery { grid-template-columns: repeat(3, 1fr); }
@@ -339,6 +337,13 @@
         .fac_info li { flex-direction: column; gap: 2px; }
         .fac_info_value { text-align: left; }
         .fac_lb_nav { width: 38px; height: 38px; font-size: 24px; }
+    }
+
+        /* Turn off the theme's own image animation so only the zoom-in plays */
+    .fac_detail .td_faq_1_img {
+        transform: none !important;
+        animation: none !important;
+        transition: none !important;
     }
 </style>
 @endpush

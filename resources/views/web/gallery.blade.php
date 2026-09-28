@@ -13,14 +13,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">Gallery</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Gallery</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Gallery</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -54,11 +51,11 @@
 
             {{-- Section intro --}}
             <div class="td_section_heading td_style_1 text-center">
-                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase gal_accent">
+                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase gal_accent wow fadeInDown" data-wow-delay="0.2s">
                     <i></i> Life at Al Azhar <i></i>
                 </p>
-                <h2 class="td_section_title td_fs_48 mb-0">Moments We Cherish</h2>
-                <div class="d-flex justify-content-center">
+                <h2 class="td_section_title td_fs_48 mb-0 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Moments We Cherish</h2>
+                <div class="d-flex justify-content-center wow fadeInUp" data-wow-delay="0.45s">
                     <p class="td_section_subtitle td_fs_18 mb-0 gal_intro">
                         Celebrations, achievements and everyday campus life, captured in photos and videos.
                     </p>
@@ -74,8 +71,8 @@
                 @foreach ($albums as $album)
                     <div class="gal_album">
                         <div class="gal_album_head">
-                            <span class="gal_album_year">{{ $album->year }}</span>
-                            <div class="gal_album_titles">
+                            <span class="gal_album_year wow zoomIn" data-wow-duration="0.8s" data-wow-delay="0.1s">{{ $album->year }}</span>
+                            <div class="gal_album_titles wow fadeInLeft" data-wow-duration="0.9s" data-wow-delay="0.25s">
                                 <h3 class="td_fs_32 td_semibold mb-0">
                                     {{ is_numeric($album->title) ? 'Moments of ' . $album->title : $album->title }}
                                 </h3>
@@ -102,7 +99,8 @@
                                     }
                                     $thumb = $item->thumbnail_url;
                                 @endphp
-                                <a href="{{ $src }}" class="gal_tile" data-index="{{ $index++ }}"
+                                <a href="{{ $src }}" class="gal_tile wow zoomIn" data-index="{{ $index++ }}"
+                                    data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($loop->index % 4) * 0.1 }}s"
                                     data-kind="{{ $kind }}" data-src="{{ $src }}" data-thumb="{{ $thumb }}"
                                     data-title="{{ $item->title }}" aria-label="Open {{ $item->title }}">
 
@@ -334,6 +332,8 @@
     @media (max-width: 420px) {
         .gal_grid { grid-auto-rows: 130px; gap: 10px; }
     }
+    /* Let hover effects work again after the entrance animation */
+    
 </style>
 @endpush
 

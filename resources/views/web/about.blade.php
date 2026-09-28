@@ -15,16 +15,12 @@
 </style>
 @endpush
   <!-- Start Page Heading Section -->
-  <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble about_banner"
-    data-src="{{ asset('images/services-banner.webp') }}"
-    style="background-image: url('{{ asset('images/services-banner.webp') }}'); background-size: cover; background-position: center;">
+  <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
     <div class="container">
       <div class="td_page_heading_in">
-        <h1 class="td_white_color td_fs_48 td_mb_10">About Us</h1>
-        <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-          <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-          <li class="breadcrumb-item active">About Us</li>
-        </ol>
+        <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">About Us</h1>
       </div>
     </div>
     <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -53,10 +49,8 @@
 
    <!-- Start About Section -->
 @php
-    $aboutShort = \Illuminate\Support\Str::limit(
-        trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) ($about->description ?? ''))))),
-        230
-    );
+    $aboutShort = trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) ($about->short_description ?? $about->description ?? '')))));
+
 @endphp
 <section>
     <div class="td_height_100 td_height_lg_50"></div>
@@ -67,10 +61,10 @@
                 {{-- Left: two static images (theme layout) --}}
                 <div class="col-lg-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.25s">
                     <div class="td_about_thumb_wrap">
-                        <div class="td_about_thumb_1">
+                        <div class="td_about_thumb_1 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                             <img src="{{ asset('images/about2.jpeg') }}" alt="Al Azhar Central School campus">
                         </div>
-                        <div class="td_about_thumb_2">
+                        <div class="td_about_thumb_2 wow zoomIn" data-wow-duration="1s" data-wow-delay="0.6s">
                             <img src="{{ asset('images/about.webp') }}" alt="Students at Al Azhar Central School">
                         </div>
                     </div>
@@ -79,31 +73,33 @@
                 {{-- Right: heading, short description, vision & mission --}}
                 <div class="col-lg-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
                     <div class="td_section_heading td_style_1 td_mb_30">
-                        <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
+                        <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color wow fadeInDown" data-wow-delay="0.2s">
                             About us
                         </p>
-                        <h2 class="td_section_title td_fs_48 mb-0">
+                        <h2 class="td_section_title td_fs_48 mb-0 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
                             {{ $about->title ?? 'Welcome to Al Azhar Central School' }}
                         </h2>
                         @if ($aboutShort !== '')
-                            <p class="td_section_subtitle td_fs_18 mb-0">{{ $aboutShort }}</p>
+                            <div class="td_section_subtitle td_fs_18 mb-0 home_about_text wow fadeInUp" data-wow-delay="0.4s">
+                                {!! strip_tags($about->short_description ?? $about->description ?? '', '<p><br><strong><b><em><i><u>') !!}
+                            </div>
                         @endif
                     </div>
 
                     <div class="td_mb_40">
                         <ul class="td_list td_style_5 td_mp_0">
-                            <li>
+                            <li class="wow fadeInRight" data-wow-delay="0.5s">
                                 <h3 class="td_fs_24 td_mb_8">Our Vision</h3>
                                 <div class="td_fs_18 mb-0">{!! strip_tags($about->vision ?? 'To nurture confident, compassionate learners who excel in knowledge, character and service.', '<p><br><strong><b><em><i><u>') !!}</div>
                             </li>
-                            <li>
+                            <li class="wow fadeInRight" data-wow-delay="0.7s">
                                 <h3 class="td_fs_24 td_mb_8">Our Mission</h3>
                                 <div class="td_fs_18 mb-0">{!! strip_tags($about->mission ?? 'To provide holistic, value-based education that brings out the best in every child.', '<p><br><strong><b><em><i><u>') !!}</div>
                             </li>
                         </ul>
                     </div>
 
-                    <a href="{{ route('contact.index') }}" class="td_btn td_style_1 td_radius_30 td_medium">
+                    <a href="{{ route('contact.index') }}" class="td_btn td_style_1 td_radius_30 td_medium wow zoomIn" data-wow-delay="0.8s">
                         <span class="td_btn_in td_white_color td_accent_bg">
                             <span>Contact Us</span>
                             <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -125,6 +121,9 @@
     .home_about .td_about_thumb_2 img { width: 100%; object-fit: cover; display: block; }
     .home_about .td_about_thumb_1 img { aspect-ratio: 476 / 492; }   /* tall left photo */
     .home_about .td_about_thumb_2 img { aspect-ratio: 315 / 416; }   /* overlapping right photo */
+    .home_about_text p { margin: 0 0 12px; }
+.home_about_text p:last-child { margin-bottom: 0; }
+.home_about_text br:last-child { display: none; }
 </style>
 <!-- End About Section -->
 
@@ -152,7 +151,7 @@
                 <div class="{{ $abValues !== '' ? 'col-lg-7' : 'col-lg-10 offset-lg-1' }} wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                     <div class="ab_hv_card">
                         <div class="ab_hv_card_head">
-                            <span class="ab_hv_icon">
+                            <span class="ab_hv_icon wow zoomIn" data-wow-delay="0.5s">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
                             </span>
                             <h3 class="td_fs_32 td_semibold mb-0">Our History</h3>
@@ -166,7 +165,7 @@
                 <div class="{{ $abHistory !== '' ? 'col-lg-5' : 'col-lg-10 offset-lg-1' }} wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.25s">
                     <div class="ab_hv_card ab_hv_card_values">
                         <div class="ab_hv_card_head">
-                            <span class="ab_hv_icon">
+                            <span class="ab_hv_icon wow zoomIn" data-wow-delay="0.5s">
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2L12 2z"/><path d="m8.5 12 2.3 2.3 4.7-4.6"/></svg>
                             </span>
                             <h3 class="td_fs_32 td_semibold mb-0">Our Values</h3>
@@ -247,9 +246,9 @@
 <section class="td_accent_bg td_shape_section_1 ab_vm">
     <div class="td_height_100 td_height_lg_75"></div>
     <div class="container">
-        <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
-            <p class="ab_vm_badge">What Guides Us</p>
-            <h2 class="td_section_title td_fs_48 mb-0 td_white_color">Our Vision &amp; Mission</h2>
+        <div class="td_section_heading td_style_1 text-center">
+            <p class="ab_vm_badge wow fadeInDown" data-wow-delay="0.2s">What Guides Us</p>
+            <h2 class="td_section_title td_fs_48 mb-0 td_white_color wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.35s">Our Vision &amp; Mission</h2>
         </div>
         <div class="td_height_50 td_height_lg_40"></div>
 
@@ -258,7 +257,7 @@
                 <div class="{{ $vmMission !== '' ? 'col-lg-6' : 'col-lg-10 offset-lg-1' }} wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                     <div class="ab_vm_card">
                         <div class="ab_vm_head">
-                            <span class="ab_vm_icon">
+                            <span class="ab_vm_icon wow zoomIn" data-wow-delay="0.5s">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
                             </span>
                             <div>
@@ -467,30 +466,62 @@
             {{-- Left: featured (pinned / urgent / latest) --}}
             <div class="col-lg-5 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                 @php $fd = $nnDate($nnFeatured); @endphp
-                <a href="{{ $nnUrl($nnFeatured) }}" class="home_nn_feature home_nn_p_{{ $nnFeatured->priority ?: 'normal' }}">
-                    <div class="home_nn_feature_top">
-                        <div class="home_nn_bigdate">
-                            <strong>{{ $fd->format('d') }}</strong>
-                            <span>{{ $fd->format('M Y') }}</span>
-                        </div>
-                        <div class="home_nn_tags">
-                            <span class="home_nn_type">{{ $nnTypes[$nnFeatured->type] ?? 'Notice' }}</span>
-                            @if ($nnFeatured->priority && $nnFeatured->priority !== 'normal')
-                                <span class="home_nn_prio home_nn_prio_{{ $nnFeatured->priority }}">{{ $nnFeatured->priority_label }}</span>
-                            @endif
-                            @if ($nnFeatured->is_pinned)
-                                <span class="home_nn_pin">Pinned</span>
-                            @endif
-                        </div>
-                    </div>
-                    <h3 class="home_nn_feature_title">{{ $nnFeatured->title }}</h3>
-                    <p class="home_nn_feature_text">
-                        {{ \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $nnFeatured->description))), 200) }}
-                    </p>
-                    <span class="home_nn_more">Read full notice
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    </span>
-                </a>
+                <a href="{{ $nnUrl($nnFeatured) }}"
+    class="home_nn_feature home_nn_p_{{ $nnFeatured->priority ?: 'normal' }} {{ $nnFeatured->image_url ? 'has-img' : '' }}">
+
+        @if ($nnFeatured->image_url)
+            {{-- With image: photo on top, date badge on the photo --}}
+            <div class="home_nn_feature_img">
+                <img src="{{ $nnFeatured->image_url }}" alt="{{ $nnFeatured->title }}" loading="lazy">
+                <div class="home_nn_img_date">
+                    <strong>{{ $fd->format('d') }}</strong>
+                    <span>{{ $fd->format('M Y') }}</span>
+                </div>
+            </div>
+            <div class="home_nn_feature_body">
+                <div class="home_nn_tags">
+                    <span class="home_nn_type">{{ $nnTypes[$nnFeatured->type] ?? 'Notice' }}</span>
+                    @if ($nnFeatured->priority && $nnFeatured->priority !== 'normal')
+                        <span class="home_nn_prio home_nn_prio_{{ $nnFeatured->priority }}">{{ $nnFeatured->priority_label }}</span>
+                    @endif
+                    @if ($nnFeatured->is_pinned)
+                        <span class="home_nn_pin">Pinned</span>
+                    @endif
+                </div>
+                <h3 class="home_nn_feature_title">{{ $nnFeatured->title }}</h3>
+                <p class="home_nn_feature_text">
+                    {{ \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $nnFeatured->description))), 130) }}
+                </p>
+                <span class="home_nn_more">Read full notice
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </span>
+            </div>
+        @else
+        {{-- Without image: blue card --}}
+        <div class="home_nn_feature_top">
+            <div class="home_nn_bigdate">
+                <strong>{{ $fd->format('d') }}</strong>
+                <span>{{ $fd->format('M Y') }}</span>
+            </div>
+            <div class="home_nn_tags">
+                <span class="home_nn_type">{{ $nnTypes[$nnFeatured->type] ?? 'Notice' }}</span>
+                @if ($nnFeatured->priority && $nnFeatured->priority !== 'normal')
+                    <span class="home_nn_prio home_nn_prio_{{ $nnFeatured->priority }}">{{ $nnFeatured->priority_label }}</span>
+                @endif
+                @if ($nnFeatured->is_pinned)
+                    <span class="home_nn_pin">Pinned</span>
+                @endif
+            </div>
+        </div>
+        <h3 class="home_nn_feature_title">{{ $nnFeatured->title }}</h3>
+        <p class="home_nn_feature_text">
+            {{ \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) $nnFeatured->description))), 200) }}
+        </p>
+        <span class="home_nn_more">Read full notice
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+    @endif
+</a>
             </div>
 
             {{-- Right: latest list --}}
@@ -498,11 +529,19 @@
                 <div class="home_nn_list">
                     @forelse ($nnList as $n)
                         @php $d = $nnDate($n); @endphp
-                        <a href="{{ $nnUrl($n) }}" class="home_nn_item home_nn_p_{{ $n->priority ?: 'normal' }}">
-                            <div class="home_nn_date">
-                                <strong>{{ $d->format('d') }}</strong>
-                                <span>{{ $d->format('M') }}</span>
-                            </div>
+                        <a href="{{ $nnUrl($n) }}" class="home_nn_item home_nn_p_{{ $n->priority ?: 'normal' }} wow fadeInRight"
+                            data-wow-duration="0.8s" data-wow-delay="{{ 0.2 + $loop->index * 0.12 }}s">
+                            @if ($n->image_url)
+                                <div class="home_nn_thumb">
+                                    <img src="{{ $n->image_url }}" alt="{{ $n->title }}" loading="lazy">
+                                    <span>{{ $d->format('d M') }}</span>
+                                </div>
+                            @else
+                                <div class="home_nn_date">
+                                    <strong>{{ $d->format('d') }}</strong>
+                                    <span>{{ $d->format('M') }}</span>
+                                </div>
+                            @endif
                             <div class="home_nn_item_body">
                                 <div class="home_nn_tags">
                                     <span class="home_nn_type">{{ $nnTypes[$n->type] ?? 'Notice' }}</span>
@@ -599,6 +638,40 @@
     .home_nn_feature:hover .home_nn_more svg { transform: translateX(4px); }
     .home_nn_empty { padding: 40px 20px; text-align: center; color: #6b7489; border: 2px dashed var(--nn-line); border-radius: 14px; }
 
+    /* ---- Featured card with image ---- */
+.home_nn_feature.has-img { padding: 0; background: #fff; color: inherit; border: 1px solid var(--nn-line); box-shadow: 0 30px 60px -38px rgba(0,0,27,.55); }
+.home_nn_feature.has-img::after { display: none; }
+.home_nn_feature.has-img.home_nn_p_urgent { background: #fff; border-top: 4px solid var(--nn-red); }
+.home_nn_feature.has-img.home_nn_p_important { border-top: 4px solid var(--nn-amber); }
+.home_nn_feature_img { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+.home_nn_feature_img img { width: 100%; height: 100%; object-fit: cover; transition: transform .8s ease; }
+.home_nn_feature.has-img:hover .home_nn_feature_img img { transform: scale(1.06); }
+.home_nn_img_date {
+    position: absolute; left: 18px; bottom: 18px; min-width: 70px; padding: 8px 12px; border-radius: 12px; text-align: center;
+    background: var(--nn); color: #fff; box-shadow: 0 12px 24px -10px rgba(0,0,0,.5);
+}
+.home_nn_feature.has-img.home_nn_p_urgent .home_nn_img_date { background: var(--nn-red); }
+.home_nn_img_date strong { display: block; font-size: 28px; line-height: 1; font-weight: 700; }
+.home_nn_img_date span { display: block; margin-top: 3px; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; opacity: .85; }
+.home_nn_feature_body { display: flex; flex-direction: column; flex: 1; padding: 24px 26px 26px; }
+.home_nn_feature.has-img .home_nn_tags { justify-content: flex-start; }
+.home_nn_feature.has-img .home_nn_type { background: #F4F7FB; color: var(--nn); }
+.home_nn_feature.has-img .home_nn_pin { background: #eef4ff; color: var(--nn); }
+.home_nn_feature.has-img .home_nn_feature_title { margin: 14px 0 10px; color: var(--nn); font-size: 22px; }
+.home_nn_feature.has-img .home_nn_feature_text { color: #5b6477; opacity: 1; }
+.home_nn_feature.has-img .home_nn_more { color: var(--nn); padding-top: 20px; }
+.home_nn_feature.has-img:hover { color: inherit; }
+
+/* ---- List item thumbnail ---- */
+.home_nn_thumb { position: relative; flex: none; width: 92px; height: 72px; border-radius: 12px; overflow: hidden; }
+.home_nn_thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s ease; }
+.home_nn_item:hover .home_nn_thumb img { transform: scale(1.08); }
+.home_nn_thumb span {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 3px 0; text-align: center;
+    background: rgba(0,47,95,.85); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+}
+.home_nn_item.home_nn_p_urgent .home_nn_thumb span { background: rgba(200,16,46,.9); }
+
     @media (max-width: 575px) {
         .home_nn_feature { padding: 26px 20px; }
         .home_nn_bigdate strong { font-size: 44px; }
@@ -606,6 +679,9 @@
         .home_nn_item { padding: 14px; gap: 12px; }
         .home_nn_item:hover { transform: none; }
         .home_nn_arrow { display: none; }
+        .home_nn_feature_body { padding: 20px; }
+    .home_nn_feature.has-img .home_nn_feature_title { font-size: 19px; }
+    .home_nn_thumb { width: 74px; height: 60px; }
     }
 </style>
 @endif
@@ -618,7 +694,7 @@
 <section class="home_gal">
     <div class="td_height_100 td_height_lg_75"></div>
     <div class="container">
-        <div class="home_gal_head">
+        <div class="home_gal_head wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
             <div class="td_section_heading td_style_1 mb-0">
                 <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase home_gal_accent">
                     Gallery
@@ -652,7 +728,7 @@
                     }
                     $thumb = $item->thumbnail_url;
                 @endphp
-                <a href="{{ $src }}" class="home_gal_tile wow fadeInUp" data-wow-duration="1s" data-wow-delay="{{ 0.1 + ($i % 4) * 0.05 }}s"
+                <a href="{{ $src }}" class="home_gal_tile wow zoomIn" data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($i % 4) * 0.1 }}s"
                     data-kind="{{ $kind }}" data-src="{{ $src }}" data-title="{{ $item->title }}"
                     aria-label="Open {{ $item->title }}">
                     @if ($thumb)
@@ -829,6 +905,7 @@
         });
     }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+    
 })();
 </script>
 @endif
@@ -877,7 +954,8 @@
                     $text     = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) ($event->short_description ?? $event->excerpt ?? $event->description ?? '')))), 110);
                     $venue    = $event->location ?? $event->venue ?? null;
                 @endphp
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="{{ 0.2 + $loop->index * 0.05 }}s">
+                @php $evAnim = ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$loop->index % 3]; @endphp
+                <div class="col-lg-4 col-md-6 wow {{ $evAnim }}" data-wow-duration="1s" data-wow-delay="{{ 0.2 + $loop->index * 0.1 }}s">
                     <article class="home_ev_card">
                         <a href="{{ $url }}" class="home_ev_thumb">
                             <img src="{{ $evImage($event) ?: $evPlaceholder }}" alt="{{ $event->title }}" loading="lazy">
@@ -965,6 +1043,17 @@
     @media (max-width: 767px) {
         .home_ev_card:hover { transform: none; }
     }
+
+    /* Stop left/right slides from causing a horizontal scrollbar (scroll still works) */
+html, body { overflow-x: clip; }
+section { overflow-x: clip; }
+
+/* Softer, shorter slide distance than animate.css default */
+@keyframes fadeInLeft  { from { opacity: 0; transform: translate3d(-60px,0,0); } to { opacity: 1; transform: none; } }
+@keyframes fadeInRight { from { opacity: 0; transform: translate3d(60px,0,0); }  to { opacity: 1; transform: none; } }
+@keyframes fadeInUp    { from { opacity: 0; transform: translate3d(0,50px,0); }  to { opacity: 1; transform: none; } }
+@keyframes fadeInDown  { from { opacity: 0; transform: translate3d(0,-40px,0); } to { opacity: 1; transform: none; } }
+@keyframes zoomIn      { from { opacity: 0; transform: scale(.85); }             to { opacity: 1; transform: none; } }
 </style>
 @endif
 <!-- End Events Section -->

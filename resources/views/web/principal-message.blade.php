@@ -8,14 +8,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">Principal's Message</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Principal's Message</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Principal's Message</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -49,7 +46,7 @@
         <div class="td_faq_1 td_style_1 td_type_1 pm_wrap">
 
             {{-- Left: photo --}}
-            <div class="td_faq_1_left">
+            <div class="td_faq_1_left wow zoomIn" data-wow-duration="1.1s" data-wow-delay="0.2s">
                 @if ($principal->photo_url)
                     <div class="td_faq_1_img pm_photo"
                         style="background-image: url('{{ $principal->photo_url }}');"
@@ -62,15 +59,15 @@
             </div>
 
             {{-- Right: heading, message, name, sign --}}
-            <div class="td_faq_1_right wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.25s">
+            <div class="td_faq_1_right">
                 <div class="td_section_heading td_style_1 td_mb_30">
-                    <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
+                    <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color wow fadeInDown" data-wow-delay="0.2s">
                         Principal's Message
                     </p>
-                    <h2 class="td_section_title td_fs_48 mb-0">{{ $principal->heading }}</h2>
+                    <h2 class="td_section_title td_fs_48 mb-0 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.35s">{{ $principal->heading }}</h2>
                 </div>
 
-               <div class="pm_message td_fs_18 td_heading_color">
+               <div class="pm_message td_fs_18 td_heading_color wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s">
                     <span class="pm_quote td_accent_color" aria-hidden="true">
                         <svg width="65" height="46" viewBox="0 0 65 46" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path opacity="0.08"
@@ -96,8 +93,8 @@
                     @endif
                 </div>
 
-                <div class="pm_sign_block">
-                    <span class="pm_signature td_heading_color">{{ $principal->name }}</span>
+                <div class="pm_sign_block wow fadeInUp" data-wow-delay="0.3s">
+                    <span class="pm_signature td_heading_color wow fadeInLeft" data-wow-duration="1.2s" data-wow-delay="0.5s">{{ $principal->name }}</span>
                     <h3 class="td_fs_24 td_semibold mb-0">{{ $principal->name }}</h3>
                     <p class="td_fs_16 mb-0 td_heading_color td_opacity_7">Principal, Al Azhar Central School</p>
                 </div>
@@ -119,6 +116,14 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
 <style>
+    html, body { overflow-x: clip; }
+    section, .pm_wrap { overflow-x: clip; }
+
+    @keyframes fadeInLeft  { from { opacity: 0; transform: translate3d(-60px,0,0); } to { opacity: 1; transform: none; } }
+    @keyframes fadeInRight { from { opacity: 0; transform: translate3d(60px,0,0); }  to { opacity: 1; transform: none; } }
+    @keyframes fadeInUp    { from { opacity: 0; transform: translate3d(0,50px,0); }  to { opacity: 1; transform: none; } }
+    @keyframes fadeInDown  { from { opacity: 0; transform: translate3d(0,-40px,0); } to { opacity: 1; transform: none; } }
+    @keyframes zoomIn      { from { opacity: 0; transform: scale(.85); } }
     /* Photo: keep the face in view for portrait images */
     .pm_wrap .pm_photo { background-size: cover; background-repeat: no-repeat; background-position: center top; }
     .pm_wrap .pm_photo_fallback { background-color: var(--heading-color); }

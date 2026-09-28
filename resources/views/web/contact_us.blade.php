@@ -8,14 +8,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">Contact Us</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Contact Us</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Contact Us</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -49,7 +46,7 @@
             <div class="row">
                 <div class="col-xxl-10 offset-xxl-1">
                     <div class="row align-items-center td_gap_y_40">
-                        <div class="col-lg-7">
+                        <div class="col-lg-7 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                             <div class="contact_modal contact_modal_page">
                                 <div class="modal-content">
                                     <div class="modal-header">
@@ -74,7 +71,7 @@
                                                     autocomplete="off">
                                             </div>
 
-                                            <div class="contact_modal_form_item">
+                                            <div class="contact_modal_form_item wow fadeInUp" data-wow-delay="0.4s">
                                                 <div class="contact_modal_form_inner">
                                                     <input type="text"
                                                         class="form-control @error('name') is-invalid @enderror"
@@ -95,7 +92,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="contact_modal_form_item">
+                                            <div class="contact_modal_form_item wow fadeInUp" data-wow-delay="0.5s">
                                                 <div class="contact_modal_form_inner">
                                                     <input type="email"
                                                         class="form-control @error('email') is-invalid @enderror"
@@ -116,7 +113,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="contact_modal_form_item">
+                                            <div class="contact_modal_form_item wow fadeInUp" data-wow-delay="0.6s">
                                                 <div class="contact_modal_form_inner">
                                                     <textarea class="form-control @error('message') is-invalid @enderror"
                                                         placeholder="Message *" rows="5" name="message" maxlength="5000"
@@ -127,7 +124,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="contact_modal_form_item">
+                                            <div class="contact_modal_form_item wow zoomIn" data-wow-delay="0.7s"> 
                                                 <button type="submit"
                                                     class="td_btn td_style_1 td_radius_30 td_medium td_with_shadow contact_submit">
                                                     <span class="td_btn_in td_white_color td_accent_bg">
@@ -151,13 +148,13 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-4 offset-xl-1 col-lg-5">
+                        <div class="col-xl-4 offset-xl-1 col-lg-5 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
                             <div class="td_contact_info">
                                 <div class="td_section_heading td_style_2 td_mb_20">
                                     <h2 class="td_contact_info_title td_fs_36 mb-0">Our Office Address</h2>
                                 </div>
                                 {{-- TODO: replace with your real address / phone / email --}}
-                                <div class="td_mb_40">
+                                <div class="td_mb_40 wow fadeInUp" data-wow-delay="0.5s">
                                     <h2 class="td_fs_24 td_semibold td_mb_20">Al Azhar Central School</h2>
                                     <p class="td_fs_18 td_heading_color td_medium td_mb_10">Mala, Thrissur, Kerala, India</p>
                                     <p class="td_fs_18 td_heading_color td_medium td_mb_10 td_opacity_7">
@@ -167,7 +164,7 @@
                                         <a href="mailto:al-azhar@gmail.com">al-azhar@gmail.com</a>
                                     </p>
                                 </div>
-                                <div>
+                                <div class="wow fadeInUp" data-wow-delay="0.65s">  
                                     <h2 class="td_fs_24 td_semibold td_mb_20">Office Hours</h2>
                                     <p class="td_fs_18 td_heading_color td_medium td_mb_10">Monday – Saturday</p>
                                     <p class="td_fs_18 td_heading_color td_medium mb-0 td_opacity_7">9:00 AM – 4:00 PM</p>
@@ -179,7 +176,7 @@
             </div>
         </div>
         <div class="td_height_100 td_height_lg_50"></div>
-        <div class="td_map">
+        <div class="td_map wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
             <iframe id="map" title="School location"
                 src="https://maps.google.com/maps?q={{ urlencode('Al Azhar Central School, Mala, Thrissur, Kerala') }}&output=embed"
                 loading="lazy" allowfullscreen=""></iframe>

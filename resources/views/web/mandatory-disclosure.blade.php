@@ -14,14 +14,11 @@
 
     <!-- Start Page Heading Section -->
     <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-        data-src="{{ asset('uploads/website-images/students-after-graduation-ceremony.jpg') }}">
+    data-src="{{ asset('images/header.jpeg') }}"
+    style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10">Mandatory Public Disclosure</h1>
-                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color">
-                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
-                    <li class="breadcrumb-item active">Mandatory Disclosure</li>
-                </ol>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Mandatory Public Disclosure</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -54,11 +51,11 @@
 
             {{-- Intro --}}
             <div class="td_section_heading td_style_1 text-center">
-                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase md_accent">
-                    <i></i> As per CBSE Norms <i></i>
-                </p>
-                <h2 class="td_section_title td_fs_48 mb-0">Mandatory Public Disclosure</h2>
-                <div class="d-flex justify-content-center">
+                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase md_accent wow fadeInDown" data-wow-delay="0.2s">
+                        <i></i> As per CBSE Norms <i></i>
+                    </p>
+                    <h2 class="td_section_title td_fs_48 mb-0 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">Mandatory Public Disclosure</h2>
+                    <div class="d-flex justify-content-center wow fadeInUp" data-wow-delay="0.45s">
                     <p class="td_section_subtitle td_fs_18 mb-0 md_intro">
                         Affiliation, recognition, safety certificates and other documents published in line with
                         CBSE's disclosure requirements. Click any document to view it or download it.
@@ -74,7 +71,7 @@
             @else
 
                 {{-- Toolbar: search + category jump + counts --}}
-                <div class="md_toolbar">
+                <div class="md_toolbar wow zoomIn" data-wow-duration="0.8s" data-wow-delay="0.2s">
                     <div class="md_search">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
                         <input type="search" id="md_q" placeholder="Search documents…" aria-label="Search documents" autocomplete="off">
@@ -89,7 +86,7 @@
                 </div>
 
                 @if ($groups->count() > 1)
-                    <div class="md_chips">
+                    <div class="md_chips wow fadeInUp" data-wow-delay="0.35s">
                         <button type="button" class="md_chip is-active" data-cat="">All</button>
                         @foreach ($groups as $name => $docs)
                             <button type="button" class="md_chip" data-cat="{{ \Illuminate\Support\Str::slug($name) }}">
@@ -102,7 +99,7 @@
                 {{-- Groups --}}
                 @foreach ($groups as $name => $docs)
                     <div class="md_group" data-cat="{{ \Illuminate\Support\Str::slug($name) }}">
-                        <div class="md_group_head">
+                        <div class="md_group_head wow fadeInLeft" data-wow-duration="0.9s" data-wow-delay="0.1s">
                             <h3 class="td_fs_24 td_semibold mb-0">{{ $name }}</h3>
                             <span class="md_group_count">{{ $docs->count() }}</span>
                         </div>
@@ -114,7 +111,8 @@
                                     $isPdf = $ext === 'pdf';
                                     $isImg = in_array($ext, ['jpg', 'jpeg', 'png', 'webp', 'gif'], true);
                                 @endphp
-                                <div class="col-xl-4 col-md-6 md_item"
+                                <div class="col-xl-4 col-md-6 md_item wow fadeInUp"
+                                    data-wow-duration="0.8s" data-wow-delay="{{ 0.1 + ($loop->index % 3) * 0.12 }}s"
                                     data-search="{{ \Illuminate\Support\Str::lower($doc->title . ' ' . $name . ' ' . $doc->issued_by) }}">
                                     <div class="md_card">
                                         <span class="md_file md_file_{{ $isPdf ? 'pdf' : ($isImg ? 'img' : 'doc') }}">{{ strtoupper($ext) }}</span>
@@ -447,6 +445,12 @@
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
     else init();
+
+    var none = document.getElementById('md_none');
+    if (none) none.classList.toggle('d-none', visible > 0);
+
+    // Let WOW reveal cards that just became visible through search or a chip
+    window.dispatchEvent(new Event('scroll'));
 })();
 </script>
 @endpush

@@ -19,7 +19,7 @@
     </div>
 
     <div class="container">
-        <div class="td_hero_text wow fadeInRight" data-wow-duration="0.9s" data-wow-delay="0.35s">
+        <div class="td_hero_text" data-wow-duration="0.9s" data-wow-delay="0.35s">
             <p
                 class="td_hero_subtitle_up td_fs_18 td_white_color td_spacing_1 td_semibold text-uppercase td_mb_10 td_opacity_9">
                 Knowledge is Power</p>
@@ -33,7 +33,7 @@
             <p class="td_hero_subtitle td_fs_18 td_white_color td_opacity_7 td_mb_30">
                 {{ $banner->description ?? 'A university is a vibrant institution that serves as a hub for higher education and research. It provides a dynamic environment.' }}
             </p>
-            <a href="about-us.html" class="td_btn td_style_1 td_radius_30 td_medium">
+            <a href="{{ url('/about-us') }}" class="td_btn td_style_1 td_radius_30 td_medium">
                 <span class="td_btn_in td_white_color td_accent_bg">
                     <span>Explore Us</span>
                     <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -112,66 +112,75 @@
         opacity: 0; transition: opacity 1s ease;
     }
     .td_hero_bg_carousel.hero_fade .td_hero_bg_slide.is-active { opacity: 1; }
+
+    /* Stop left/right slides from causing a horizontal scrollbar (without blocking scroll) */
+html, body { overflow-x: clip; }
+section { overflow-x: clip; }
+
+/* Softer, shorter slide distance than animate.css default */
+@keyframes fadeInLeft  { from { opacity: 0; transform: translate3d(-60px,0,0); } to { opacity: 1; transform: none; } }
+@keyframes fadeInRight { from { opacity: 0; transform: translate3d(60px,0,0); }  to { opacity: 1; transform: none; } }
+@keyframes fadeInUp    { from { opacity: 0; transform: translate3d(0,50px,0); }  to { opacity: 1; transform: none; } }
+@keyframes fadeInDown  { from { opacity: 0; transform: translate3d(0,-40px,0); } to { opacity: 1; transform: none; } }
+@keyframes zoomIn      { from { opacity: 0; transform: scale(.85); }             to { opacity: 1; transform: none; } }
 </style>
 @if (!empty($stats))
     @php
-        // Icon picked from the stat's label (keywords), so it still matches after editing in admin.
+        // Static icons matching the old site (graduation cap, group, gear with people, runner)
         $statIconSet = [
-            // Trophy — years / excellence / experience / awards
-            'award' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4z"/><path d="M17 5h2.5a1.5 1.5 0 0 1 1.5 1.5V7a4 4 0 0 1-4 4M7 5H4.5A1.5 1.5 0 0 0 3 6.5V7a4 4 0 0 0 4 4"/></svg>',
-            // Graduation cap — students / enrolled / alumni
-            'students' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/></svg>',
-            // Teacher at board — faculty / teachers / staff
-            'faculty' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="7" cy="7" r="3"/><path d="M2 21v-2a5 5 0 0 1 5-5h2l4-3"/><path d="M11 3h10v10H14"/></svg>',
-            // Badge with tick — pass / result / percentage / success
-            'pass' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 2l2.4 1.8 3-.2.9 2.9 2.5 1.7-1 2.8 1 2.8-2.5 1.7-.9 2.9-3-.2L12 22l-2.4-1.8-3 .2-.9-2.9-2.5-1.7 1-2.8-1-2.8 2.5-1.7.9-2.9 3 .2L12 2z"/><path d="m8.5 12 2.3 2.3 4.7-4.6"/></svg>',
-            // Book — courses / programs / subjects / classes
-            'courses' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M2 5a2 2 0 0 1 2-2h6v17H4a2 2 0 0 0-2 2V5zM22 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2V5z"/></svg>',
-            // Star — anything else
-            'default' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>',
+            'academics' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12 3 1 8l11 5 11-5-11-5z"/><path d="M5 10.5V16c0 1.5 3 3 7 3s7-1.5 7-3v-5.5"/><path d="M20 9v5"/><path d="M20 14l-1 4h2l-1-4z"/></svg>',
+            'boarding'  => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="6" r="2.5"/><circle cx="5.5" cy="8" r="2"/><circle cx="18.5" cy="8" r="2"/><path d="M8 20v-4a4 4 0 0 1 8 0v4"/><path d="M2 20v-3a3 3 0 0 1 4.5-2.6M22 20v-3a3 3 0 0 0-4.5-2.6"/></svg>',
+            'events'    => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="10" r="2"/><path d="M8.5 16a3.5 3.5 0 0 1 7 0"/></svg>',
+            'facilities' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M2 21h20"/><path d="M4 21V10l8-6 8 6v11"/><path d="M10 21v-5h4v5"/><path d="M8 11h2M14 11h2M8 14h2M14 14h2"/><path d="M12 4V2"/></svg>',
         ];
-
-        $statKeywords = [
-            'award'    => ['year', 'excellence', 'experience', 'award', 'legacy', 'since'],
-            'students' => ['student', 'enroll', 'alumni', 'learner', 'pupil'],
-            'faculty'  => ['faculty', 'teacher', 'staff', 'instructor', 'mentor', 'tutor'],
-            'pass'     => ['pass', 'result', 'percent', '%', 'success', 'rank'],
-            'courses'  => ['course', 'program', 'subject', 'class', 'department'],
-        ];
-
-        $statIconFor = function ($label) use ($statIconSet, $statKeywords) {
-            $label = \Illuminate\Support\Str::lower($label);
-            foreach ($statKeywords as $key => $words) {
-                if (\Illuminate\Support\Str::contains($label, $words)) {
-                    return $statIconSet[$key];
-                }
-            }
-            return $statIconSet['default'];
-        };
+        $statIconDefault = '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>';
     @endphp
 
     <div class="container">
         <div class="td_hero_btn_group">
             @foreach ($stats as $item)
                 @php
-                    $value = $item['value'] ?? $item['number'] ?? $item['count'] ?? '';
-                    $label = $item['label'] ?? $item['title'] ?? '';
+                    $label = $item['label'] ?? '';
+                    $desc  = $item['description'] ?? '';
+                    $icon  = $statIconSet[\Illuminate\Support\Str::lower(trim($label))] ?? $statIconDefault;
                 @endphp
 
-                @if ($value !== '' || $label !== '')
-                    <a href="javascript:;" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp"
-                        data-wow-duration="0.9s" data-wow-delay="0.35s">
+                @if ($label !== '' || $desc !== '')
+                    <a href="javascript:;" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp home_stat_btn"
+                        data-wow-duration="0.9s" data-wow-delay="{{ 0.2 + $loop->index * 0.15 }}s">
                         <span class="td_btn_in td_white_color td_accent_bg">
-                            <span>{{ $value }} {{ $label }}</span>
-                            {!! $statIconFor($label . ' ' . $value) !!}
+                            <span class="home_stat_txt">
+                                <strong>{{ $label }}</strong>
+                                @if ($desc !== '')
+                                    <small>{{ $desc }}</small>
+                                @endif
+                            </span>
+                            {!! $icon !!}
                         </span>
                     </a>
                 @endif
             @endforeach
         </div>
     </div>
-
 @endif
+<style>
+    .td_hero_btn_group { align-items: stretch; }
+    .td_hero_btn_group .home_stat_btn {
+        height: auto !important; white-space: normal !important; display: flex;
+    }
+    .td_hero_btn_group .home_stat_btn .td_btn_in {
+        height: 100% !important; width: 100%; min-height: 80px;
+        display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+        padding: 18px 20px !important; line-height: 1.4 !important; white-space: normal !important; text-align: left;
+    }
+    .home_stat_txt { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+    .home_stat_txt strong { font-size: 20px; font-weight: 600; line-height: 1.2; }
+    .home_stat_txt small {
+        font-size: 14px; font-weight: 400; line-height: 1.5; opacity: .9;
+        display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden;
+    }
+    .home_stat_btn svg { margin-top: 2px; }
+</style>
     <!-- End Hero Section -->
 
 
@@ -191,10 +200,10 @@
                 {{-- Left: two static images (theme layout) --}}
                 <div class="col-lg-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.25s">
                     <div class="td_about_thumb_wrap">
-                        <div class="td_about_thumb_1">
+                        <div class="td_about_thumb_1 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
                             <img src="{{ asset('images/about2.jpeg') }}" alt="Al Azhar Central School campus">
                         </div>
-                        <div class="td_about_thumb_2">
+                        <div class="td_about_thumb_2 wow zoomIn" data-wow-duration="1s" data-wow-delay="0.6s">
                             <img src="{{ asset('images/about.webp') }}" alt="Students at Al Azhar Central School">
                         </div>
                     </div>
@@ -203,31 +212,32 @@
                 {{-- Right: heading, short description, vision & mission --}}
                 <div class="col-lg-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
                     <div class="td_section_heading td_style_1 td_mb_30">
-                        <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
+                        <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color wow fadeInDown">
                             About us
                         </p>
-                        <h2 class="td_section_title td_fs_48 mb-0">
+                        <h2 class="td_section_title td_fs_48 mb-0 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
                             {{ $about->title ?? 'Welcome to Al Azhar Central School' }}
                         </h2>
+                        
                         @if ($aboutShort !== '')
-                            <p class="td_section_subtitle td_fs_18 mb-0">{{ $aboutShort }}</p>
+                            <p class="td_section_subtitle td_fs_18 mb-0 wow fadeInUp" data-wow-delay="0.4s">{{ $aboutShort }}</p>
                         @endif
                     </div>
 
                     <div class="td_mb_40">
                         <ul class="td_list td_style_5 td_mp_0">
-                            <li>
+                            <li class="wow fadeInRight" data-wow-delay="0.5s">
                                 <h3 class="td_fs_24 td_mb_8">Our Vision</h3>
-                                <p class="td_fs_18 mb-0">To nurture confident, compassionate learners who excel in knowledge, character and service.</p>
+                                <div class="td_fs_18 mb-0">{!! strip_tags($about->vision ?? 'To nurture confident, compassionate learners who excel in knowledge, character and service.', '<p><br><strong><b><em><i><u>') !!}</div>
                             </li>
-                            <li>
+                            <li class="wow fadeInRight" data-wow-delay="0.7s">
                                 <h3 class="td_fs_24 td_mb_8">Our Mission</h3>
-                                <p class="td_fs_18 mb-0">To provide holistic, value-based education that brings out the best in every child.</p>
+                                <div class="td_fs_18 mb-0">{!! strip_tags($about->mission ?? 'To provide holistic, value-based education that brings out the best in every child.', '<p><br><strong><b><em><i><u>') !!}</div>
                             </li>
                         </ul>
                     </div>
 
-                    <a href="{{ url('/about-us') }}" class="td_btn td_style_1 td_radius_30 td_medium">
+                    <a href="{{ url('/about-us') }}" class="td_btn td_style_1 td_radius_30 td_medium wow zoomIn" data-wow-delay="0.8s">
                         <span class="td_btn_in td_white_color td_accent_bg">
                             <span>More About</span>
                             <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -240,7 +250,6 @@
             </div>
         </div>
     </div>
-    <div class="td_height_100 td_height_lg_50"></div>
 </section>
 
 <style>
@@ -269,7 +278,7 @@
                 <div class="td_features_thumb">
                     @if ($principal->photo_url)
                         <img src="{{ $principal->photo_url }}" alt="{{ $principal->name }}"
-                            class="td_radius_10 wow fadeInUp home_pm_photo" data-wow-duration="1s" data-wow-delay="0.2s">
+                            class="td_radius_10 wow zoomIn home_pm_photo" data-wow-duration="1.1s" data-wow-delay="0.2s">
                     @else
                         <div class="td_radius_10 home_pm_photo home_pm_fallback"><span>{{ $principal->initial }}</span></div>
                     @endif
@@ -284,14 +293,14 @@
                         <h2 class="td_section_title td_fs_48 mb-0">{{ $principal->heading }}</h2>
                     </div>
                     <div class="td_height_50 td_height_lg_50"></div>
-                    <div class="home_pm_msg">
+                    <div class="home_pm_msg wow fadeInUp" data-wow-delay="0.4s">
                         <svg class="home_pm_quote" width="46" height="32" viewBox="0 0 65 46" fill="currentColor" aria-hidden="true">
                             <path d="M13.9286 26.6H1V1H26.8571V27.362L17.956 45H6.26764L14.8213 28.0505L15.5534 26.6H13.9286ZM51.0714 26.6H38.1429V1H64V27.362L55.0988 45H43.4105L51.9642 28.0505L52.6962 26.6H51.0714Z"/>
                         </svg>
                         <p class="td_fs_18 td_heading_color mb-0">{{ $pmExcerpt }}</p>
                     </div>
 
-                    <div class="home_pm_foot">
+                    <div class="home_pm_foot wow fadeInUp" data-wow-delay="0.6s">
                         <div>
                             <span class="home_pm_sign">{{ $principal->name }}</span>
                             <h3 class="td_fs_20 td_semibold mb-0">{{ $principal->name }}</h3>
@@ -359,8 +368,8 @@
 
             {{-- Left: message + buttons --}}
             <div class="col-lg-7 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
-                <span class="home_adm_badge"><span class="home_adm_dot"></span> Admissions Open {{ $admSession }}</span>
-
+                <span class="home_adm_badge wow fadeInDown" data-wow-delay="0.2s">
+                    <span class="home_adm_dot"></span> Admissions Open {{ $admSession }}</span>
                 <h2 class="td_fs_48 td_white_color td_mb_20 home_adm_title">Begin Your Child's Journey With Us</h2>
                 <p class="td_fs_18 td_white_color td_opacity_8 mb-0 home_adm_text">
                     Admissions are open from Pre-KG to Grade XII, with hostel facilities available.
@@ -386,13 +395,13 @@
                 <div class="home_adm_card">
                     <h3 class="td_fs_24 td_semibold td_mb_20">How to Apply</h3>
                     <ol class="home_adm_steps td_mp_0">
-                        <li><b>1</b><div><strong>Send an enquiry</strong><span>Fill in the short online form.</span></div></li>
-                        <li><b>2</b><div><strong>We call you back</strong><span>By phone or WhatsApp.</span></div></li>
-                        <li><b>3</b><div><strong>Visit the campus</strong><span>Meet our teachers and see the school.</span></div></li>
-                        <li><b>4</b><div><strong>Confirm admission</strong><span>Complete the documents and fees.</span></div></li>
+                        <li class="wow fadeInRight" data-wow-delay="0.4s"><b>1</b><div><strong>Send an enquiry</strong><span>Fill in the short online form.</span></div></li>
+                        <li class="wow fadeInRight" data-wow-delay="0.55s"><b>2</b><div><strong>We call you back</strong><span>By phone or WhatsApp.</span></div></li>
+                        <li class="wow fadeInRight" data-wow-delay="0.7s"><b>3</b><div><strong>Visit the campus</strong><span>Meet our teachers and see the school.</span></div></li>
+                        <li class="wow fadeInRight" data-wow-delay="0.85s"><b>4</b><div><strong>Confirm admission</strong><span>Complete the documents and fees.</span></div></li>
                     </ol>
                     {{-- TODO: replace with your real admission number --}}
-                    <a href="tel:99884567809" class="home_adm_call">
+                    <a href="tel:99884567809" class="home_adm_call wow zoomIn" data-wow-delay="1s">
                         <span class="home_adm_call_icon">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>
                         </span>
@@ -581,7 +590,8 @@
                 <div class="home_nn_list">
                     @forelse ($nnList as $n)
                         @php $d = $nnDate($n); @endphp
-                        <a href="{{ $nnUrl($n) }}" class="home_nn_item home_nn_p_{{ $n->priority ?: 'normal' }}">
+                            <a href="{{ $nnUrl($n) }}" class="home_nn_item home_nn_p_{{ $n->priority ?: 'normal' }} wow fadeInRight"
+                                data-wow-duration="0.8s" data-wow-delay="{{ 0.2 + $loop->index * 0.12 }}s">
                             @if ($n->image_url)
                                 <div class="home_nn_thumb">
                                     <img src="{{ $n->image_url }}" alt="{{ $n->title }}" loading="lazy">
@@ -748,7 +758,7 @@
 <section class="home_gal">
     <div class="td_height_100 td_height_lg_75"></div>
     <div class="container">
-        <div class="home_gal_head">
+        <div class="home_gal_head wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
             <div class="td_section_heading td_style_1 mb-0">
                 <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase home_gal_accent">
                     Gallery
@@ -782,9 +792,10 @@
                     }
                     $thumb = $item->thumbnail_url;
                 @endphp
-                <a href="{{ $src }}" class="home_gal_tile wow fadeInUp" data-wow-duration="1s" data-wow-delay="{{ 0.1 + ($i % 4) * 0.05 }}s"
+                <a href="{{ $src }}" class="home_gal_tile wow zoomIn" data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($i % 4) * 0.1 }}s"
                     data-kind="{{ $kind }}" data-src="{{ $src }}" data-title="{{ $item->title }}"
                     aria-label="Open {{ $item->title }}">
+                    
                     @if ($thumb)
                         <img src="{{ $thumb }}" alt="{{ $item->title }}" loading="lazy" decoding="async">
                     @elseif ($kind === 'video')
@@ -799,7 +810,6 @@
             @endforeach
         </div>
     </div>
-    <div class="td_height_100 td_height_lg_75"></div>
 </section>
 
 {{-- Viewer --}}
@@ -1007,7 +1017,8 @@
                     $text     = \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) ($event->short_description ?? $event->excerpt ?? $event->description ?? '')))), 110);
                     $venue    = $event->location ?? $event->venue ?? null;
                 @endphp
-                <div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="{{ 0.2 + $loop->index * 0.05 }}s">
+                    @php $evAnim = ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$loop->index % 3]; @endphp
+                    <div class="col-lg-4 col-md-6 wow {{ $evAnim }}" data-wow-duration="1s" data-wow-delay="{{ 0.2 + $loop->index * 0.1 }}s">
                     <article class="home_ev_card">
                         <a href="{{ $url }}" class="home_ev_thumb">
                             <img src="{{ $evImage($event) ?: $evPlaceholder }}" alt="{{ $event->title }}" loading="lazy">
@@ -1136,6 +1147,7 @@
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHeroCarousel);
     else initHeroCarousel();
+
 })();
 </script>
 @endpush

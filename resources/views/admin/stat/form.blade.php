@@ -28,7 +28,7 @@
 
 @php
     // Fixed set of stats — the admin only fills in value + description, the label is preset.
-    $presetLabels = ['Year of Excellence', 'Students Enrolled', 'Faculty Strength', 'Pass Percentage'];
+    $presetLabels = ['Academics', 'Boarding', 'Events', 'Facilities'];
     $existingByLabel = collect(old('items', $stat->items ?? []))->keyBy('label');
 @endphp
 
@@ -42,7 +42,7 @@
     <div class="header">
         <div>
             <h1>Stats Section</h1>
-            <p>The numbers strip shown on your homepage — 4 fixed stats, each with a value and short description.</p>
+            <p>The highlights strip shown on your homepage — 4 fixed items, each with a short description.</p>
         </div>
     </div>
 
@@ -57,7 +57,6 @@
 
             <div class="stats-table-header">
                 <span>Stat</span>
-                <span>Value</span>
                 <span>Description</span>
             </div>
 
@@ -70,20 +69,10 @@
                                 <div class="stat-label-display">{{ $label }}</div>
                                 <input type="hidden" name="items[{{ $index }}][label]" value="{{ $label }}">
                             </div>
-                            <div class="input-group-cell" data-label="Value">
-                                <input type="text" name="items[{{ $index }}][value]" maxlength="10"
-                                       value="{{ old("items.$index.value", $item['value'] ?? '') }}"
-                                       placeholder="e.g. 100K"
-                                       class="{{ $errors->has("items.$index.value") ? 'input-error' : '' }}">
-                                @error("items.$index.value")
-                                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                                @enderror
-                            </div>
                             <div class="input-group-cell" data-label="Description">
-                                <input type="text" name="items[{{ $index }}][description]" maxlength="45"
-                                       value="{{ old("items.$index.description", $item['description'] ?? '') }}"
-                                       placeholder="e.g. Held & managed"
-                                       class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">
+                               <textarea name="items[{{ $index }}][description]" maxlength="150" rows="2"
+                                    placeholder="e.g. Held & managed"
+                                    class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">{{ old("items.$index.description", $item['description'] ?? '') }}</textarea>
                                 @error("items.$index.description")
                                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                                 @enderror
@@ -139,14 +128,9 @@
         font-size:13.5px; font-weight:600; color: var(--ink,#171B2C);
     }
 
-    .stats-row input{
-        padding:10px 12px; border:1px solid var(--input-border,#DBDFEA); border-radius:8px;
-        font-size:14px; outline:none; width:100%; font-family:inherit; color: var(--ink,#171B2C);
-        transition:box-shadow .15s, border-color .15s;
-    }
-    .stats-row input:focus{ border-color: var(--orange,#BF0001); box-shadow:0 0 0 4px var(--orange-tint-strong,#FFE9D8); }
-    .stats-row input.input-error{ border-color:#e74c3c; background:#fff8f8; }
-
+    .stats-row input, .stats-row textarea{ padding:10px 12px; border:1px solid var(--input-border,#DBDFEA); border-radius:8px; font-size:14px; outline:none; width:100%; font-family:inherit; color: var(--ink,#171B2C); transition:box-shadow .15s, border-color .15s; resize:vertical; }
+    .stats-row input:focus, .stats-row textarea:focus{ border-color: var(--orange,#BF0001); box-shadow:0 0 0 4px var(--orange-tint-strong,#FFE9D8); }
+    .stats-row input.input-error, .stats-row textarea.input-error{ border-color:#e74c3c; background:#fff8f8; }
     .field-error{ display:flex; align-items:center; gap:5px; color:#e74c3c; font-size:12px; margin-top:6px; }
 
     .notice{ display:flex; align-items:flex-start; gap:8px; background: var(--canvas,#F6F7FB); border-radius:10px; padding:10px 12px; }

@@ -825,7 +825,7 @@
     // Pattern "name*" (no dot) matches the list page AND its create/edit pages.
     $homeOpen        = request()->routeIs('admin.home.*');
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
-    $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*');
+    $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*');
     $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*');
     $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*');
 @endphp
@@ -943,6 +943,14 @@
                         <a class="nav-item {{ request()->routeIs('admin.facilities*') ? 'active' : '' }}"
                            href="{{ route('admin.facilities') }}">
                             <i class="bi bi-building nav-ico"></i> Facilities
+                        </a>
+                    </li>
+                @endif
+                @if ($isAdmin)
+                    <li>
+                        <a class="nav-item {{ request()->routeIs('admin.boarding*') ? 'active' : '' }}"
+                        href="{{ route('admin.boarding') }}">
+                            <i class="bi bi-house-heart nav-ico"></i> Boarding &amp; Fees
                         </a>
                     </li>
                 @endif
