@@ -81,7 +81,7 @@
             </div>
 
             <div class="field">
-                <label class="lbl">Short Description <span class="counter" data-for="short_description"></span></label>
+                <label class="lbl">Short Description  <span class="req">*</span> <span class="counter" data-for="short_description"></span></label>
                 <textarea name="short_description" rows="2" maxlength="255"
                           class="{{ $errors->has('short_description') ? 'input-error' : '' }}"
                           placeholder="One or two lines shown on the facility card">{{ old('short_description', $facility->short_description) }}</textarea>
@@ -104,12 +104,13 @@
         {{-- ================= Cover image ================= --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span> Cover Image</h2>
+                <h2><span class="icon"><i class="bi bi-image"></i></span> Cover Image <span class="req">*</span></h2>
             </div>
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>Accepted:</b> JPG, PNG, WEBP &middot; up to 5MB &middot; landscape (16:10) looks best.</p>
+             <p><b>Required</b> &middot; recommended 416&times;260px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+
             </div>
 
             <div class="image-slot" style="max-width:320px;">
@@ -143,8 +144,19 @@
         {{-- ================= Gallery ================= --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-images"></i></span> Photo Gallery</h2>
-                <span class="field-hint">Up to 20 photos per upload &middot; JPG, PNG, WEBP &middot; 5MB each</span>
+                <h2><span class="icon"><i class="bi bi-images"></i></span> Photo Gallery <span class="req">*</span></h2>
+
+                <!-- <span class="field-hint">Up to 20 photos per upload &middot; JPG, PNG, WEBP &middot; 5MB each</span> -->
+
+
+                
+            </div>
+
+            
+            <div class="notice caution">
+                <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
+          <p><b>Required</b> &middot; Min 1, up to 20 photos per upload &middot; Recommended 310&times;230px&middot; JPG, PNG, WEBP &middot; 5MB each</p>
+
             </div>
 
             <div class="gallery-grid" id="gallery-grid">

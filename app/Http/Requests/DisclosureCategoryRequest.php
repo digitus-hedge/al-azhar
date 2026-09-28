@@ -29,7 +29,7 @@ class DisclosureCategoryRequest extends FormRequest
                 'required',
                 'string',
                 'min:2',
-                'max:150',
+                'max:35',
                 // Unique among NON-deleted rows, ignoring the row being edited
                 Rule::unique('disclosure_categories', 'name')
                     ->ignore($category?->id)
@@ -43,7 +43,7 @@ class DisclosureCategoryRequest extends FormRequest
         return [
             'name.required' => 'Please enter a category name.',
             'name.min'      => 'Category name must be at least 2 characters.',
-            'name.max'      => 'Category name may not be longer than 150 characters.',
+            'name.max'      => 'Category name may not be longer than 35 characters.',
             'name.unique'   => 'A category with this name already exists.',
         ];
     }

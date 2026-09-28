@@ -120,50 +120,47 @@
                 <tbody>
                     @foreach ($newsNotices as $notice)
                         <tr>
-                            <td>
-                                <b>{{ $notice->title }}</b>
-                                @if ($notice->attachment)
-                                    <i class="bi bi-paperclip" title="Has attachment" style="color:#9AA1B2;margin-left:4px;"></i>
-                                @endif
-                                @if ($notice->link)
-                                    <i class="bi bi-link-45deg" title="Has external link" style="color:#9AA1B2;margin-left:2px;"></i>
-                                @endif
-                            </td>
-                            <td>
-                                @if ($notice->type)
-                                    <span class="badge-type badge-{{ $notice->type }}">{{ $types[$notice->type] ?? ucfirst($notice->type) }}</span>
-                                @else
-                                    <span class="badge-muted">&mdash;</span>
-                                @endif
-                            </td>
-
-                        <td>
-    @php $priority = $notice->priority ?? 'normal'; @endphp
-    <span class="badge-priority badge-priority-{{ $priority }}">
-        <!-- <i class="bi bi-flag-fill"></i> -->
-        {{ \App\Models\NewsNotice::PRIORITIES[$priority] ?? ucfirst($priority) }}
-    </span>
-</td>
-                            <td>{{ $notice->published_at?->format('d M Y') ?? '—' }}</td>
-                          
-                            <td style="text-align:right;">
-                                <a href="{{ route('admin.news-notices.edit', $notice) }}" class="icon-btn" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                      @if(auth()->user()->role === 'admin')
-                                <button type="button" class="icon-btn icon-btn-danger" title="Delete"
-                                        onclick="confirmDeleteNotice({{ $notice->id }}, '{{ addslashes($notice->title) }}')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                                <form id="delete-form-{{ $notice->id }}"
-                                      action="{{ route('admin.news-notices.destroy', $notice) }}"
-                                      method="POST" style="display:none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                                @endif
-                            </td>
-                        </tr>
+    <td data-label="Title">
+        <b>{{ $notice->title }}</b>
+        @if ($notice->attachment)
+            <i class="bi bi-paperclip" title="Has attachment" style="color:#9AA1B2;margin-left:4px;"></i>
+        @endif
+        @if ($notice->link)
+            <i class="bi bi-link-45deg" title="Has external link" style="color:#9AA1B2;margin-left:2px;"></i>
+        @endif
+    </td>
+    <td data-label="Type">
+        @if ($notice->type)
+            <span class="badge-type badge-{{ $notice->type }}">{{ $types[$notice->type] ?? ucfirst($notice->type) }}</span>
+        @else
+            <span class="badge-muted">&mdash;</span>
+        @endif
+    </td>
+    <td data-label="Priority">
+        @php $priority = $notice->priority ?? 'normal'; @endphp
+        <span class="badge-priority badge-priority-{{ $priority }}">
+            {{ \App\Models\NewsNotice::PRIORITIES[$priority] ?? ucfirst($priority) }}
+        </span>
+    </td>
+    <td data-label="Date">{{ $notice->published_at?->format('d M Y') ?? '—' }}</td>
+    <td data-label="Actions" style="text-align:right;white-space:nowrap;">
+        <a href="{{ route('admin.news-notices.edit', $notice) }}" class="icon-btn" title="Edit">
+            <i class="bi bi-pencil"></i>
+        </a>
+        @if (auth()->user()->role === 'admin')
+            <button type="button" class="icon-btn icon-btn-danger" title="Delete"
+                    onclick="confirmDeleteNotice({{ $notice->id }}, @js($notice->title))">
+                <i class="bi bi-trash"></i>
+            </button>
+            <form id="delete-form-{{ $notice->id }}"
+                  action="{{ route('admin.news-notices.destroy', $notice) }}"
+                  method="POST" style="display:none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endif
+    </td>
+</tr>
                     @endforeach
                 </tbody>
             </table>
@@ -378,6 +375,75 @@ function confirmDeleteNotice(id, title) {
 .badge-priority-normal{ background:#F2F4F7; color:#475467; }
 .badge-priority-important{ background:#FFF7E6; color:#B45309; }
 .badge-priority-urgent{ background:#FEF2F2; color:#B91C1C; }
+
+
+.table-scroll{ overflow-x:auto; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px){
+    .toolbar{ flex-direction:column; align-items:stretch; }
+    .search-form{ max-width:none; min-width:0; }
+    .toolbar-right{ justify-content:space-between; }
+    .news-table th, .news-table td{ padding:12px 14px; }
+}
+
+/* ---------- Phone: rows become cards ---------- */
+@media (max-width: 640px){
+    .header{ flex-direction:column; align-items:stretch; margin-bottom:18px; }
+    .header h1{ font-size:21px; }
+    .header p{ font-size:13px; }
+    .header .btn-save{ justify-content:center; width:100%; }
+
+    .toolbar-right{ gap:10px; }
+    .toolbar-meta{ white-space:normal; }
+
+    .table-scroll{ overflow-x:visible; }
+    .news-table thead{ display:none; }
+    .news-table, .news-table tbody{ display:block; width:100%; }
+
+    /* [title ........ actions]
+       [type] [priority]  [date] */
+    .news-table tr{
+        display:grid;
+        grid-template-columns:auto auto 1fr auto;
+        grid-template-areas:
+            "title title    title actions"
+            "type  priority date  date";
+        gap:10px 8px; align-items:center;
+        padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2);
+    }
+    .news-table tbody tr:last-child{ border-bottom:none; }
+    .news-table td{ display:block; padding:0; border:none; }
+
+    .news-table td[data-label="Title"]   { grid-area:title; min-width:0; font-size:14px; line-height:1.4; word-break:break-word; }
+    .news-table td[data-label="Actions"] { grid-area:actions; align-self:start; }
+    .news-table td[data-label="Type"]    { grid-area:type; }
+    .news-table td[data-label="Priority"]{ grid-area:priority; }
+    .news-table td[data-label="Date"]    { grid-area:date; text-align:right; font-size:12px; color: var(--faint,#9AA1B2); white-space:nowrap; }
+    .news-table td[data-label="Date"]::before{ content:'\F1F6'; font-family:'bootstrap-icons'; margin-right:4px; }
+
+    .badge-type, .badge-priority{ font-size:11px; padding:3px 9px; }
+
+    .icon-btn{ width:38px; height:38px; margin-left:4px; }
+
+    .pager{ flex-direction:column; align-items:center; gap:12px; }
+    .pager-links{ flex-wrap:wrap; justify-content:center; }
+    .pager-btn{ min-width:36px; height:36px; }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 380px){
+    .perpage-form span{ display:none; }
+    .toolbar-right{ flex-direction:column; align-items:flex-start; }
+    /* Date drops to its own line */
+    .news-table tr{
+        grid-template-areas:
+            "title title    title actions"
+            "type  priority .     ."
+            "date  date     date  date";
+    }
+    .news-table td[data-label="Date"]{ text-align:left; }
+}
 </style>
 
 @endsection

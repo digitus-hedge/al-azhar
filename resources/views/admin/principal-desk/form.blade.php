@@ -119,7 +119,8 @@
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>Required</b> &middot; square photo recommended &middot; JPG, PNG, WEBP &middot; up to 2MB.</p>
+                <p><b>Required</b> &middot; recommended 730&times;720px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
+
             </div>
 
             @error('photo')
@@ -196,6 +197,43 @@
                        {{ old('is_active', $item->is_active ?? true) ? 'checked' : '' }}>
             </label>
         </div> -->
+
+
+
+         <div class="card">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-search"></i></span> SEO Meta</h2>
+                <span class="field-hint">Optional</span>
+            </div>
+            <p class="section-sub" style="margin:0 0 16px;">Used for search engine results and social share previews.</p>
+
+            <div class="field">
+                <div class="field-top">
+                    <label class="field-label">Meta Title</label>
+                    <span class="field-hint">Recommended under 60 chars</span>
+                </div>
+                <input type="text" name="meta_title" value="{{ old('meta_title', $item->meta_title) }}" maxlength="60"
+                       class="{{ $errors->has('meta_title') ? 'input-error' : '' }}"
+                       placeholder="Enter meta title">
+                @error('meta_title')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="field">
+                <div class="field-top">
+                    <label class="field-label">Meta Description</label>
+                    <span class="field-hint">Recommended under 160 chars</span>
+                </div>
+                <textarea name="meta_description" rows="3" maxlength="160"
+                          class="{{ $errors->has('meta_description') ? 'input-error' : '' }}"
+                          placeholder="Enter meta description">{{ old('meta_description', $item->meta_description) }}</textarea>
+                @error('meta_description')
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
+            </div>
+        </div>
+
 
         <div class="savebar">
             <div class="savebar-inner">

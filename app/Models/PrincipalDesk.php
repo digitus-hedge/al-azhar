@@ -20,6 +20,8 @@ class PrincipalDesk extends Model
         // 'message',
         'is_active',
         'sort_order',
+            'meta_title',
+    'meta_description',
     ];
 
     protected $casts = [

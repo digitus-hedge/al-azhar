@@ -29,7 +29,7 @@
     <div class="header">
         <div>
             <h1>Events</h1>
-            <p>Manage the events shown in the "Upcoming Events" section on your homepage.</p>
+            <p>Manage the events shown in the "Upcoming or Past Events" section on your homepage.</p>
         </div>
         <a href="{{ route('admin.events.create') }}" class="btn-save" style="text-decoration:none;">
             <i class="bi bi-plus-lg"></i>
@@ -119,49 +119,45 @@
                 </thead>
                 <tbody>
                     @foreach ($events as $event)
-                        <tr>
-                            <td>
-                                @if ($event->image)
-                                    <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="row-thumb">
-                                @else
-                                    <div class="row-thumb row-thumb-placeholder"><i class="bi bi-calendar-event"></i></div>
-                                @endif
-                            </td>
-                            <td>
-                                <b>{{ $event->title }}</b>
-                                @if ($event->link)
-                                    <i class="bi bi-link-45deg" title="Has event link" style="color:#9AA1B2;margin-left:2px;"></i>
-                                @endif
-                            </td>
-                            <td>
-                                {{ optional($event->event_date)->format('d M Y') }}
-                                @if ($event->event_time)
-                                    <br><span class="muted-sub">{{ $event->event_time->format('h:i A') }}</span>
-                                @endif
-                            </td>
-                            <td>{{ $event->venue ?: '—' }}</td>
-                          
-                            <td style="text-align:right;">
-                                <a href="{{ route('admin.events.edit', $event) }}" class="icon-btn" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-
-                                     @if(auth()->user()->role === 'admin')
-
-                                <button type="button" class="icon-btn icon-btn-danger" title="Delete"
-                                        onclick="confirmDeleteEvent({{ $event->id }}, '{{ addslashes($event->title) }}')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                                <form id="delete-form-{{ $event->id }}"
-                                      action="{{ route('admin.events.destroy', $event) }}"
-                                      method="POST" style="display:none;">
-                                    @csrf
-                                    @method('DELETE')
-                                </form>
-                                @endif
-                                
-                            </td>
-                        </tr>
+                      <tr>
+    <td data-label="Image">
+        @if ($event->image)
+            <img src="{{ Storage::url($event->image) }}" alt="{{ $event->title }}" class="row-thumb">
+        @else
+            <div class="row-thumb row-thumb-placeholder"><i class="bi bi-calendar-event"></i></div>
+        @endif
+    </td>
+    <td data-label="Title">
+        <b>{{ $event->title }}</b>
+        @if ($event->link)
+            <i class="bi bi-link-45deg" title="Has event link" style="color:#9AA1B2;margin-left:2px;"></i>
+        @endif
+    </td>
+    <td data-label="Date">
+        {{ optional($event->event_date)->format('d M Y') }}
+        @if ($event->event_time)
+            <br><span class="muted-sub">{{ $event->event_time->format('h:i A') }}</span>
+        @endif
+    </td>
+    <td data-label="Venue">{{ $event->venue ?: '—' }}</td>
+    <td data-label="Actions" style="text-align:right;white-space:nowrap;">
+        <a href="{{ route('admin.events.edit', $event) }}" class="icon-btn" title="Edit">
+            <i class="bi bi-pencil"></i>
+        </a>
+        @if (auth()->user()->role === 'admin')
+            <button type="button" class="icon-btn icon-btn-danger" title="Delete"
+                    onclick="confirmDeleteEvent({{ $event->id }}, @js($event->title))">
+                <i class="bi bi-trash"></i>
+            </button>
+            <form id="delete-form-{{ $event->id }}"
+                  action="{{ route('admin.events.destroy', $event) }}"
+                  method="POST" style="display:none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endif
+    </td>
+</tr>
                     @endforeach
                 </tbody>
             </table>
@@ -366,6 +362,82 @@ function confirmDeleteEvent(id, title) {
     .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
     .pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
     .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+    .table-scroll{ overflow-x:auto; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px){
+    .toolbar{ flex-direction:column; align-items:stretch; }
+    .search-form{ max-width:none; min-width:0; }
+    .toolbar-right{ justify-content:space-between; }
+    .news-table th, .news-table td{ padding:12px 14px; }
+}
+
+/* ---------- Phone: rows become cards ---------- */
+@media (max-width: 640px){
+    .header{ flex-direction:column; align-items:stretch; margin-bottom:18px; }
+    .header h1{ font-size:21px; }
+    .header p{ font-size:13px; }
+    .header .btn-save{ justify-content:center; width:100%; }
+
+    .toolbar-right{ gap:10px; }
+    .toolbar-meta{ white-space:normal; }
+
+    .table-scroll{ overflow-x:visible; }
+    .news-table thead{ display:none; }
+    .news-table, .news-table tbody{ display:block; width:100%; }
+
+    /* [image] [title ...... actions]
+       [image] [date · time]
+       [image] [venue]                */
+    .news-table tr{
+        display:grid;
+        grid-template-columns:72px 1fr auto;
+        grid-template-areas:
+            "thumb title actions"
+            "thumb date  date"
+            "thumb venue venue";
+        gap:4px 12px; align-items:start;
+        padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2);
+    }
+    .news-table tbody tr:last-child{ border-bottom:none; }
+    .news-table td{ display:block; padding:0; border:none; }
+
+    .news-table td[data-label="Image"]  { grid-area:thumb; }
+    .news-table td[data-label="Title"]  { grid-area:title; min-width:0; font-size:14px; line-height:1.4; word-break:break-word; align-self:center; }
+    .news-table td[data-label="Actions"]{ grid-area:actions; }
+    .news-table td[data-label="Date"]   { grid-area:date; font-size:12.5px; color: var(--muted,#667085); }
+    .news-table td[data-label="Venue"]  { grid-area:venue; font-size:12.5px; color: var(--muted,#667085); min-width:0; }
+
+    /* Date and time on one line */
+    .news-table td[data-label="Date"] br{ display:none; }
+    .news-table td[data-label="Date"] .muted-sub::before{ content:'· '; }
+
+    /* Small icons before date and venue */
+    .news-table td[data-label="Date"]::before,
+    .news-table td[data-label="Venue"]::before{
+        font-family:'bootstrap-icons'; margin-right:5px; color: var(--faint,#9AA1B2);
+    }
+    .news-table td[data-label="Date"]::before { content:'\F1F6'; }   /* calendar */
+    .news-table td[data-label="Venue"]::before{ content:'\F3E8'; }   /* geo-alt */
+
+    .row-thumb{ width:72px; height:54px; border-radius:10px; }
+    .row-thumb-placeholder{ font-size:18px; }
+
+    .icon-btn{ width:38px; height:38px; margin-left:4px; }
+
+    .pager{ flex-direction:column; align-items:center; gap:12px; }
+    .pager-links{ flex-wrap:wrap; justify-content:center; }
+    .pager-btn{ min-width:36px; height:36px; }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 380px){
+    .perpage-form span{ display:none; }
+    .toolbar-right{ flex-direction:column; align-items:flex-start; }
+    .news-table tr{ grid-template-columns:56px 1fr auto; }
+    .row-thumb{ width:56px; height:42px; }
+}
 </style>
 
 @endsection

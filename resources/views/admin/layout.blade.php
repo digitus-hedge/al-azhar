@@ -910,7 +910,7 @@
     @endif
 
     {{-- News & Notices --}}
-    @if ($can('news'))
+    @if ($can('news-notices'))
         <div class="nav-group">
             <a class="nav-item {{ request()->routeIs('admin.news-notices*') ? 'active' : '' }}"
                href="{{ route('admin.news-notices') }}">

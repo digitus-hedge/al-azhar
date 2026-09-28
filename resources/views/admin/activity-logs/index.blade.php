@@ -49,7 +49,7 @@
                 <label>Search</label>
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" name="q" value="{{ $filters['q'] }}" placeholder="Record, user, module, IP or record ID…">
+                    <input type="text" name="q" value="{{ $filters['q'] }}" placeholder="Record, user, module or record ID…">
                 </div>
             </div>
 

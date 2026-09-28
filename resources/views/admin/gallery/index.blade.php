@@ -118,70 +118,58 @@
                 </thead>
                 <tbody>
                     @foreach ($items as $item)
-                        <tr>
-                          <td>
-    @if ($item->is_embed)
-        <div class="row-thumb-wrap">
-            @if ($item->thumbnail_url)
-                <img src="{{ $item->thumbnail_url }}" alt="{{ $item->title }}" class="row-thumb">
-            @else
-                <div class="row-thumb row-thumb-placeholder">
-                    <i class="bi bi-vimeo"></i>
-                </div>
-            @endif
-            <span class="thumb-badge {{ $item->video_provider }}">
-                <i class="bi bi-{{ $item->video_provider === 'youtube' ? 'youtube' : 'vimeo' }}"></i>
-            </span>
-        </div>
-    @elseif ($item->is_video)
-        <div class="row-thumb-wrap">
-            <video src="{{ $item->media_url }}" class="row-thumb" muted preload="metadata"></video>
-            <span class="thumb-badge video"><i class="bi bi-play-fill"></i></span>
-        </div>
-    @elseif ($item->media)
-        <img src="{{ $item->media_url }}" alt="{{ $item->title }}" class="row-thumb">
-    @else
-        <div class="row-thumb row-thumb-placeholder">
-            <i class="bi bi-image"></i>
-        </div>
-    @endif
-</td>
-                            <td>
-                                <b>{{ $item->title }}</b>
-                            </td>
-                            <td>
-                                <span class="badge-type {{ $item->is_video ? 'badge-type-video' : 'badge-type-image' }}">
-                                    <i class="bi bi-{{ $item->is_video ? 'camera-video' : 'image' }}"></i>
-                                    {{ ucfirst($item->media_type) }}
-                                </span>
-                            </td>
-                            <!-- <td>
-                                @if ($item->is_active)
-                                    <span class="badge-active"><i class="bi bi-check-circle-fill"></i> Active</span>
-                                @else
-                                    <span class="badge-muted">Inactive</span>
-                                @endif
-                            </td> -->
-                            <td style="text-align:right;">
-                                <a href="{{ route('admin.gallery.edit', $item) }}" class="icon-btn" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                              
-                                 @if(auth()->user()->role === 'admin')
-        <button type="button" class="icon-btn icon-btn-danger" title="Delete"
-                onclick="confirmDeleteGalleryItem({{ $item->id }}, '{{ addslashes($item->title) }}')">
-            <i class="bi bi-trash"></i>
-        </button>
-        <form id="delete-form-{{ $item->id }}"
-              action="{{ route('admin.gallery.destroy', $item) }}"
-              method="POST" style="display:none;">
-            @csrf
-            @method('DELETE')
-        </form>
-    @endif
-
-                            </td>
-                        </tr>
+                     <tr>
+    <td data-label="Media">
+        @if ($item->is_embed)
+            <div class="row-thumb-wrap">
+                @if ($item->thumbnail_url)
+                    <img src="{{ $item->thumbnail_url }}" alt="{{ $item->title }}" class="row-thumb">
+                @else
+                    <div class="row-thumb row-thumb-placeholder"><i class="bi bi-vimeo"></i></div>
+                @endif
+                <span class="thumb-badge {{ $item->video_provider }}">
+                    <i class="bi bi-{{ $item->video_provider === 'youtube' ? 'youtube' : 'vimeo' }}"></i>
+                </span>
+            </div>
+        @elseif ($item->is_video)
+            <div class="row-thumb-wrap">
+                <video src="{{ $item->media_url }}" class="row-thumb" muted preload="metadata"></video>
+                <span class="thumb-badge video"><i class="bi bi-play-fill"></i></span>
+            </div>
+        @elseif ($item->media)
+            <img src="{{ $item->media_url }}" alt="{{ $item->title }}" class="row-thumb">
+        @else
+            <div class="row-thumb row-thumb-placeholder"><i class="bi bi-image"></i></div>
+        @endif
+    </td>
+    <td data-label="Title">
+        <b>{{ $item->title }}</b>
+    </td>
+    <td data-label="Type">
+        @php $isVideoType = $item->is_video || $item->is_embed; @endphp
+        <span class="badge-type {{ $isVideoType ? 'badge-type-video' : 'badge-type-image' }}">
+            <i class="bi bi-{{ $item->is_embed ? $item->video_provider : ($item->is_video ? 'camera-video' : 'image') }}"></i>
+            {{ $item->is_embed ? ucfirst($item->video_provider) : ucfirst($item->media_type) }}
+        </span>
+    </td>
+    <td data-label="Actions" style="text-align:right;white-space:nowrap;">
+        <a href="{{ route('admin.gallery.edit', $item) }}" class="icon-btn" title="Edit">
+            <i class="bi bi-pencil"></i>
+        </a>
+        @if (auth()->user()->role === 'admin')
+            <button type="button" class="icon-btn icon-btn-danger" title="Delete"
+                    onclick="confirmDeleteGalleryItem({{ $item->id }}, @js($item->title))">
+                <i class="bi bi-trash"></i>
+            </button>
+            <form id="delete-form-{{ $item->id }}"
+                  action="{{ route('admin.gallery.destroy', $item) }}"
+                  method="POST" style="display:none;">
+                @csrf
+                @method('DELETE')
+            </form>
+        @endif
+    </td>
+</tr>
                     @endforeach
                 </tbody>
             </table>
@@ -405,6 +393,72 @@ function confirmDeleteGalleryItem(id, title) {
 .thumb-badge.youtube { background: #FF0000; }
 .thumb-badge.vimeo   { background: #1AB7EA; }
 .thumb-badge.video   { background: rgba(0,0,0,0.65); }
+
+.table-scroll{ overflow-x:auto; }
+
+/* ---------- Tablet ---------- */
+@media (max-width: 900px){
+    .toolbar{ flex-direction:column; align-items:stretch; }
+    .search-form{ max-width:none; min-width:0; }
+    .toolbar-right{ justify-content:space-between; }
+    .news-table th, .news-table td{ padding:12px 14px; }
+}
+
+/* ---------- Phone: rows become cards ---------- */
+@media (max-width: 640px){
+    .header{ flex-direction:column; align-items:stretch; margin-bottom:18px; }
+    .header h1{ font-size:21px; }
+    .header p{ font-size:13px; }
+    .header .btn-save{ justify-content:center; width:100%; }
+
+    .toolbar-right{ gap:10px; }
+    .toolbar-meta{ white-space:normal; }
+
+    .table-scroll{ overflow-x:visible; }
+    .news-table thead{ display:none; }
+    .news-table, .news-table tbody{ display:block; width:100%; }
+
+    /* [media] [title ...... actions]
+       [media] [type badge]           */
+    .news-table tr{
+        display:grid;
+        grid-template-columns:88px 1fr auto;
+        grid-template-areas:
+            "thumb title actions"
+            "thumb type  type";
+        gap:6px 12px; align-items:center;
+        padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2);
+    }
+    .news-table tbody tr:last-child{ border-bottom:none; }
+    .news-table td{ display:block; padding:0; border:none; }
+
+    .news-table td[data-label="Media"]  { grid-area:thumb; align-self:start; }
+    .news-table td[data-label="Title"]  { grid-area:title; min-width:0; font-size:14px; line-height:1.4; word-break:break-word; }
+    .news-table td[data-label="Type"]   { grid-area:type; align-self:start; }
+    .news-table td[data-label="Actions"]{ grid-area:actions; align-self:start; }
+
+    /* Bigger landscape thumbnail */
+    .row-thumb-wrap{ display:block; }
+    .row-thumb{ width:88px; height:66px; border-radius:10px; }
+    .row-thumb-placeholder{ font-size:20px; }
+    .thumb-badge{ width:22px; height:22px; font-size:12px; }
+
+    .badge-type{ font-size:11px; padding:3px 9px; }
+
+    .icon-btn{ width:38px; height:38px; margin-left:4px; }
+
+    .pager{ flex-direction:column; align-items:center; gap:12px; }
+    .pager-links{ flex-wrap:wrap; justify-content:center; }
+    .pager-btn{ min-width:36px; height:36px; }
+}
+
+/* ---------- Very small phones ---------- */
+@media (max-width: 380px){
+    .perpage-form span{ display:none; }
+    .toolbar-right{ flex-direction:column; align-items:flex-start; }
+    .news-table tr{ grid-template-columns:68px 1fr auto; }
+    .row-thumb{ width:68px; height:51px; }
+}
 </style>
 
 @endsection

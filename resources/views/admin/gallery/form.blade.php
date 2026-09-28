@@ -123,9 +123,10 @@
     <div id="video-preview" style="max-width:420px;margin-top:14px;{{ $item->is_embed ? '' : 'display:none;' }}">
         <div style="position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#0F1220;">
             <iframe id="video-preview-frame" src="{{ $item->embed_url }}"
-                    style="position:absolute;inset:0;width:100%;height:100%;border:0;"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowfullscreen></iframe>
+        referrerpolicy="strict-origin-when-cross-origin"
+        style="position:absolute;inset:0;width:100%;height:100%;border:0;"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
         </div>
     </div>
 </div>

@@ -41,7 +41,7 @@
 
             <div class="row-fields">
                 <div class="field" style="flex:2;">
-                    <div class="field-top"><label class="field-label">Name</label></div>
+                    <div class="field-top"><label class="field-label">Name <span class="req">*</span></label></div>
                     <input type="text" name="name" value="{{ old('name', $item->name) }}"
                            class="{{ $errors->has('name') ? 'input-error' : '' }}"
                            placeholder="e.g. Higher Secondary">

@@ -24,6 +24,7 @@ class GalleryController extends Controller
      * Columns that are allowed to be sorted on from the URL.
      */
     protected array $sortable = [
+        'id',
         'title',
         'media_type',
         'is_active',
@@ -39,47 +40,49 @@ class GalleryController extends Controller
     /**
      * Listing page — search, sort, per-page (same pattern as Staff).
      */
-    public function index(Request $request): View
-    {
-        $search  = trim((string) $request->query('q', ''));
-        $sortBy  = $request->query('sort', 'sort_order');
-        $sortDir = strtolower($request->query('dir', 'asc')) === 'desc' ? 'desc' : 'asc';
-        $perPage = (int) $request->query('per_page', 10);
+public function index(Request $request): View
+{
+    $search  = trim((string) $request->query('q', ''));
+    $sortBy  = $request->query('sort', 'id');
+    $sortDir = strtolower($request->query('dir', $sortBy === 'id' ? 'desc' : 'asc')) === 'desc' ? 'desc' : 'asc';
+    $perPage = (int) $request->query('per_page', 10);
 
-        if (! in_array($sortBy, $this->sortable, true)) {
-            $sortBy = 'sort_order';
-        }
+    if (! in_array($sortBy, $this->sortable, true)) {
+        $sortBy  = 'id';
+        $sortDir = 'desc';
+    }
 
-        if (! in_array($perPage, $this->perPageOptions, true)) {
-            $perPage = 10;
-        }
+    if (! in_array($perPage, $this->perPageOptions, true)) {
+        $perPage = 10;
+    }
 
-        $query = Gallery::query();
+    $query = Gallery::query();
 
-         if ($search !== '') {
+    if ($search !== '') {
         $query->where(function ($q) use ($search) {
             $q->where('title', 'like', "%{$search}%")
               ->orWhere('media_type', 'like', "%{$search}%");
         });
     }
 
-        $query->orderBy($sortBy, $sortDir);
-        if ($sortBy !== 'title') {
-            $query->orderBy('title');
-        }
+    $query->orderBy($sortBy, $sortDir);
 
-        $items = $query->paginate($perPage)->appends($request->query());
-
-        return view('admin.gallery.index', [
-            'items'          => $items,
-            'search'         => $search,
-            'sortBy'         => $sortBy,
-            'sortDir'        => $sortDir,
-            'perPage'        => $perPage,
-            'perPageOptions' => $this->perPageOptions,
-        ]);
+    // Tie-breaker: newest first when values are equal
+    if ($sortBy !== 'id') {
+        $query->orderByDesc('id');
     }
 
+    $items = $query->paginate($perPage)->appends($request->query());
+
+    return view('admin.gallery.index', [
+        'items'          => $items,
+        'search'         => $search,
+        'sortBy'         => $sortBy,
+        'sortDir'        => $sortDir,
+        'perPage'        => $perPage,
+        'perPageOptions' => $this->perPageOptions,
+    ]);
+}
     /**
      * Show the create form.
      */

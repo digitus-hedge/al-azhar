@@ -99,7 +99,7 @@ class ActivityLogController extends Controller
             $out = fopen('php://output', 'w');
             fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM so Excel shows Malayalam/Arabic text correctly
 
-            fputcsv($out, ['Date & Time', 'User', 'Email', 'Role', 'Action', 'Module', 'Record', 'Record ID', 'Changed Fields', 'IP Address']);
+            fputcsv($out, ['Date & Time', 'User', 'Email', 'Role', 'Action', 'Module', 'Record',  'Changed Fields']);
 
             ActivityLog::query()
                 ->filter($filters)
@@ -114,9 +114,9 @@ class ActivityLogController extends Controller
                             $log->action_label,
                             $log->module,
                             $log->subject_label,
-                            $log->subject_id,
+                            // $log->subject_id,
                             is_array($log->properties) ? implode(', ', array_keys($log->properties)) : '',
-                            $log->ip_address,
+                            // $log->ip_address,
                         ]);
                     }
                 });
