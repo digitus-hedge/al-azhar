@@ -4,6 +4,10 @@
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 
+@php
+    $ctMapQuery = 'Al Azhar Central School, Kunnathukad, Paranatukunnu, Mala, Kerala 680732';
+@endphp
+
 @section('content')
 
     <!-- Start Page Heading Section -->
@@ -13,6 +17,10 @@
         <div class="container">
             <div class="td_page_heading_in">
                 <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Contact Us</h1>
+                <ol class="breadcrumb m-0 td_fs_20 td_opacity_8 td_semibold td_white_color wow fadeInUp" data-wow-duration="0.9s" data-wow-delay="0.4s">
+                    <li class="breadcrumb-item"><a href="{{ url('/') }}">Home</a></li>
+                    <li class="breadcrumb-item active">Contact Us</li>
+                </ol>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -124,7 +132,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="contact_modal_form_item wow zoomIn" data-wow-delay="0.7s"> 
+                                            <div class="contact_modal_form_item wow zoomIn" data-wow-delay="0.7s">
                                                 <button type="submit"
                                                     class="td_btn td_style_1 td_radius_30 td_medium td_with_shadow contact_submit">
                                                     <span class="td_btn_in td_white_color td_accent_bg">
@@ -148,26 +156,66 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-4 offset-xl-1 col-lg-5 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
-                            <div class="td_contact_info">
-                                <div class="td_section_heading td_style_2 td_mb_20">
-                                    <h2 class="td_contact_info_title td_fs_36 mb-0">Our Office Address</h2>
-                                </div>
-                                {{-- TODO: replace with your real address / phone / email --}}
-                                <div class="td_mb_40 wow fadeInUp" data-wow-delay="0.5s">
-                                    <h2 class="td_fs_24 td_semibold td_mb_20">Al Azhar Central School</h2>
-                                    <p class="td_fs_18 td_heading_color td_medium td_mb_10">Mala, Thrissur, Kerala, India</p>
-                                    <p class="td_fs_18 td_heading_color td_medium td_mb_10 td_opacity_7">
-                                        <a href="tel:99884567809">99884567809</a>
-                                    </p>
-                                    <p class="td_fs_18 td_heading_color td_medium mb-0 td_opacity_7">
-                                        <a href="mailto:al-azhar@gmail.com">al-azhar@gmail.com</a>
-                                    </p>
-                                </div>
-                                <div class="wow fadeInUp" data-wow-delay="0.65s">  
-                                    <h2 class="td_fs_24 td_semibold td_mb_20">Office Hours</h2>
-                                    <p class="td_fs_18 td_heading_color td_medium td_mb_10">Monday – Saturday</p>
-                                    <p class="td_fs_18 td_heading_color td_medium mb-0 td_opacity_7">9:00 AM – 4:00 PM</p>
+                        <div class="col-lg-5 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.3s">
+                            <div class="ct_info">
+                                <h2 class="ct_title wow fadeInDown" data-wow-delay="0.35s">Contact Info</h2>
+                                <p class="ct_intro wow fadeInUp" data-wow-delay="0.45s">
+                                    AL AZHAR CENTRAL SCHOOL is affiliated to the Central Board of Secondary Education
+                                    (CBSE, Affiliation No. 930609) New Delhi. It is a Boarding school imparting holistic
+                                    education from Pre-KG to XIIth Grades.
+                                </p>
+
+                                <div class="ct_grid">
+                                    {{-- Location --}}
+                                    <div class="ct_item wow fadeInUp" data-wow-delay="0.5s">
+                                        <div class="ct_head">
+                                            <span class="ct_icon">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z"/></svg>
+                                            </span>
+                                            <h3>Location</h3>
+                                        </div>
+                                        <a href="https://maps.google.com/?q={{ urlencode($ctMapQuery) }}" target="_blank" rel="noopener">
+                                            Kunnathukad, Paranatukunnu, P.O, Mala, Kerala 680732
+                                        </a>
+                                    </div>
+
+                                    {{-- Email --}}
+                                    <div class="ct_item wow fadeInUp" data-wow-delay="0.6s">
+                                        <div class="ct_head">
+                                            <span class="ct_icon">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.2-8 5-8-5V6l8 5 8-5v2.2z"/></svg>
+                                            </span>
+                                            <h3>Email</h3>
+                                        </div>
+                                        <a href="mailto:alazharmala@gmail.com">alazharmala@gmail.com</a>
+                                        <a href="mailto:alazharschool@yahoo.com">alazharschool@yahoo.com</a>
+                                    </div>
+
+                                    {{-- Phone --}}
+                                    <div class="ct_item wow fadeInUp" data-wow-delay="0.7s">
+                                        <div class="ct_head">
+                                            <span class="ct_icon">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1l-2.2 2.23z"/></svg>
+                                            </span>
+                                            <h3>Phone</h3>
+                                        </div>
+                                        <a href="tel:+918943337011">Mob: 894 333 7011</a>
+                                        <span class="ct_phones">
+                                            <a href="tel:+914802897605">+91 480 289 7605</a>,
+                                            <a href="tel:+914802897505">+91 480 289 7505</a>
+                                        </span>
+                                    </div>
+
+                                    {{-- Website --}}
+                                    <div class="ct_item wow fadeInUp" data-wow-delay="0.8s">
+                                        <div class="ct_head">
+                                            <span class="ct_icon">
+                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
+                                            </span>
+                                            <h3>Website</h3>
+                                        </div>
+                                        <a href="https://alazharmala.com" target="_blank" rel="noopener">alazharmala.com</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -178,7 +226,7 @@
         <div class="td_height_100 td_height_lg_50"></div>
         <div class="td_map wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.1s">
             <iframe id="map" title="School location"
-                src="https://maps.google.com/maps?q={{ urlencode('Al Azhar Central School, Mala, Thrissur, Kerala') }}&output=embed"
+                src="https://maps.google.com/maps?q={{ urlencode($ctMapQuery) }}&output=embed"
                 loading="lazy" allowfullscreen=""></iframe>
         </div>
     </section>
@@ -193,6 +241,34 @@
     .contact_modal_form .form-control.is-invalid { border-color: #dc3545; }
     .contact_alert { border-radius: 10px; margin-bottom: 20px; }
     .contact_submit[disabled] { opacity: .7; pointer-events: none; }
+
+    /* Breadcrumb separator (same as other pages) */
+    .td_page_heading .breadcrumb-item + .breadcrumb-item::before { content: "/" !important; color: #fff; padding: 0 8px; }
+
+    /* ---------- Contact Info ---------- */
+    .ct_info { --ct: var(--heading-color, #00539B); }
+    .ct_title { margin: 0 0 18px; font-size: 44px; font-weight: 700; color: var(--ct); line-height: 1.15; }
+    .ct_intro { margin: 0 0 40px; font-size: 16px; line-height: 1.75; color: #6b7489; }
+
+    .ct_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px 30px; }
+    .ct_item { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .ct_item.animated { animation-fill-mode: backwards; }
+    .ct_head { display: flex; align-items: center; gap: 16px; margin-bottom: 14px; }
+    .ct_icon {
+        width: 40px; height: 40px; flex: none; border-radius: 4px;
+        display: flex; align-items: center; justify-content: center;
+        background: var(--ct); color: #fff; transition: transform .3s ease, border-radius .3s ease;
+    }
+    .ct_item:hover .ct_icon { transform: rotate(-8deg) scale(1.06); border-radius: 10px; }
+    .ct_head h3 { margin: 0; font-size: 21px; font-weight: 600; color: var(--heading-color, #0d1b4c); }
+    .ct_item a, .ct_phones { font-size: 16px; line-height: 1.6; color: var(--ct); word-break: break-word; }
+    .ct_item a:hover { color: #002F5F; text-decoration: underline; }
+
+    @media (max-width: 1199px) { .ct_title { font-size: 38px; } }
+    @media (max-width: 575px) {
+        .ct_title { font-size: 32px; }
+        .ct_grid { grid-template-columns: 1fr; gap: 28px; }
+    }
 </style>
 @endpush
 

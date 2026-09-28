@@ -107,7 +107,7 @@
 
     <div class="af_bottom">
         <div class="container af_bottom_in">
-            <p class="mb-0">&copy; {{ date('Y') }} Al Azhar Central School, Mala. All rights reserved.</p>
+            <p class="mb-0">&copy; {{ date('Y') }} Al Azhar Central School Mala, All Right Reserved. All rights reserved.</p>
             <ul class="af_bottom_links">
                 <li><a href="{{ $ftLink('boarding') }}">Pay Fees</a></li>
                 <li><a href="{{ $ftLink('mandatory-disclosure') }}">Mandatory Disclosure</a></li>

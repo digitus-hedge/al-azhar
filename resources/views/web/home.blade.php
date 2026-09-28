@@ -20,20 +20,21 @@
 
     <div class="container">
         <div class="td_hero_text" data-wow-duration="0.9s" data-wow-delay="0.35s">
-            <p
-                class="td_hero_subtitle_up td_fs_18 td_white_color td_spacing_1 td_semibold text-uppercase td_mb_10 td_opacity_9">
+            <p class="td_hero_subtitle_up td_fs_18 td_white_color td_spacing_1 td_semibold text-uppercase td_mb_10 td_opacity_9 wow fadeInDown"
+            data-wow-duration="0.9s" data-wow-delay="0.2s">
                 Knowledge is Power</p>
-            <h1 class="td_hero_title td_fs_64 td_white_color td_mb_12">
+            <h1 class="td_hero_title td_fs_64 td_white_color td_mb_12 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.4s">
                 @if($banner && $banner->title)
                     {{ $banner->title }}
                 @else
                     <span>Educve</span> - The Best Place to Invest in your Knowledge
                 @endif
             </h1>
-            <p class="td_hero_subtitle td_fs_18 td_white_color td_opacity_7 td_mb_30">
+            <p class="td_hero_subtitle td_fs_18 td_white_color td_opacity_7 td_mb_30 wow zoomIn" data-wow-duration="1s" data-wow-delay="0.6s">
                 {{ $banner->description ?? 'A university is a vibrant institution that serves as a hub for higher education and research. It provides a dynamic environment.' }}
             </p>
-            <a href="{{ url('/about-us') }}" class="td_btn td_style_1 td_radius_30 td_medium">
+            <a href="{{ url('/about-us') }}" class="td_btn td_style_1 td_radius_30 td_medium hero_explore_btn wow zoomIn"
+                data-wow-duration="0.8s" data-wow-delay="0.8s">
                 <span class="td_btn_in td_white_color td_accent_bg">
                     <span>Explore Us</span>
                     <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -86,15 +87,19 @@
     }
 
     /* keep the existing dark overlay (td_heading_bg) and content above the slides */
-    .td_hero_carousel_wrap .container,
-    .td_hero_carousel_wrap .td_lines {
-        position: relative;
-        z-index: 2;
-    }
-
-    .td_hero_carousel_wrap.td_heading_bg::before {
-        z-index: 1;
-    }
+    /* Text and button on top, decorative layers below and never clickable */
+.td_hero_carousel_wrap .container {
+    position: relative;
+    z-index: 3;
+}
+.td_hero_carousel_wrap .td_lines {
+    z-index: 2;
+    pointer-events: none;
+}
+.td_hero_carousel_wrap.td_heading_bg::before {
+    z-index: 1;
+    pointer-events: none;
+}
 
     /* single-image case: no slick controls needed, just show it statically */
     .td_hero_bg_carousel:not(.slick-initialized) .td_hero_bg_slide {
@@ -113,6 +118,32 @@
     }
     .td_hero_bg_carousel.hero_fade .td_hero_bg_slide.is-active { opacity: 1; }
 
+    /* Explore Us button hover */
+.hero_explore_btn.animated { animation-fill-mode: backwards; }   /* lets the hover lift work after the zoom-in */
+.hero_explore_btn .td_btn_in {
+    position: relative; overflow: hidden;
+    transition: transform .35s ease, box-shadow .35s ease, background-color .35s ease, color .35s ease;
+}
+.hero_explore_btn .td_btn_in svg { transition: transform .35s ease; }
+
+/* Shine sweep */
+.hero_explore_btn .td_btn_in::after {
+    content: ""; position: absolute; top: 0; left: -75%; width: 50%; height: 100%;
+    background: linear-gradient(120deg, transparent, rgba(255,255,255,.45), transparent);
+    transform: skewX(-20deg); pointer-events: none;
+}
+
+.hero_explore_btn:hover .td_btn_in {
+    transform: translateY(-4px);
+    background-color: #fff !important;
+    color: var(--heading-color, #00539B) !important;
+    box-shadow: 0 18px 35px -12px rgba(0, 0, 0, .55);
+}
+.hero_explore_btn:hover .td_btn_in svg { transform: rotate(45deg); }
+.hero_explore_btn:hover .td_btn_in::after { animation: heroBtnShine .8s ease; }
+@keyframes heroBtnShine { to { left: 125%; } }
+
+.hero_explore_btn:active .td_btn_in { transform: translateY(-1px); }
     /* Stop left/right slides from causing a horizontal scrollbar (without blocking scroll) */
 html, body { overflow-x: clip; }
 section { overflow-x: clip; }
@@ -1148,6 +1179,24 @@ section { overflow-x: clip; }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initHeroCarousel);
     else initHeroCarousel();
 
+        /* Explore Us: always go to the About page, even if a decorative layer
+       ends up on top of the button */
+    (function () {
+        var btn = document.querySelector('.hero_explore_btn');
+        var hero = document.querySelector('.td_hero_carousel_wrap');
+        if (!btn || !hero) return;
+
+        hero.addEventListener('click', function (e) {
+            if (btn.contains(e.target)) return;              // normal click on the button: let the link work
+            var r = btn.getBoundingClientRect();
+            var inside = e.clientX >= r.left && e.clientX <= r.right &&
+                         e.clientY >= r.top  && e.clientY <= r.bottom;
+            if (inside) {                                    // click landed on something covering the button
+                e.preventDefault();
+                window.location.href = btn.href;
+            }
+        });
+    })();
 })();
 </script>
 @endpush
