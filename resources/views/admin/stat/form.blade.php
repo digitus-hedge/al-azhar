@@ -56,60 +56,42 @@
             </div>
 
             <div class="stats-table-header">
-                <span>Stat</span>
-                <span>Description</span>
+    <span>Stat</span>
+    <span>Description</span>
+</div>
+
+@php
+    $placeholders = [
+        'Academics'  => 'e.g. SSLC & Plus Two with a 100% pass rate',
+        'Boarding'   => 'e.g. Safe, supervised residential hostels',
+        'Events'     => 'e.g. Cultural, sports & academic events all year',
+        'Facilities' => 'e.g. Labs, library, sports grounds & more',
+    ];
+@endphp
+
+<div id="statsRows">
+    @foreach ($presetLabels as $index => $label)
+        @php $item = $existingByLabel->get($label, []); @endphp
+
+        <div class="stats-row">
+            {{-- Stat (fixed label) --}}
+            <div class="input-group-cell" data-label="Stat">
+                <div class="stat-label-display">{{ $label }}</div>
+                <input type="hidden" name="items[{{ $index }}][label]" value="{{ $label }}">
             </div>
 
-
-            @php
-            $placeholders = [
-            'Year of Excellence' => ['value' => 'e.g. 25+', 'desc' => 'e.g. Years of academic excellence'],
-            'Students Enrolled' => ['value' => 'e.g. 1,200+', 'desc' => 'e.g. Students currently enrolled'],
-            'Faculty Strength' => ['value' => 'e.g. 80+', 'desc' => 'e.g. Qualified teaching staff'],
-            'Pass Percentage' => ['value' => 'e.g. 100%', 'desc' => 'e.g. SSLC / Plus Two pass rate'],
-            ];
-            @endphp
-
-            <div id="statsRows">
-                @foreach ($presetLabels as $index => $label)
-                    @php $item = $existingByLabel->get($label, []); @endphp
-                    <div class="stats-row-wrapper">
-                        <div class="stats-row">
-                            <div class="input-group-cell" data-label="Stat">
-                                <div class="stat-label-display">{{ $label }}</div>
-                                <input type="hidden" name="items[{{ $index }}][label]" value="{{ $label }}">
-                            </div>
-                            <div class="input-group-cell" data-label="Description">
-                               <textarea name="items[{{ $index }}][description]" maxlength="150" rows="2"
-                                    placeholder="e.g. Held & managed"
-                                    class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">{{ old("items.$index.description", $item['description'] ?? '') }}</textarea>
-                                @error("items.$index.description")
-                                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                                @enderror
-                            </div>
-                        </div>
-                        <div class="input-group-cell" data-label="Value">
-                            <input type="text" name="items[{{ $index }}][value]" maxlength="10"
-                                value="{{ old("items.$index.value", $item['value'] ?? '') }}"
-                                  placeholder="{{ $ph['value'] }}"
-                                class="{{ $errors->has("items.$index.value") ? 'input-error' : '' }}">
-                            @error("items.$index.value")
-                            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                            @enderror
-                        </div>
-                        <!-- <div class="input-group-cell" data-label="Description">
-                            <input type="text" name="items[{{ $index }}][description]" maxlength="45"
-                                value="{{ old("items.$index.description", $item['description'] ?? '') }}"
-                               placeholder="{{ $ph['desc'] }}"
-                                class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">
-                            @error("items.$index.description")
-                            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                            @enderror
-                        </div> -->
-                    </div>
-                </div>
-                @endforeach
+            {{-- Description --}}
+            <div class="input-group-cell" data-label="Description">
+                <textarea name="items[{{ $index }}][description]" maxlength="150" rows="2"
+                    placeholder="{{ $placeholders[$label] ?? '' }}"
+                    class="{{ $errors->has("items.$index.description") ? 'input-error' : '' }}">{{ old("items.$index.description", $item['description'] ?? '') }}</textarea>
+                @error("items.$index.description")
+                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+                @enderror
             </div>
+        </div>
+    @endforeach
+</div>
         </div>
 
         <div class="savebar">
