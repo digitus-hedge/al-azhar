@@ -164,12 +164,16 @@
                                     @endif
                                 </td>
                                 <td>
-                                    <select class="status-select st-{{ $e->status }}" data-url="{{ route('admin.admission-enquiries.status', $e) }}"
-                                            data-current="{{ $e->status }}" onchange="changeStatus(this)">
-                                        @foreach ($statuses as $key => $label)
-                                            <option value="{{ $key }}" @selected($e->status === $key)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
+                              <select class="status-select st-{{ $e->status }}" data-url="{{ route('admin.admission-enquiries.status', $e) }}"
+        data-current="{{ $e->status }}" onchange="changeStatus(this)">
+    @foreach ($statuses as $key => $label)
+        <option value="{{ $key }}"
+                @selected($e->status === $key)
+                @disabled($key === 'new')>
+            {{ $label }}
+        </option>
+    @endforeach
+</select>
                                 </td>
                                 <td style="text-align:right;white-space:nowrap;">
                                     <a href="{{ route('admin.admission-enquiries.show', $e) }}" class="icon-btn" title="View">
@@ -235,20 +239,13 @@ function changeStatus(select) {
         const data = await r.json().catch(() => ({}));
         if (!r.ok) throw new Error(data.message || 'Could not change status.');
 
-        select.className = 'status-select st-' + select.value;
-        select.dataset.current = select.value;
-        select.closest('tr').classList.toggle('is-new', select.value === 'new');
-        const dot = select.closest('tr').querySelector('.dot-new');
-        if (dot && select.value !== 'new') dot.remove();
-
-        Swal.fire({ icon: 'success', title: data.message || 'Saved', toast: true, position: 'top-end',
-                    showConfirmButton: false, timer: 1800, timerProgressBar: true });
+        window.location.reload();   // refresh counts, tabs and list; toast comes from session
     })
     .catch(err => {
         select.value = previous;
+        select.disabled = false;
         Swal.fire({ icon: 'error', title: 'Error', text: err.message, confirmButtonColor: '#002F5F' });
-    })
-    .finally(() => { select.disabled = false; });
+    });
 }
 
 function confirmDeleteEnquiry(id, name) {

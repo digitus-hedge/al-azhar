@@ -77,16 +77,18 @@
                 </div>
 
                 <label class="lbl">Status</label>
-                <div class="status-picker">
-                    @foreach ($statuses as $key => $label)
-                        <label class="st-option">
-                            <input type="radio" name="status" value="{{ $key }}" @checked(old('status', $enquiry->status) === $key)>
-                            <span class="st-card st-{{ $key }}">
-                                <i class="bi {{ \App\Models\AdmissionEnquiry::STATUS_ICONS[$key] }}"></i> {{ $label }}
-                            </span>
-                        </label>
-                    @endforeach
-                </div>
+             <div class="status-picker">
+    @foreach ($statuses as $key => $label)
+        <label class="st-option {{ $key === 'new' ? 'is-locked' : '' }}">
+            <input type="radio" name="status" value="{{ $key }}"
+                   @checked(old('status', $enquiry->status) === $key)
+                   @disabled($key === 'new')>
+            <span class="st-card st-{{ $key }}">
+                <i class="bi {{ \App\Models\AdmissionEnquiry::STATUS_ICONS[$key] }}"></i> {{ $label }}
+            </span>
+        </label>
+    @endforeach
+</div>
 
                 <label class="lbl" style="margin-top:16px;">Admin notes <span class="field-hint">(only visible to staff)</span></label>
                 <textarea name="admin_notes" rows="4" maxlength="5000"
@@ -321,6 +323,10 @@ function confirmDelete() {
         background:#fff; color:#C62828; border:1px solid #F3C4C4;
     }
     .btn-delete:hover{ background:#FFF6F6; }
+    
+    .st-option.is-locked { cursor: not-allowed; }
+    .st-option input:disabled + .st-card { opacity: .55; cursor: not-allowed; pointer-events: none; }
+    .st-option input:disabled:checked + .st-card { opacity: .8; } /* current "New" still readable */
 </style>
 
 @endsection

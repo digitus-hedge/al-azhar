@@ -15,7 +15,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class AdmissionEnquiryController extends Controller
 {
     protected array $sortable = [
-        'created_at', 'student_name', 'parent_name', 'grade', 'status', 'needs_hostel',
+        'created_at',
+        'student_name',
+        'parent_name',
+        'grade',
+        'status',
+        'needs_hostel',
     ];
 
     protected array $perPageOptions = [10, 25, 50, 100];
@@ -64,7 +69,7 @@ class AdmissionEnquiryController extends Controller
             'sortDir'        => $sortDir,
             'perPage'        => $perPage,
             'perPageOptions' => $this->perPageOptions,
-            'hasFilters'     => collect($filters)->except('status')->filter(fn ($v) => $v !== null)->isNotEmpty(),
+            'hasFilters'     => collect($filters)->except('status')->filter(fn($v) => $v !== null)->isNotEmpty(),
         ]);
     }
 
@@ -133,6 +138,28 @@ class AdmissionEnquiryController extends Controller
     /**
      * Quick status change from the list (one click).
      */
+
+    // public function updateStatus(Request $request, AdmissionEnquiry $admissionEnquiry): JsonResponse|RedirectResponse
+    // {
+    //     $status = $request->validate([
+    //         'status' => ['required', Rule::in(array_keys(AdmissionEnquiry::STATUSES))],
+    //     ])['status'];
+
+    //     $data = ['status' => $status];
+    //     if ($status !== 'new' && ! $admissionEnquiry->contacted_at) {
+    //         $data['contacted_at'] = now();
+    //     }
+
+    //     $admissionEnquiry->update($data);
+
+    //     if ($request->wantsJson()) {
+    //         return response()->json(['message' => 'Status changed to ' . $admissionEnquiry->status_label . '.']);
+    //     }
+
+    //     return back()->with('success', 'Status changed to ' . $admissionEnquiry->status_label . '.');
+    // }
+
+
     public function updateStatus(Request $request, AdmissionEnquiry $admissionEnquiry): JsonResponse|RedirectResponse
     {
         $status = $request->validate([
@@ -146,12 +173,17 @@ class AdmissionEnquiryController extends Controller
 
         $admissionEnquiry->update($data);
 
+        $message = 'Status changed to ' . $admissionEnquiry->status_label . '.';
+
         if ($request->wantsJson()) {
-            return response()->json(['message' => 'Status changed to ' . $admissionEnquiry->status_label . '.']);
+            session()->flash('success', $message);   // shown after the page reloads
+            return response()->json(['message' => $message]);
         }
 
-        return back()->with('success', 'Status changed to ' . $admissionEnquiry->status_label . '.');
+        return back()->with('success', $message);
     }
+
+
 
     /**
      * Soft delete — admins only.
@@ -182,8 +214,18 @@ class AdmissionEnquiryController extends Controller
             fwrite($out, "\xEF\xBB\xBF"); // UTF-8 BOM for Excel
 
             fputcsv($out, [
-                'ID', 'Received On', 'Student Name', 'Parent Name', 'Phone / WhatsApp', 'Email',
-                'Grade', 'Hostel Needed', 'Message', 'Status', 'Contacted On', 'Admin Notes',
+                'ID',
+                'Received On',
+                'Student Name',
+                'Parent Name',
+                'Phone / WhatsApp',
+                'Email',
+                'Grade',
+                'Hostel Needed',
+                'Message',
+                'Status',
+                'Contacted On',
+                'Admin Notes',
             ]);
 
             AdmissionEnquiry::query()
