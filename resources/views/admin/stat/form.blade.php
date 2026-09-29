@@ -198,7 +198,7 @@
 
     .stats-row {
         display: grid;
-        grid-template-columns: 1fr 1fr 2fr;
+        grid-template-columns: 1fr 2fr 2fr;
         gap: 12px;
         align-items: flex-start;
         margin-bottom: 12px;
