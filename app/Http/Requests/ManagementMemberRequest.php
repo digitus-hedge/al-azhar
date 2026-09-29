@@ -66,7 +66,6 @@ class ManagementMemberRequest extends FormRequest
                 'image',
                 'mimes:jpg,jpeg,png,webp',
                 'max:2048',
-                'dimensions:min_width=300,min_height=400',
             ],
             'remove_photo' => ['nullable', 'boolean'],
 
@@ -86,7 +85,7 @@ class ManagementMemberRequest extends FormRequest
             'photo.image'             => 'The photo must be an image.',
             'photo.mimes'             => 'The photo must be a JPG, PNG or WEBP file.',
             'photo.max'               => 'The photo must not be larger than 2MB.',
-            'photo.dimensions'        => 'The photo must be at least 300 × 400 pixels.',
+            // 'photo.dimensions'        => 'The photo must be at least 300 × 400 pixels.',
             'bio.required'            => 'Please enter a short bio.',
             'bio.min'                 => 'The bio must be at least ' . self::BIO_MIN . ' characters.',
             'bio.max'                 => 'The bio must not be more than ' . self::BIO_MAX . ' characters.',

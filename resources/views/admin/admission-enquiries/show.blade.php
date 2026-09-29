@@ -300,11 +300,13 @@ function confirmDelete() {
 
     .parent-name{ font-size:16px; font-weight:700; color: var(--ink,#171B2C); margin-bottom:4px; }
     .contact-btns{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+
     .c-btn{
         flex:1; min-width:90px; display:inline-flex; align-items:center; justify-content:center; gap:6px;
         padding:9px 10px; border-radius:9px; font-size:13px; font-weight:600; text-decoration:none;
         background: var(--canvas,#F6F7FB); color: var(--ink,#171B2C); border:1px solid var(--line,#E9EBF2);
     }
+    
     .c-btn:hover{ border-color: var(--ink,#171B2C); }
     .c-btn.wa{ background:#E6F6EC; color:#1E8E4E; border-color:#C9EBD5; }
 
@@ -317,6 +319,7 @@ function confirmDelete() {
     .meta{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:8px 14px; font-size:13px; }
     .meta dt{ color: var(--faint,#9AA1B2); font-weight:600; }
     .meta dd{ margin:0; color: var(--ink,#171B2C); }
+
     .btn-delete{
         margin-top:16px; width:100%; display:inline-flex; align-items:center; justify-content:center; gap:6px;
         padding:9px; border-radius:9px; font-size:13px; font-weight:600; cursor:pointer;

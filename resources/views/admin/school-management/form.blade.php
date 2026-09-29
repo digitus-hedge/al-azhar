@@ -92,7 +92,7 @@
                                   class="{{ $errors->has('bio') ? 'input-error' : '' }}"
                                   placeholder="Qualifications, experience and role in the institution (2–4 sentences)...">{{ old('bio', $member->bio) }}</textarea>
                         @error('bio') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
-                        <span class="field-hint">Optional. Shown under the name on the website.</span>
+                        <span class="field-hint">Shown under the name on the website.</span>
                     </div>
                 </div>
             </div>
