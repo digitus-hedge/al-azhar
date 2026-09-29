@@ -56,6 +56,12 @@ class StaffRequest extends FormRequest
                 'max:5120',
             ],
 
+             'head_type' => [
+                'nullable',
+                Rule::in(['HOD', 'HOS']),
+            ],
+
+
             'is_head_of_staff' => [
                 'nullable',
                 'boolean',

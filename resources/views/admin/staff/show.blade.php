@@ -134,6 +134,21 @@
                         </dd>
                     </div> -->
 
+                    <div class="info-row">
+    <dt>Head Type (HOD/HOS)</dt>
+    <dd>
+        @if ($staffMember->head_type)
+            <span class="head-badge head-{{ strtolower($staffMember->head_type) }}">
+                <i class="bi bi-star-fill"></i> {{ $staffMember->head_type }}
+            </span>
+            <span class="muted" style="margin-left:6px;">{{ $staffMember->head_type_label }}</span>
+        @else
+            <span class="muted">Not a head</span>
+        @endif
+    </dd>
+</div>
+
+
                 </dl>
             </div>
 
@@ -360,6 +375,14 @@ function confirmDeleteStaff(id, name) {
         .view-actions .btn-ghost,
         .view-actions .btn-danger-ghost{ justify-content:center; width:100%; padding:12px 16px; }
     }
+
+    .head-badge{
+    display:inline-flex; align-items:center; gap:5px;
+    padding:3px 10px; border-radius:20px; font-size:12px; font-weight:700;
+}
+.head-badge i{ font-size:10px; }
+.head-hod{ background:#EEF4FF; color:#2F5BD3; }
+.head-hos{ background:#FFE9D8; color:#BF0001; }
 </style>
 
 @endsection

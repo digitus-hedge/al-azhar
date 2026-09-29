@@ -159,24 +159,29 @@
         {{-- Show on Home Page --}}
 
         
-        <!-- <div class="card" id="show-on-home-card">
-            <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-house"></i></span> Home Page</h2>
-            </div>
-            <label class="toggle-row">
-                <input type="hidden" name="show_on_home" value="0">
-                <input type="checkbox" name="show_on_home" id="show_on_home" value="1"
-                       {{ old('show_on_home', $staffMember->show_on_home) ? 'checked' : '' }}>
-                <span class="toggle-switch"></span>
-                <span class="toggle-label">Show this staff member on the Home Page</span>
-            </label>
-            <p class="section-sub" style="margin:8px 0 0;">
-                Turn this on to feature this staff member in the staff section of your site's home page.
-            </p>
-            @error('show_on_home')
-                <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-            @enderror
-        </div> -->
+      
+        {{-- Head Type (HOD / HOS) --}}
+<div class="card" id="head-type-card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-star"></i></span> Head Type (HOD or HOS)</h2>
+    </div>
+
+    <div class="field">
+        <select name="head_type" id="head_type"
+                class="{{ $errors->has('head_type') ? 'input-error' : '' }}">
+            <option value="">— None —</option>
+            <option value="HOD" @selected(old('head_type', $staffMember->head_type) === 'HOD')>HOD — Head of Department</option>
+            <option value="HOS" @selected(old('head_type', $staffMember->head_type) === 'HOS')>HOS — Head of Staff</option>
+        </select>
+        @error('head_type')
+            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+        <span class="field-hint" style="display:block;margin-top:6px;">
+            Optional — HOD or HOS
+        </span>
+    </div>
+</div>
+
 
 
         {{-- Login Access --}}

@@ -118,6 +118,8 @@ class StaffController extends Controller
         }
 
         $validated['is_head_of_staff'] = $request->boolean('is_head_of_staff');
+            $validated['head_type']        = $request->input('head_type') ?: null;   // HOD / HOS / null
+
         $validated['show_on_home']     = $request->boolean('show_on_home');
         $validated['has_login']        = $request->boolean('has_login');
 
@@ -187,6 +189,8 @@ class StaffController extends Controller
         }
 
         $validated['is_head_of_staff'] = $request->boolean('is_head_of_staff');
+            $validated['head_type']        = $request->input('head_type') ?: null;   // HOD / HOS / null
+
         $validated['show_on_home']     = $request->boolean('show_on_home');
         $validated['has_login']        = $request->boolean('has_login');
 
