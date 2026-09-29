@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\web;   // match your real folder name casing (web / Web)
+namespace App\Http\Controllers\Web;   // match your real folder name casing (web / Web)
 
 use App\Http\Controllers\Controller;
 use App\Models\ManagementMember;
