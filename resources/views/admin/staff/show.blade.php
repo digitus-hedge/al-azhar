@@ -143,7 +143,7 @@
             </span>
             <span class="muted" style="margin-left:6px;">{{ $staffMember->head_type_label }}</span>
         @else
-            <span class="muted">Not a head</span>
+            <span class="muted"></span>
         @endif
     </dd>
 </div>
