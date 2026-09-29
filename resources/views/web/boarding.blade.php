@@ -33,8 +33,12 @@
     ];
 @endphp
 
-@section('title', 'Boarding & Fees || AL-Azhar')
-@section('meta_description', \Illuminate\Support\Str::limit($description ?: 'Hostel facilities, boarding life and fee payment at Al Azhar Central School, Mala.', 155))
+@section('title', 'Boarding & Fees || Al Azhar Central School, Mala')
+@section('meta_description', \Illuminate\Support\Str::limit(
+    trim(preg_replace('/\s+/', ' ', strip_tags((string) ($description ?? ''))))
+        ?: 'Hostel facilities, boarding life and fee details at Al Azhar Central School, Mala. Safe, supervised residential care for students.',
+    155
+))
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 

@@ -1,6 +1,8 @@
 @extends('web.layouts.app')
 
-@section('title', "Principal's Message || AL-Azhar")
+@section('title', ($principal?->meta_title ?: "Principal's Message") . ' || Al Azhar Central School, Mala')
+@section('meta_description', $principal?->meta_description
+    ?: 'A message from the Principal of Al Azhar Central School, Mala, on our vision, values and commitment to every student.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 

@@ -1,6 +1,8 @@
 @extends('web.layouts.app')
 
-@section('title', 'Home || AL-Azhar')
+@section('title', $banner?->meta_title ?: 'Home || Al Azhar Central School')
+@section('meta_description', $banner?->meta_description
+    ?: \Illuminate\Support\Str::limit(strip_tags($banner?->description ?? ''), 160))
 
 @section('content')
 

@@ -21,7 +21,13 @@
     <title>@yield('title', 'Al Azhar Central School, Mala')</title>
     <meta name="title" content="@yield('title', 'Al Azhar Central School, Mala')">
     <meta name="description" content="@yield('meta_description', 'Al Azhar Central School, Mala - a CBSE school offering education from Preschool to Senior Secondary, with hostel facilities.')">
-
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Al Azhar Central School, Mala">
+    <meta property="og:title" content="@yield('title', 'Al Azhar Central School, Mala')">
+    <meta property="og:description" content="@yield('meta_description', 'Al Azhar Central School, Mala - a CBSE school offering education from Preschool to Senior Secondary, with hostel facilities.')">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="@yield('og_image', asset('images/logo1.png'))">
+    <link rel="canonical" href="{{ url()->current() }}">
     <!-- CSS -->
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/fontawesome.min.css') }}">

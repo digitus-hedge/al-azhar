@@ -4,10 +4,17 @@ namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
 use App\Models\Department;
+use App\Models\Staff;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
  * Public (website) departments page.
+ *
+ * Shows two sections built from the staff "head_type" field:
+ *   HOD = Head of Department
+ *   HOS = Head of Staff
+ * Ordinary staff (head_type = null) are not shown.
  *
  * The admin CRUD stays in App\Http\Controllers\Admin\DepartmentController;
  * this controller only reads data for visitors.
@@ -16,50 +23,49 @@ use Illuminate\View\View;
 class DepartmentController extends Controller
 {
     /**
-     * How many members (besides the head) to show per department
-     * on the listing page. "View All" shows everyone.
-     */
-    protected int $membersPerDepartment = 6;
-
-    /**
-     * /departments — every active department with its head + a few members.
+     * /departments — all HODs and HOSs across the school.
      */
     public function index(): View
     {
-        $departments = Department::active()
-            ->with(['staff' => fn ($q) => $this->orderStaff($q)])
-            ->get()
-            // hide departments that have nobody assigned yet
-            ->filter(fn (Department $department) => $department->staff->isNotEmpty())
-            ->values();
-
         return view('web.department', [
-            'departments' => $departments,
-            'limit'       => $this->membersPerDepartment,
+            'pageName'   => 'Our Departments',
+            'department' => null,
+            'groups'     => $this->headGroups(),
         ]);
     }
 
     /**
-     * /departments/{department} — one department with all of its staff.
+     * /departments/{department} — the HOD / HOS of one department.
      */
     public function show(Department $department): View
     {
-        $department->load(['staff' => fn ($q) => $this->orderStaff($q)]);
-
         return view('web.department', [
-            'departments' => collect([$department]),
-            'limit'       => null, // null = show everyone
+            'pageName'   => $department->name,
+            'department' => $department,
+            'groups'     => $this->headGroups($department->id),
         ]);
     }
 
     /**
-     * Head of department first, then the admin's sort order, then name.
+     * Staff with a head type, grouped as HOD then HOS.
+     * Each group: ['key' => 'HOD', 'label' => 'Head of Department', 'people' => Collection]
      */
-    protected function orderStaff($query)
+    protected function headGroups(?int $departmentId = null): Collection
     {
-        return $query
-            ->orderByDesc('is_head_of_staff')
+        $heads = Staff::query()
+            ->whereIn('head_type', array_keys(Staff::HEAD_TYPES))
+            ->when($departmentId, fn ($q) => $q->where('department_id', $departmentId))
+            ->with(['staffDesignation', 'department'])
             ->orderBy('sort_order')
-            ->orderBy('name');
+            ->orderBy('name')
+            ->get();
+
+        return collect(Staff::HEAD_TYPES)
+            ->map(fn ($label, $key) => [
+                'key'    => $key,
+                'label'  => $label,
+                'people' => $heads->where('head_type', $key)->values(),
+            ])
+            ->values();
     }
 }

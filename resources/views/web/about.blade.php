@@ -1,6 +1,9 @@
 @extends('web.layouts.app')
 
-@section('title', 'About Us || AL-Azhar')
+@section('title', $about?->meta_title ?: 'About Us || Al Azhar Central School, Mala')
+@section('meta_description', $about?->meta_description
+    ?: \Illuminate\Support\Str::limit(trim(preg_replace('/\s+/', ' ', strip_tags((string) ($about?->description ?? '')))), 160)
+    ?: 'Learn about Al Azhar Central School, Mala - our history, vision, mission and commitment to value-based CBSE education.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 

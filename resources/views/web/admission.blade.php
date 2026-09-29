@@ -1,6 +1,7 @@
 @extends('web.layouts.app')
 
-@section('title', 'Admission || AL-Azhar')
+@section('title', 'Admission || Al Azhar Central School, Mala')
+@section('meta_description', 'Admissions open at Al Azhar Central School, Mala for Preschool to Senior Secondary (CBSE), with hostel facilities. Send an online enquiry and our team will call you back.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 

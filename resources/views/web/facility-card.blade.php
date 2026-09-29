@@ -1,6 +1,7 @@
 @extends('web.layouts.app')
 
-@section('title', 'Facilities || AL-Azhar')
+@section('title', 'Facilities || Al Azhar Central School, Mala')
+@section('meta_description', 'Explore the facilities at Al Azhar Central School, Mala - science and computer labs, library, sports grounds, transport and hostel for a complete learning experience.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 

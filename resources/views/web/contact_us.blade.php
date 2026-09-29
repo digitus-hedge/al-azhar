@@ -1,6 +1,7 @@
 @extends('web.layouts.app')
 
-@section('title', 'Contact Us || AL-Azhar')
+@section('title', 'Contact Us || Al Azhar Central School, Mala')
+@section('meta_description', 'Contact Al Azhar Central School, Mala. Call +91 89433 37011, email alazharschoolmala@gmail.com, or send us a message online. Find our address and directions.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 
