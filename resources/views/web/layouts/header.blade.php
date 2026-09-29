@@ -339,6 +339,9 @@
             }
             header.classList.toggle('is-sticky', sticky);
         }
+
+
+        
         window.addEventListener('scroll', onScroll, { passive: true });
         window.addEventListener('resize', function () {
             if (!header.classList.contains('is-sticky')) {
