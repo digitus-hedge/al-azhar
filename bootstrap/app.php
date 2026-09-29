@@ -15,6 +15,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'module'     => \App\Http\Middleware\EnsureModuleAccess::class,
             'admin.only' => \App\Http\Middleware\EnsureAdmin::class,
         ]);
+
+        // Guests hitting an 'auth' route go to the admin login
+        $middleware->redirectGuestsTo(fn () => route('admin.login'));
+
+        // Logged-in users hitting a 'guest' route go to the dashboard
+        $middleware->redirectUsersTo(fn () => route('admin.dashboard'));
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
