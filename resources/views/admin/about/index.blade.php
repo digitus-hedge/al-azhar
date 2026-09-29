@@ -125,7 +125,8 @@
         </div>
 
         {{-- Image --}}
-        <div class="card" id="imageSection">
+       
+        <!-- <div class="card" id="imageSection">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-image"></i></span> About Image <span class="req">*</span></h2>
             </div>
@@ -167,7 +168,7 @@
                     <input type="hidden" name="remove_image" id="removeImageInput" value="0">
                 </div>
             </div>
-        </div>
+        </div> -->
 
         {{-- SEO Meta --}}
         <div class="card">

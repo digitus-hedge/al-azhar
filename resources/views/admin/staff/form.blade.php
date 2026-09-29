@@ -134,6 +134,7 @@
         </div>
 
         {{-- Head of Staff --}}
+
         <div class="card" id="head-of-staff-card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-star"></i></span> Head of Staff</h2>
@@ -153,9 +154,12 @@
                 <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
             @enderror
         </div>
+        
 
         {{-- Show on Home Page --}}
-        <div class="card" id="show-on-home-card">
+
+        
+        <!-- <div class="card" id="show-on-home-card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-house"></i></span> Home Page</h2>
             </div>
@@ -172,7 +176,8 @@
             @error('show_on_home')
                 <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
             @enderror
-        </div>
+        </div> -->
+
 
         {{-- Login Access --}}
         <div class="card" id="login-access-card">

@@ -65,7 +65,7 @@
                     <span class="badge-head"><i class="bi bi-star-fill"></i> Head of Staff</span>
                 @endif
                 @if ($staffMember->show_on_home)
-                    <span class="badge-home"><i class="bi bi-house-fill"></i> On Home Page</span>
+                    <!-- <span class="badge-home"><i class="bi bi-house-fill"></i> On Home Page</span> -->
                 @endif
                 @if ($staffMember->has_login)
                     <span class="badge-access"><i class="bi bi-check-circle-fill"></i> Login Access</span>

@@ -39,13 +39,16 @@ class AboutRequest extends FormRequest
             'history'          => ['required', 'string', 'max:10000', $this->notEmptyHtml()],
             'values'           => ['required', 'string', 'max:5000',  $this->notEmptyHtml()],
 
-            'image'            => [
-                Rule::requiredIf($imageNeeded),
-                'nullable',
-                'image',
-                'mimes:jpeg,jpg,png,webp',
-                'max:5120',
-            ],
+            // 'image'            => [
+            //     Rule::requiredIf($imageNeeded),
+            //     'nullable',
+            //     'image',
+            //     'mimes:jpeg,jpg,png,webp',
+            //     'max:5120',
+            // ],
+            // 'remove_image'     => ['nullable', 'boolean'],
+
+            'image'            => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:5120'],
             'remove_image'     => ['nullable', 'boolean'],
 
             // SEO — optional
@@ -79,7 +82,7 @@ class AboutRequest extends FormRequest
             'mission.required'     => 'Please enter the mission.',
             'history.required'     => 'Please enter the history.',
             'values.required'      => 'Please enter the values.',
-            'image.required'       => 'Please upload an image.',
+            // 'image.required'       => 'Please upload an image.',
             'image.image'          => 'The file must be an image.',
             'image.mimes'          => 'The image must be a JPEG, PNG or WEBP file.',
             'image.max'            => 'The image must not be larger than 5MB.',
