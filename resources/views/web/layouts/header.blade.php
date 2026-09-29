@@ -169,7 +169,7 @@
     .ah, .ah_drawer { --ah: var(--heading-color, #00539B); --ah-dark: #002F5F; }
 
     /* Sits over the page banner / hero like the theme header did */
-    .ah { position: absolute; top: 0; left: 0; right: 0; z-index: 1000; }
+    .ah { position: relative; z-index: 1000; }
 
     /* ---------- Row 1 ---------- */
     .ah_top { background: var(--ah-dark); color: rgba(255,255,255,.9); font-size: 14px; }
@@ -331,8 +331,22 @@
         /* Sticky main row after scrolling past the top bar + a little */
         function onScroll() {
             var limit = (top ? top.offsetHeight : 0) + 80;
-            header.classList.toggle('is-sticky', window.scrollY > limit);
+            var sticky = window.scrollY > limit;
+
+            // Hold the header's height so the page doesn't jump when the menu row becomes fixed
+            if (!header.classList.contains('is-sticky')) {
+                header.style.minHeight = header.offsetHeight + 'px';
+            }
+            header.classList.toggle('is-sticky', sticky);
         }
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', function () {
+            if (!header.classList.contains('is-sticky')) {
+                header.style.minHeight = '';
+                header.style.minHeight = header.offsetHeight + 'px';
+            }
+        });
+        onScroll();
         window.addEventListener('scroll', onScroll, { passive: true });
         onScroll();
 
