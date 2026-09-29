@@ -122,7 +122,8 @@
                             @endif
                         </dd>
                     </div>
-                    <div class="info-row">
+
+                    <!-- <div class="info-row">
                         <dt>Home Page</dt>
                         <dd>
                             @if ($staffMember->show_on_home)
@@ -131,7 +132,8 @@
                                 <span class="muted">Not shown</span>
                             @endif
                         </dd>
-                    </div>
+                    </div> -->
+
                 </dl>
             </div>
 
