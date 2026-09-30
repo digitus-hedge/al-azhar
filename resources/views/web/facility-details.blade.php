@@ -11,9 +11,8 @@
 
     $related = $related ?? collect();
 
-    // Cover + gallery together for the photo grid / lightbox
-    $photos = collect([$facility->image_url])->merge($facility->gallery_urls)->filter()->values();
-
+    // gallery together for the photo grid / lightbox
+    $photos = collect($facility->gallery_urls)->filter()->values();
     $details = collect([
         ['Capacity',       $facility->capacity ? number_format($facility->capacity) : null],
         ['Location',       $facility->location],
@@ -166,7 +165,7 @@
     <!-- End Facility Details -->
 
     {{-- Photo gallery --}}
-    @if ($photos->count() > 1)
+    @if ($photos->isNotEmpty())
         <section>
             <div class="td_height_100 td_height_lg_50"></div>
             <div class="container">
@@ -349,7 +348,7 @@
 @endpush
 
 @push('scripts')
-@if ($photos->count() > 1)
+@if ($photos->isNotEmpty())
 <script>
     $(function () {
         var photos = @json($photos);

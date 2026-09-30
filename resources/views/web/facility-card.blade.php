@@ -202,7 +202,21 @@
     }
     .fac_tabs .active .fac_count { background-color: #fff; }
     .fac_showing { flex: none; white-space: nowrap; }
+    .fac_tabs li a { transition: background-color .25s ease, color .25s ease; }
 
+.fac_head .fac_tabs li.active > a {
+    background: #002F5F !important;   /* your navy – change if needed */
+    color: #fff !important;
+}
+.fac_head .fac_tabs li.active > a::before,
+.fac_head .fac_tabs li.active > a::after {
+    display: none !important;
+}
+
+.fac_head .fac_tabs li.active .fac_count {
+    background: #fff !important;
+    color: #002F5F !important;
+}
     /* ---------- Cards ---------- */
     .fac_item { display: flex; }
     .fac_item.d-none { display: none !important; }
@@ -274,8 +288,6 @@
                 $('html, body').animate({ scrollTop: $('.fac_head').offset().top - 140 }, 400);
             }
         });
-
-        history.replaceState(null, '', href);
 
         // Let WOW reveal cards that just became visible through a tab
         window.dispatchEvent(new Event('scroll'));
