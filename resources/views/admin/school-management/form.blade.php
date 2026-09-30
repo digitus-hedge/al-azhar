@@ -55,9 +55,9 @@
                     <div class="field">
                         <div class="field-top field-top-row">
                             <label class="field-label" for="designation_id">Designation <span class="req">*</span></label>
-                           <a href="{{ route('admin.designations.create', ['type' => 'management']) }}" target="_blank" class="add-link">
-    <i class="bi bi-plus-lg"></i> New designation
-</a>
+                            <a href="{{ route('admin.designations.create', ['type' => 'management']) }}" target="_blank" class="add-link">
+                            <i class="bi bi-plus-lg"></i> New designation
+                            </a>
                         </div>
                         <select id="designation_id" name="designation_id"
                                 class="{{ $errors->has('designation_id') ? 'input-error' : '' }}"
@@ -107,7 +107,7 @@
 
                     <div class="photo-drop {{ $member->photo ? 'filled' : '' }} {{ $errors->has('photo') ? 'input-error' : '' }}"
                          id="photoDrop" onclick="document.getElementById('photoInput').click()">
-                        <img id="photoPreview" src="{{ $member->photo_url }}" alt="" style="{{ $member->photo ? '' : 'display:none;' }}">
+                        <img id="photoPreview" src="{{ $member->photo_url }}" alt=""  style="{{ $member->photo ? '' : 'display:none;' }}">
 
                         <div class="photo-empty" id="photoEmpty" style="{{ $member->photo ? 'display:none;' : '' }}">
                             <span class="initials" id="photoInitials">{{ $member->exists ? $member->initials : '' }}</span>

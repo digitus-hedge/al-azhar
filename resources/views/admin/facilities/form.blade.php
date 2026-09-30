@@ -162,15 +162,14 @@
             <div class="gallery-grid" id="gallery-grid">
                 {{-- Existing photos --}}
                 @foreach ($facility->gallery ?? [] as $i => $path)
-                    <div class="g-item existing" data-path="{{ $path }}">
-                        <img src="{{ Storage::url($path) }}" alt="">
-                        <label class="g-remove" title="Remove photo">
-                            <input type="checkbox" name="remove_gallery[]" value="{{ $path }}" onchange="toggleExisting(this)">
-                            <i class="bi bi-trash"></i>
-                        </label>
-                        <div class="g-removed-tag"><i class="bi bi-trash"></i> Will be removed</div>
-                    </div>
-                @endforeach
+    <div class="g-item existing" data-path="{{ $path }}">
+        <img src="{{ Storage::url($path) }}" alt="">
+        <button type="button" class="g-remove-btn" title="Remove photo"
+                onclick="removeExistingPhoto(this)">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+@endforeach
 
                 {{-- Add tile --}}
                 <div class="g-add" id="gallery-drop" onclick="document.getElementById('file-gallery').click()">
@@ -181,6 +180,7 @@
             <input type="file" id="file-gallery" name="gallery[]" accept="image/jpeg,image/png,image/webp" multiple hidden>
             <span class="file-size-info" id="size-gallery"></span>
             <span id="gallery-errors"></span>
+            <div id="removed-gallery-inputs"></div>
         </div>
 
         {{-- ================= Highlights ================= --}}
@@ -505,8 +505,17 @@ function renderNewGallery() {
     });
 }
 
-function toggleExisting(checkbox) {
-    checkbox.closest('.g-item').classList.toggle('marked', checkbox.checked);
+function removeExistingPhoto(btn) {
+    const item = btn.closest('.g-item');
+    const path = item.dataset.path;
+
+    const input = document.createElement('input');
+    input.type  = 'hidden';
+    input.name  = 'remove_gallery[]';
+    input.value = path;
+    document.getElementById('removed-gallery-inputs').appendChild(input);
+
+    item.remove();
 }
 
 /* Drag & drop onto the add tile and the cover slot */
