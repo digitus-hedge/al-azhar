@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PrincipalDeskController;
 use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\FeeController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\AdmissionEnquiryController;
@@ -136,7 +137,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('facilities/{facility}', [FacilityController::class, 'update'])->name('facilities.update');
             Route::delete('facilities/{facility}', [FacilityController::class, 'destroy'])->name('facilities.destroy');
 
-             // Boarding & Fees (single page)
+            // Boarding & Fees (single page)
             Route::get('boarding', [BoardingController::class, 'edit'])->name('boarding');
             Route::post('boarding', [BoardingController::class, 'update'])->name('boarding.update');
 
@@ -149,7 +150,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::patch('mandatory-disclosures/{disclosure}/toggle', [MandatoryDisclosureController::class, 'toggle'])->name('mandatory-disclosures.toggle');
 
 
-                        // Master > Management Designations
+            // Master > Management Designations
             Route::get('designations',                  [ManagementDesignationController::class, 'index'])->name('designations');
             Route::get('designations/create',           [ManagementDesignationController::class, 'create'])->name('designations.create');
             Route::post('designations',                 [ManagementDesignationController::class, 'store'])->name('designations.store');
@@ -157,6 +158,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('designations/{designation}',    [ManagementDesignationController::class, 'update'])->name('designations.update');
             Route::delete('designations/{designation}', [ManagementDesignationController::class, 'destroy'])->name('designations.destroy');
             Route::patch('designations/{id}/restore',   [ManagementDesignationController::class, 'restore'])->name('designations.restore')->whereNumber('id');
+
+
+            Route::get('fees',              [FeeController::class, 'index'])->name('fees');
+            Route::get('fees/create',       [FeeController::class, 'create'])->name('fees.create');
+            Route::post('fees',             [FeeController::class, 'store'])->name('fees.store');
+            Route::get('fees/{fee}/edit',   [FeeController::class, 'edit'])->name('fees.edit');
+            Route::put('fees/{fee}',        [FeeController::class, 'update'])->name('fees.update');
+            Route::delete('fees/{fee}',     [FeeController::class, 'destroy'])->name('fees.destroy');
 
             // School Management (committee, trustees, leadership)
             Route::get('school-management',                   [ManagementMemberController::class, 'index'])->name('school-management');

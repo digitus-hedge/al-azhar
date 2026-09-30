@@ -660,7 +660,7 @@
 
 @php
     $homeOpen   = request()->routeIs('admin.home.*');
-    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*','admin.disclosure-categories*');
+    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*','admin.disclosure-categories*','admin.fees*');
 @endphp
 
 
@@ -1061,6 +1061,14 @@
                         <i class="bi bi-folder2-open nav-ico"></i> Disclosure Categories
                     </a>
                 </li>
+
+                <li>
+    <a class="nav-item {{ request()->routeIs('admin.fees*') ? 'active' : '' }}"
+       href="{{ route('admin.fees') }}">
+        <i class="bi bi-cash-coin nav-ico"></i> Fees
+    </a>
+</li>
+
             </ul>
         </div>
     @endif
