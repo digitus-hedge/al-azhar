@@ -81,39 +81,52 @@
         </div>
 
         {{-- ================= Images ================= --}}
-        <div class="card">
-            <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-images"></i></span> Images</h2>
-                <span class="section-sub">{{ count($images) }} uploaded</span>
-            </div>
+       @php
+    $removedOld = (array) old('remove_images', []);
+@endphp
 
-            @if (count($images))
-                <div class="media-grid">
-                    @foreach ($images as $path)
-                        <label class="media-item">
-                            <img src="{{ \Illuminate\Support\Facades\Storage::url($path) }}" alt="">
-                            <input type="checkbox" name="remove_images[]" value="{{ $path }}" class="remove-check"
-                                   @checked(in_array($path, (array) old('remove_images', []), true))>
-                            <span class="remove-tag"><i class="bi bi-trash3"></i> Remove</span>
-                        </label>
-                    @endforeach
+<div class="card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-images"></i></span> Images</h2>
+        <span class="section-sub"><span id="existingCount">{{ count(array_diff($images, $removedOld)) }}</span> uploaded</span>
+    </div>
+
+    {{-- Keeps removed photos removed if the form reloads with errors --}}
+    <div id="removedImageInputs">
+        @foreach ($removedOld as $path)
+            <input type="hidden" name="remove_images[]" value="{{ $path }}">
+        @endforeach
+    </div>
+
+    @if (count($images))
+        <div class="media-grid" id="existingImages">
+            @foreach ($images as $path)
+                @continue(in_array($path, $removedOld, true))
+                <div class="media-item" data-path="{{ $path }}">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($path) }}" alt="">
+                    <button type="button" class="item-remove" title="Remove photo"
+                            onclick="removeExistingImage(this)">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
                 </div>
-                <p class="hint" style="margin:10px 0 18px;">Click a photo to mark it for removal. It is deleted when you save.</p>
-            @endif
-
-            <label class="drop" for="images" id="imageDrop">
-                <i class="bi bi-cloud-arrow-up"></i>
-                <span><b>Add photos</b> — click or drag &amp; drop. Select several at once, and add more as many times as you like. JPG, PNG or WebP, up to 5 MB each.</span>
-                <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/webp" multiple hidden>
-            </label>
-            <div class="picker-bar" id="imageBar" hidden>
-                <span><b id="imageCount">0</b> new photo(s) ready to upload</span>
-                <button type="button" class="link-btn" id="imageClear"><i class="bi bi-x-circle"></i> Clear all</button>
-            </div>
-            <div class="media-grid new-previews" id="imagePreviews"></div>
-            @error('images') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
-            @error('images.*') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
+            @endforeach
         </div>
+        <p class="hint" style="margin:10px 0 18px;">Click <i class="bi bi-x-lg"></i> to remove a photo. It is deleted when you save.</p>
+    @endif
+
+    <label class="drop" for="images" id="imageDrop">
+        <i class="bi bi-cloud-arrow-up"></i>
+        <span><b>Add photos</b> — click or drag &amp; drop. Select several at once, and add more as many times as you like. JPG, PNG or WebP, up to 5 MB each.</span>
+        <input type="file" id="images" name="images[]" accept="image/jpeg,image/png,image/webp" multiple hidden>
+    </label>
+    <div class="picker-bar" id="imageBar" hidden>
+        <span><b id="imageCount">0</b> new photo(s) ready to upload</span>
+        <button type="button" class="link-btn" id="imageClear"><i class="bi bi-x-circle"></i> Clear all</button>
+    </div>
+    <div class="media-grid new-previews" id="imagePreviews"></div>
+    @error('images') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
+    @error('images.*') <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span> @enderror
+</div>
 
         {{-- ================= Videos ================= --}}
         <div class="card">
@@ -436,6 +449,17 @@
         .qr-box{ flex-direction:column; align-items:flex-start; }
         .media-grid{ grid-template-columns:repeat(3, 1fr); gap:8px; }
     }
+
+
+    .media-item { position: relative; }
+.media-item .item-remove {
+    position: absolute; top: 6px; right: 6px;
+    width: 28px; height: 28px; border-radius: 999px;
+    background: rgba(0,0,0,0.6); color: #fff; border: none;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; font-size: 12px; z-index: 2;
+}
+.media-item .item-remove:hover { background: #C62828; }
 </style>
 
 <script>
@@ -600,6 +624,25 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.querySelector('span').textContent = 'Saving…';
     });
 });
-</script>
 
+
+</script>
+<script>
+function removeExistingImage(btn) {
+    const item = btn.closest('.media-item');
+
+    const input = document.createElement('input');
+    input.type  = 'hidden';
+    input.name  = 'remove_images[]';
+    input.value = item.dataset.path;
+    document.getElementById('removedImageInputs').appendChild(input);
+
+    item.remove();
+
+    const countEl = document.getElementById('existingCount');
+    if (countEl) {
+        countEl.textContent = document.querySelectorAll('#existingImages .media-item').length;
+    }
+}
+</script>
 @endsection
