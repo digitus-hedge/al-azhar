@@ -26,6 +26,6 @@ class AcademicController extends Controller
             ))
             ->values();
 
-        return view('Web.academics', compact('fees'));
+        return view('web.academics', compact('fees'));
     }
 }
