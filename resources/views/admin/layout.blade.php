@@ -826,7 +826,7 @@
     $homeOpen        = request()->routeIs('admin.home.*');
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
     $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*');
-    $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*');
+    $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*','admin.fees*');
     $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*');
 @endphp
 
