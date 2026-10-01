@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Concerns\LogsActivity;
 
 /**
  * Master > Designations
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class ManagementDesignation extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes,LogsActivity;
 
     protected $table = 'management_designations';
 

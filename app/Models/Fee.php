@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Concerns\LogsActivity;
 class Fee extends Model
 {
+    
+   use LogsActivity;
+
     public const CLASSES = [
         'Pre.KG',
         'LKG',
