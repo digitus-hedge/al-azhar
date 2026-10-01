@@ -25,54 +25,54 @@ class EventController extends Controller
     /**
      * Display a listing of events.
      */
-   public function index(Request $request)
-{
-    $search  = trim((string) $request->query('q', ''));
-    $sortBy  = $request->query('sort', 'id');
-    $sortDir = strtolower($request->query('dir', $sortBy === 'id' ? 'desc' : 'asc')) === 'desc' ? 'desc' : 'asc';
-    $perPage = (int) $request->query('per_page', 10);
+    public function index(Request $request)
+    {
+        $search  = trim((string) $request->query('q', ''));
+        $sortBy  = $request->query('sort', 'id');
+        $sortDir = strtolower($request->query('dir', $sortBy === 'id' ? 'desc' : 'asc')) === 'desc' ? 'desc' : 'asc';
+        $perPage = (int) $request->query('per_page', 10);
 
-    if (! in_array($sortBy, $this->sortable, true)) {
-        $sortBy  = 'id';
-        $sortDir = 'desc';
+        if (! in_array($sortBy, $this->sortable, true)) {
+            $sortBy  = 'id';
+            $sortDir = 'desc';
+        }
+
+        if (! in_array($perPage, $this->perPageOptions, true)) {
+            $perPage = 10;
+        }
+
+        $query = Event::query();
+
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+                ->orWhere('venue', 'like', "%{$search}%");
+            });
+        }
+
+        if ($sortBy === 'event_date') {
+            $query->orderBy('event_date', $sortDir)->orderBy('event_time', $sortDir);
+        } else {
+            $query->orderBy($sortBy, $sortDir);
+        }
+
+        // Tie-breaker: newest first when values are equal
+        if ($sortBy !== 'id') {
+            $query->orderByDesc('id');
+        }
+
+        $events = $query->paginate($perPage)->appends($request->query());
+
+        return view('admin.event.index', [
+            'events'         => $events,
+            'search'         => $search,
+            'sortBy'         => $sortBy,
+            'sortDir'        => $sortDir,
+            'perPage'        => $perPage,
+            'perPageOptions' => $this->perPageOptions,
+        ]);
     }
-
-    if (! in_array($perPage, $this->perPageOptions, true)) {
-        $perPage = 10;
-    }
-
-    $query = Event::query();
-
-    if ($search !== '') {
-        $query->where(function ($q) use ($search) {
-            $q->where('title', 'like', "%{$search}%")
-              ->orWhere('description', 'like', "%{$search}%")
-              ->orWhere('venue', 'like', "%{$search}%");
-        });
-    }
-
-    if ($sortBy === 'event_date') {
-        $query->orderBy('event_date', $sortDir)->orderBy('event_time', $sortDir);
-    } else {
-        $query->orderBy($sortBy, $sortDir);
-    }
-
-    // Tie-breaker: newest first when values are equal
-    if ($sortBy !== 'id') {
-        $query->orderByDesc('id');
-    }
-
-    $events = $query->paginate($perPage)->appends($request->query());
-
-    return view('admin.event.index', [
-        'events'         => $events,
-        'search'         => $search,
-        'sortBy'         => $sortBy,
-        'sortDir'        => $sortDir,
-        'perPage'        => $perPage,
-        'perPageOptions' => $this->perPageOptions,
-    ]);
-}
     /**
      * Show the form for creating a new event.
      */

@@ -9,13 +9,19 @@ use Illuminate\Http\Request;
 
 class FeeController extends Controller
 {
+    protected array $perPageOptions = [10, 25, 50, 100];
+
     public function index(Request $request)
     {
-        $perPage = $request->input('per_page', 10);
-        $search  = $request->input('search');
+        $search  = trim((string) $request->query('search', ''));
+        $perPage = (int) $request->query('per_page', 10);
+
+        if (! in_array($perPage, $this->perPageOptions, true)) {
+            $perPage = 10;
+        }
 
         $fees = Fee::query()
-            ->when($search, function ($query, $search) {
+            ->when($search !== '', function ($query) use ($search) {
                 $query->where('class_name', 'like', "%{$search}%");
             })
             ->orderBy('sort_order')
@@ -23,7 +29,12 @@ class FeeController extends Controller
             ->paginate($perPage)
             ->withQueryString();
 
-        return view('admin.fees.list', compact('fees', 'search', 'perPage'));
+        return view('admin.fees.list', [
+            'fees'           => $fees,
+            'search'         => $search,
+            'perPage'        => $perPage,
+            'perPageOptions' => $this->perPageOptions,
+        ]);
     }
 
     public function create()
