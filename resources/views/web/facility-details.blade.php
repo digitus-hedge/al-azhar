@@ -192,16 +192,30 @@
             </div>
         </section>
 
-        {{-- Lightbox --}}
-        <div class="modal fade fac_lightbox" id="facLightbox" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl">
-                <div class="modal-content">
-                    <button type="button" class="fac_lb_close td_center" data-bs-dismiss="modal" aria-label="Close">&times;</button>
-                    <button type="button" class="fac_lb_nav fac_lb_prev td_center" aria-label="Previous">&#8249;</button>
-                    <img src="" alt="{{ $facility->title }}" class="fac_lb_img">
-                    <button type="button" class="fac_lb_nav fac_lb_next td_center" aria-label="Next">&#8250;</button>
-                    <p class="fac_lb_counter td_fs_14 mb-0"></p>
-                </div>
+                {{-- Lightbox (no Bootstrap dependency) --}}
+        <div class="fac_lb" id="facLb" aria-hidden="true" role="dialog" aria-label="{{ $facility->title }} photos">
+            <div class="fac_lb_backdrop" data-close></div>
+
+            <div class="fac_lb_bar">
+                <span class="fac_lb_counter"></span>
+                <button type="button" class="fac_lb_btn" data-close aria-label="Close">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+                </button>
+            </div>
+
+            <button type="button" class="fac_lb_btn fac_lb_nav fac_lb_prev" aria-label="Previous">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+
+            <div class="fac_lb_stage"></div>
+
+            <button type="button" class="fac_lb_btn fac_lb_nav fac_lb_next" aria-label="Next">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+
+            <div class="fac_lb_footer">
+                <p class="fac_lb_title"></p>
+                <div class="fac_lb_thumbs"></div>
             </div>
         </div>
     @endif
@@ -297,20 +311,63 @@
     .fac_gallery_item:hover .fac_gallery_zoom,
     .fac_gallery_item:focus-visible .fac_gallery_zoom { opacity: 1; }
 
-    /* Lightbox */
-    .fac_lightbox .modal-content { background: transparent; border: 0; position: relative; align-items: center; }
-    .fac_lb_img { max-width: 100%; max-height: 80vh; border-radius: 10px; object-fit: contain; }
-    .fac_lb_close, .fac_lb_nav {
-        position: absolute; z-index: 2;
-        width: 46px; height: 46px; border-radius: 50%; border: 0;
-        background-color: #fff; color: var(--heading-color);
-        font-size: 30px; line-height: 1;
+        /* ---------- Lightbox (same as gallery page) ---------- */
+    .fac_lb {
+        position: fixed; inset: 0; z-index: 99999;
+        display: flex; align-items: center; justify-content: center;
+        visibility: hidden; opacity: 0; transition: opacity .3s ease, visibility .3s ease;
     }
-    .fac_lb_close { top: -58px; right: 0; }
-    .fac_lb_prev { left: 10px; top: 50%; transform: translateY(-50%); }
-    .fac_lb_next { right: 10px; top: 50%; transform: translateY(-50%); }
-    .fac_lb_nav:hover, .fac_lb_close:hover { background-color: var(--accent-color); color: #fff; }
-    .fac_lb_counter { color: #fff; margin-top: 12px; }
+    .fac_lb.is-open { visibility: visible; opacity: 1; }
+    .fac_lb_backdrop { position: absolute; inset: 0; background: rgba(0, 0, 18, .95); backdrop-filter: blur(4px); }
+
+    .fac_lb_bar {
+        position: absolute; top: 0; left: 0; right: 0; z-index: 3;
+        display: flex; justify-content: space-between; align-items: center; padding: 16px 22px;
+    }
+    .fac_lb_counter { color: rgba(255,255,255,.75); font-size: 15px; font-weight: 500; letter-spacing: 1px; }
+
+    .fac_lb_stage {
+        position: relative; z-index: 2;
+        width: calc(100% - 200px); height: calc(100% - 230px);
+        display: flex; align-items: center; justify-content: center; margin-top: -40px;
+    }
+    .fac_lb_stage > * { animation: facFade .35s ease both; }
+    .fac_lb_stage img {
+        max-width: 100%; max-height: 100%; object-fit: contain;
+        border-radius: 10px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
+    }
+    @keyframes facFade { from { opacity: 0; transform: scale(.97); } to { opacity: 1; transform: none; } }
+
+    .fac_lb_btn {
+        width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer;
+        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,.12); color: #fff; transition: background .3s ease, transform .3s ease;
+    }
+    .fac_lb_btn:hover { background: var(--heading-color, #00539B); transform: scale(1.06); }
+    .fac_lb_nav { position: absolute; top: 50%; z-index: 3; margin-top: -60px; width: 56px; height: 56px; }
+    .fac_lb_prev { left: 28px; }
+    .fac_lb_next { right: 28px; }
+
+    .fac_lb_footer {
+        position: absolute; left: 0; right: 0; bottom: 0; z-index: 3;
+        padding: 0 20px 18px; text-align: center;
+    }
+    .fac_lb_title { color: #fff; font-size: 18px; font-weight: 500; margin-bottom: 12px; }
+    .fac_lb_thumbs {
+        display: flex; gap: 8px; justify-content: center;
+        overflow-x: auto; scrollbar-width: none; padding: 4px;
+    }
+    .fac_lb_thumbs::-webkit-scrollbar { display: none; }
+    .fac_lb_thumb {
+        flex: none; width: 74px; height: 52px; padding: 0; border: 2px solid transparent;
+        border-radius: 8px; overflow: hidden; cursor: pointer; opacity: .45;
+        background: #1c1c3a; transition: all .25s ease;
+    }
+    .fac_lb_thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .fac_lb_thumb:hover { opacity: .8; }
+    .fac_lb_thumb.is-active { opacity: 1; border-color: #fff; }
+
+    body.fac_lb_lock { overflow: hidden; }
 
     /* Related cards */
     .fac_rel_card { width: 100%; background-color: #fff; }
@@ -325,16 +382,24 @@
         .td_faq_1.td_style_1.td_type_1.fac_detail { flex-direction: column; }
         .fac_detail .td_faq_1_img { min-height: 420px; }
         .fac_gallery { grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .fac_lb_stage { width: calc(100% - 140px); }
+        .fac_lb_prev { left: 14px; }
+        .fac_lb_next { right: 14px; }
     }
     @media (max-width: 767px) {
         .fac_rel_card .td_card_btn { margin-bottom: 0; }
         .fac_rel_card:hover .td_card_info { margin-top: 0; }
+        .fac_lb_stage { width: 100%; height: calc(100% - 210px); padding: 0 10px; margin-top: -20px; }
+        .fac_lb_nav { top: auto; bottom: 92px; margin: 0; width: 44px; height: 44px; }
+        .fac_lb_title { font-size: 15px; padding: 0 56px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .fac_lb_thumb { width: 56px; height: 40px; }
     }
     @media (max-width: 575px) {
         .fac_detail .td_faq_1_img { min-height: 280px; }
         .fac_gallery { gap: 10px; }
         .fac_info li { flex-direction: column; gap: 2px; }
         .fac_info_value { text-align: left; }
+        .fac_lb_nav { width: 38px; height: 38px; font-size: 24px; }
         .fac_lb_nav { width: 38px; height: 38px; font-size: 24px; }
     }
 
@@ -350,31 +415,112 @@
 @push('scripts')
 @if ($photos->isNotEmpty())
 <script>
-    $(function () {
+(function () {
+    function init() {
         var photos = @json($photos);
+        var title  = @json($facility->title);
+        var tiles  = Array.prototype.slice.call(document.querySelectorAll('.fac_gallery_item'));
+        var lb     = document.getElementById('facLb');
+        if (!tiles.length || !lb) return;
+
+        document.body.appendChild(lb); // keep it clear of theme wrappers
+
+        var stage   = lb.querySelector('.fac_lb_stage');
+        var titleEl = lb.querySelector('.fac_lb_title');
+        var countEl = lb.querySelector('.fac_lb_counter');
+        var thumbs  = lb.querySelector('.fac_lb_thumbs');
+        var prevBtn = lb.querySelector('.fac_lb_prev');
+        var nextBtn = lb.querySelector('.fac_lb_next');
         var current = 0;
-        var el = document.getElementById('facLightbox');
-        var modal = bootstrap.Modal.getOrCreateInstance(el);
+
+        // hide arrows / thumbs when there is only one photo
+        if (photos.length < 2) {
+            prevBtn.style.display = nextBtn.style.display = thumbs.style.display = 'none';
+        }
+
+        /* ----- thumbnail strip (built once) ----- */
+        photos.forEach(function (src, i) {
+            var b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'fac_lb_thumb';
+            b.setAttribute('aria-label', 'Show photo ' + (i + 1));
+            var im = document.createElement('img');
+            im.src = src; im.alt = ''; im.loading = 'lazy';
+            b.appendChild(im);
+            b.addEventListener('click', function () { show(i); });
+            thumbs.appendChild(b);
+        });
 
         function show(i) {
             current = (i + photos.length) % photos.length;
-            $('.fac_lb_img').attr('src', photos[current]);
-            $('.fac_lb_counter').text((current + 1) + ' / ' + photos.length);
+
+            stage.innerHTML = '';
+            var img = document.createElement('img');
+            img.src = photos[current];
+            img.alt = title + ' photo ' + (current + 1);
+            stage.appendChild(img);
+
+            titleEl.textContent = title;
+            countEl.textContent = (current + 1) + ' / ' + photos.length;
+
+            var all = thumbs.children;
+            for (var k = 0; k < all.length; k++) all[k].classList.toggle('is-active', k === current);
+            if (all[current] && all[current].scrollIntoView) {
+                all[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
+
+            // preload neighbours for instant next/prev
+            [current + 1, current - 1].forEach(function (n) {
+                var p = new Image(); p.src = photos[(n + photos.length) % photos.length];
+            });
         }
 
-        $('.fac_gallery_item').on('click', function () {
-            show(parseInt($(this).data('index'), 10));
-            modal.show();
-        });
-        $('.fac_lb_prev').on('click', function () { show(current - 1); });
-        $('.fac_lb_next').on('click', function () { show(current + 1); });
+        function open(i) {
+            show(i);
+            lb.classList.add('is-open');
+            lb.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('fac_lb_lock');
+        }
 
-        $(document).on('keydown', function (e) {
-            if (!el.classList.contains('show')) return;
+        function close() {
+            lb.classList.remove('is-open');
+            lb.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('fac_lb_lock');
+            stage.innerHTML = '';
+        }
+
+        tiles.forEach(function (tile) {
+            tile.addEventListener('click', function (e) {
+                e.preventDefault();
+                open(parseInt(tile.getAttribute('data-index'), 10) || 0);
+            });
+        });
+
+        prevBtn.addEventListener('click', function () { show(current - 1); });
+        nextBtn.addEventListener('click', function () { show(current + 1); });
+        lb.querySelectorAll('[data-close]').forEach(function (el) { el.addEventListener('click', close); });
+
+        document.addEventListener('keydown', function (e) {
+            if (!lb.classList.contains('is-open')) return;
+            if (e.key === 'Escape') close();
             if (e.key === 'ArrowLeft') show(current - 1);
             if (e.key === 'ArrowRight') show(current + 1);
         });
-    });
+
+        // swipe on touch screens
+        var sx = null;
+        stage.addEventListener('touchstart', function (e) { sx = e.touches[0].clientX; }, { passive: true });
+        stage.addEventListener('touchend', function (e) {
+            if (sx === null || photos.length < 2) return;
+            var dx = e.changedTouches[0].clientX - sx;
+            if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
+            sx = null;
+        });
+    }
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+    else init();
+})();
 </script>
 @endif
 @endpush

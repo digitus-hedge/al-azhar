@@ -1,7 +1,7 @@
 @extends('web.layouts.app')
 
 @section('title', 'Academics || AL-Azhar')
-@section('meta_description', 'Academics at Al Azhar Central School, Mala: CBSE syllabus from Preschool to Senior Secondary, Montessori kindergarten, board examinations and subject streams.')
+@section('meta_description', 'Academics at Al Azhar Central School, Mala: CBSE syllabus from Preschool to Senior Secondary, Montessori kindergarten, fee structure, board examinations and subject streams.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
 
@@ -18,6 +18,45 @@
     ];
 
     $values = ['Ethics & morality', 'Civility', 'Kindness', 'Discipline', 'Honesty'];
+
+    // ---------- Fee structure (data comes from AcademicController) ----------
+    $fees       = $fees ?? collect();
+    $classIndex = array_flip(\App\Models\Fee::CLASSES);
+
+    $feeGroupMeta = [
+        'Kindergarten'           => ['sub' => 'Pre-KG, LKG & UKG', 'icon' => $levels[1]['icon']],
+        'Primary Level'          => ['sub' => 'Classes I – V',     'icon' => $levels[2]['icon']],
+        'Secondary Level'        => ['sub' => 'Classes VI – X',    'icon' => $levels[3]['icon']],
+        'Senior Secondary Level' => ['sub' => 'Classes XI – XII',  'icon' => $levels[4]['icon']],
+        'Other Classes'          => ['sub' => '',                  'icon' => $levels[0]['icon']],
+    ];
+    $groupOrder = array_flip(array_keys($feeGroupMeta));
+
+    $feeGroups = $fees
+        ->groupBy(function ($fee) use ($classIndex) {
+            $i = $classIndex[$fee->class_name] ?? null;
+            return match (true) {
+                $i === null => 'Other Classes',
+                $i <= 2     => 'Kindergarten',
+                $i <= 7     => 'Primary Level',
+                $i <= 12    => 'Secondary Level',
+                default     => 'Senior Secondary Level',
+            };
+        })
+        ->sortBy(fn ($items, $group) => $groupOrder[$group] ?? 99);
+
+    // Indian number format: 196000 → ₹1,96,000
+    $inr = function ($amount) {
+        [$int, $dec] = explode('.', number_format((float) $amount, 2, '.', ''));
+        $last3 = substr($int, -3);
+        $rest  = substr($int, 0, -3);
+        if ($rest !== '' && $rest !== false) {
+            $rest = preg_replace('/\B(?=(\d{2})+(?!\d))/', ',', $rest) . ',';
+        } else {
+            $rest = '';
+        }
+        return '₹' . $rest . $last3 . ($dec !== '00' ? '.' . $dec : '');
+    };
 @endphp
 
 @section('content')
@@ -145,6 +184,82 @@
         <div class="td_height_100 td_height_lg_75"></div>
     </section>
     <!-- End Levels -->
+
+    <!-- Start Fee Structure -->
+    @if ($feeGroups->isNotEmpty())
+    <section class="acd_fees" id="fee-structure">
+        <div class="td_height_100 td_height_lg_75"></div>
+        <div class="container">
+            <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
+                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase acd_accent">
+                    <i></i> Transparent &amp; Simple <i></i>
+                </p>
+                <h2 class="td_section_title td_fs_48 mb-0">Fee Structure</h2>
+                <div class="d-flex justify-content-center">
+                    <p class="td_section_subtitle td_fs_18 mb-0 acd_fees_intro">
+                        Class-wise school fees for the academic year, payable in convenient instalments.
+                    </p>
+                </div>
+            </div>
+            <div class="td_height_50 td_height_lg_40"></div>
+
+            <div class="acd_fees_grid">
+                @foreach ($feeGroups as $group => $items)
+                    @php $meta = $feeGroupMeta[$group] ?? $feeGroupMeta['Other Classes']; @endphp
+                    <div class="acd_fee_card wow fadeInUp" data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($loop->index % 2) * 0.15 }}s">
+                        <div class="acd_fee_head">
+                            <span class="acd_fee_head_icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">{!! $meta['icon'] !!}</svg>
+                            </span>
+                            <div>
+                                <h3 class="acd_fee_title">{{ $group }}</h3>
+                                @if ($meta['sub'])
+                                    <p class="acd_fee_sub mb-0">{{ $meta['sub'] }}</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        <table class="acd_fee_table">
+                            <thead>
+                                <tr>
+                                    <th>Class</th>
+                                    <th class="acd_fee_col_inst">Instalment</th>
+                                    <th class="text-end">Yearly Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($items as $fee)
+                                    <tr>
+                                        <td>
+                                            <strong class="acd_fee_class">{{ $fee->class_name }}</strong>
+                                            <span class="acd_fee_inst_m">{{ $inr($fee->fee_amount) }} × {{ $fee->installments }}</span>
+                                        </td>
+                                        <td class="acd_fee_col_inst">
+                                            {{ $inr($fee->fee_amount) }} <span class="acd_fee_times">× {{ $fee->installments }}</span>
+                                        </td>
+                                        <td class="text-end"><span class="acd_fee_total">{{ $inr($fee->total_amount) }}</span></td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                @endforeach
+            </div>
+
+            <div class="acd_fees_note wow fadeInUp" data-wow-delay="0.3s">
+                <span class="acd_fees_note_icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                </span>
+                <p class="mb-0">
+                    Fees are paid in instalments as shown; the yearly total is the instalment amount multiplied by the number of instalments.
+                    Fees are subject to revision. For details, please <a href="{{ route('contact.index') }}">contact the school office</a>.
+                </p>
+            </div>
+        </div>
+        <div class="td_height_100 td_height_lg_75"></div>
+    </section>
+    @endif
+    <!-- End Fee Structure -->
 
     <!-- Start Board Examinations -->
     <section class="td_accent_bg td_shape_section_1 acd_board">
@@ -328,7 +443,7 @@
 @push('styles')
 <style>
     /* Uses --heading-color (site blue) because --accent-color is broken under td_theme_2 */
-    .acd_intro, .acd_levels, .acd_board, .acd_primary, .acd_cta_wrap {
+    .acd_intro, .acd_levels, .acd_fees, .acd_board, .acd_primary, .acd_cta_wrap {
         --acd: var(--heading-color, #00539B);
         --acd-dark: #002F5F;
         --acd-soft: #F4F7FB;
@@ -396,6 +511,51 @@
     .acd_level:hover .acd_level_icon { background: var(--acd); color: #fff; }
     .acd_level_title { font-size: 19px; font-weight: 600; color: var(--acd); margin: 0 0 6px; line-height: 1.3; }
     .acd_level_sub { font-size: 14px; color: #6b7489; }
+
+    /* ---------- Fee structure ---------- */
+    .acd_fees_intro { max-width: 640px; }
+    .acd_fees_grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; align-items: start; }
+    .acd_fee_card {
+        background: #fff; border: 1px solid var(--acd-line); border-radius: 18px; overflow: hidden;
+        box-shadow: 0 24px 50px -36px rgba(0, 0, 27, .45);
+    }
+    .acd_fee_head {
+        display: flex; align-items: center; gap: 14px; padding: 20px 24px;
+        background: var(--acd-soft); border-bottom: 1px solid var(--acd-line);
+    }
+    .acd_fee_head_icon {
+        width: 50px; height: 50px; border-radius: 14px; flex: none;
+        display: flex; align-items: center; justify-content: center; background: var(--acd); color: #fff;
+    }
+    .acd_fee_title { margin: 0; font-size: 20px; font-weight: 600; color: var(--acd); line-height: 1.3; }
+    .acd_fee_sub { font-size: 14px; color: #6b7489; }
+
+    .acd_fee_table { width: 100%; border-collapse: collapse; margin: 0; }
+    .acd_fee_table th {
+        padding: 14px 24px 10px; font-size: 12px; font-weight: 600; letter-spacing: 1px;
+        text-transform: uppercase; color: #8a93a6; text-align: left; border: 0;
+    }
+    .acd_fee_table th.text-end, .acd_fee_table td.text-end { text-align: right; }
+    .acd_fee_table td {
+        padding: 14px 24px; border: 0; border-top: 1px solid var(--acd-line);
+        color: #3d4556; vertical-align: middle;
+    }
+    .acd_fee_table tbody tr { transition: background .25s ease; }
+    .acd_fee_table tbody tr:hover { background: #FAFBFD; }
+    .acd_fee_class { color: var(--acd); font-weight: 600; }
+    .acd_fee_times { color: #8a93a6; font-size: 14px; }
+    .acd_fee_total {
+        display: inline-block; padding: 5px 12px; border-radius: 20px;
+        background: var(--acd-soft); color: var(--acd); font-weight: 700; white-space: nowrap;
+    }
+    .acd_fee_inst_m { display: none; font-size: 13px; color: #8a93a6; margin-top: 2px; }
+
+    .acd_fees_note {
+        display: flex; align-items: flex-start; gap: 12px; margin-top: 30px;
+        padding: 16px 20px; border-radius: 14px; background: var(--acd-soft); color: #5b6477; font-size: 15px;
+    }
+    .acd_fees_note_icon { color: var(--acd); flex: none; margin-top: 1px; }
+    .acd_fees_note a { color: var(--acd); font-weight: 600; text-decoration: underline; }
 
     /* ---------- Board examinations ---------- */
     .acd_board { position: relative; overflow: hidden; }
@@ -515,12 +675,19 @@
     .acd_cta_btn:hover .acd_cta_btn_icon { transform: translateX(4px) rotate(-45deg); }
 
     /* ---------- Responsive ---------- */
+    @media (min-width: 992px) {
+        .acd_intro_text { padding-left: 60px; }
+    }
+    @media (min-width: 1400px) {
+        .acd_intro_text { padding-left: 80px; }
+    }
     @media (max-width: 1199px) {
         .acd_level_grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 991px) {
         .acd_photo::before { display: none; }
         .acd_cta { padding: 36px 30px; }
+        .acd_fees_grid { grid-template-columns: 1fr; }
     }
     @media (max-width: 767px) {
         .acd_level_grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
@@ -535,15 +702,14 @@
         .acd_character { flex-direction: column; padding: 24px 20px; }
         .acd_cta { padding: 30px 20px; }
         .acd_cta_btn { width: 100%; justify-content: space-between; }
+
+        .acd_fee_head { padding: 16px 18px; }
+        .acd_fee_table th, .acd_fee_table td { padding-left: 18px; padding-right: 18px; }
+        .acd_fee_col_inst { display: none; }
+        .acd_fee_inst_m { display: block; }
     }
     @media (max-width: 420px) {
         .acd_level_grid { grid-template-columns: 1fr; }
     }
-    @media (min-width: 992px) {
-    .acd_intro_text { padding-left: 60px; }
-}
-@media (min-width: 1400px) {
-    .acd_intro_text { padding-left: 80px; }
-}
 </style>
 @endpush

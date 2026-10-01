@@ -388,19 +388,6 @@
                             </ul>
                         </div>
 
-                        @if ($years->isNotEmpty())
-                            <div class="nn_widget wow fadeInRight" data-wow-delay="0.4s">
-                                <h3 class="nn_widget_title">Archive</h3>
-                                <div class="nn_years">
-                                    @foreach ($years as $y => $count)
-                                        <a href="{{ route('news-notices.index', ['year' => $y]) }}"
-                                            class="{{ (! $isDetail && $year === (int) $y) ? 'is-active' : '' }}">
-                                            {{ $y }} <span>{{ $count }}</span>
-                                        </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
 
                         @if ($recent->isNotEmpty())
                             <div class="nn_widget wow fadeInRight" data-wow-delay="0.4s">

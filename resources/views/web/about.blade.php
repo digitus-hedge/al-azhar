@@ -65,10 +65,10 @@
                 <div class="col-lg-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.25s">
                     <div class="td_about_thumb_wrap">
                         <div class="td_about_thumb_1 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
-                            <img src="{{ asset('images/about2.jpeg') }}" alt="Al Azhar Central School campus">
+                            <img src="{{ asset('images/ab2.jpg') }}" alt="Al Azhar Central School campus">
                         </div>
                         <div class="td_about_thumb_2 wow zoomIn" data-wow-duration="1s" data-wow-delay="0.6s">
-                            <img src="{{ asset('images/about.webp') }}" alt="Students at Al Azhar Central School">
+                            <img src="{{ asset('images/ab1.jpg') }}" alt="Students at Al Azhar Central School">
                         </div>
                     </div>
                 </div>

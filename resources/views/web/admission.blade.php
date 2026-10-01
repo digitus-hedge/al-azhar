@@ -440,7 +440,7 @@
     .adm_steps h3 { margin-top: 8px; }
 
     /* Help card */
-    .adm_help { padding: 30px; }
+    .adm_help { padding: 30px;margin-top: 30px; }
     .adm_help_list li { display: flex; align-items: center; gap: 12px; color: #fff; word-break: break-word; }
     .adm_help_list li:not(:last-child) { margin-bottom: 14px; }
     .adm_help_list a:hover { color: rgba(255, 255, 255, 0.75); }

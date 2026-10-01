@@ -35,7 +35,7 @@ use App\Http\Controllers\Web\WebMandatoryDisclosureController;
 use App\Http\Controllers\Web\WebManagementController;
 use App\Http\Controllers\Admin\BoardingController;
 use App\Http\Controllers\Web\WebBoardingController;
-
+use App\Http\Controllers\Web\AcademicController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -72,7 +72,7 @@ Route::get('/news-notices/{newsNotice}/{slug?}', [WebNewsNoticeController::class
 Route::get('/mandatory-disclosure', [WebMandatoryDisclosureController::class, 'index'])->name('mandatory-disclosure');
 Route::get('/about-us/school-management', [WebManagementController::class, 'index'])->name('school-management');
 
-Route::view('/academics', 'web.academics')->name('academics');
+Route::get('/academics', [AcademicController::class, 'index'])->name('academics');
 
 Route::get('/boarding', WebBoardingController::class)->name('boarding');
 
