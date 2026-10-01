@@ -167,19 +167,28 @@ section { overflow-x: clip; }
             'facilities' => '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M2 21h20"/><path d="M4 21V10l8-6 8 6v11"/><path d="M10 21v-5h4v5"/><path d="M8 11h2M14 11h2M8 14h2M14 14h2"/><path d="M12 4V2"/></svg>',
         ];
         $statIconDefault = '<svg width="22" height="22" style="flex-shrink:0;min-width:22px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1L12 2z"/></svg>';
-    @endphp
+                // Page each stat card opens (matched by its label, lower-case)
+        $statLinks = [
+            'academics'  => Route::has('academics')        ? route('academics')        : url('/academics'),
+            'boarding'   => Route::has('facilities.index') ? route('boarding')         : url('/boarding'),
+            'events'     => Route::has('events.index')     ? route('events.index')     : url('/events'),
+            'facilities' => Route::has('facilities.index') ? route('facilities.index') : url('/facilities'),
+        ];
+@endphp
 
     <div class="container">
         <div class="td_hero_btn_group">
             @foreach ($stats as $item)
                 @php
-                    $label = $item['label'] ?? '';
-                    $desc  = $item['description'] ?? '';
-                    $icon  = $statIconSet[\Illuminate\Support\Str::lower(trim($label))] ?? $statIconDefault;
+                    $label   = $item['label'] ?? '';
+                    $desc    = $item['description'] ?? '';
+                    $statKey = \Illuminate\Support\Str::lower(trim($label));
+                    $icon    = $statIconSet[$statKey] ?? $statIconDefault;
+                    $link    = $loop->index < 4 ? ($statLinks[$statKey] ?? null) : null;
                 @endphp
 
                 @if ($label !== '' || $desc !== '')
-                    <a href="javascript:;" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp home_stat_btn"
+                    <a href="{{ $link ?: 'javascript:;' }}" class="td_btn td_style_1 td_radius_10 td_medium td_fs_20 wow fadeInUp home_stat_btn"
                         data-wow-duration="0.9s" data-wow-delay="{{ 0.2 + $loop->index * 0.15 }}s">
                         <span class="td_btn_in td_white_color td_accent_bg">
                             <span class="home_stat_txt">
