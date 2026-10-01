@@ -15,9 +15,7 @@ class EventController extends Controller
     /**
      * Columns that are allowed to be sorted on from the URL.
      */
-    protected array $sortable = ['id',
-        'title', 'event_date', 'venue', 'is_active', 'created_at',
-    ];
+    protected array $sortable = ['id','image','title', 'event_date', 'venue', 'is_active', 'created_at'];
 
     /**
      * Allowed "per page" choices for the listing.

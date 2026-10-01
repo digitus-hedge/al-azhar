@@ -109,7 +109,7 @@
             <table class="news-table">
                 <thead>
                     <tr>
-                        <th></th>
+                         <th>{!! $sortLink('image', 'Image') !!}</th>
                         <th>{!! $sortLink('title', 'Title') !!}</th>
                         <th>{!! $sortLink('event_date', 'Date Time') !!}</th>
                         <th>{!! $sortLink('venue', 'Venue') !!}</th>
