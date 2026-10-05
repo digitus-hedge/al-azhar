@@ -14,13 +14,16 @@
         content: "/" !important;
         color: #fff;
         padding: 0 8px;
+        background-color: #001428;
+        box-shadow: inset 0 0 0 100vmax rgba(0, 18, 40, 21.8);
+
     }
 </style>
 @endpush
   <!-- Start Page Heading Section -->
   <section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-    data-src="{{ asset('images/header.jpeg') }}"
-    style="background-image: url('{{ asset('images/header.jpeg') }}');">
+    data-src="{{ asset('images/header.png') }}"
+    style="background-image: url('{{ asset('images/header.png') }}');">
     <div class="container">
       <div class="td_page_heading_in">
         <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">About Us</h1>
@@ -120,10 +123,15 @@
 
 <style>
     /* Same image shapes as the theme demo, whatever size your photos are */
-    .home_about .td_about_thumb_1 img,
-    .home_about .td_about_thumb_2 img { width: 100%; object-fit: cover; display: block; }
-    .home_about .td_about_thumb_1 img { aspect-ratio: 476 / 492; }   /* tall left photo */
-    .home_about .td_about_thumb_2 img { aspect-ratio: 315 / 416; }   /* overlapping right photo */
+    /* Show the full photo, no cropping */
+.home_about .td_about_thumb_1 img,
+.home_about .td_about_thumb_2 img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: auto;
+    object-fit: contain;
+    display: block;
+}
     .home_about_text p { margin: 0 0 12px; }
 .home_about_text p:last-child { margin-bottom: 0; }
 .home_about_text br:last-child { display: none; }

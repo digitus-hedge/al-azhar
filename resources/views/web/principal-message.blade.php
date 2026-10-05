@@ -45,31 +45,29 @@
     <div class="td_height_100 td_height_lg_50"></div>
 
     @if ($principal)
-        <div class="td_faq_1 td_style_1 td_type_1 pm_wrap">
+        {{-- This block uses its own pm_ layout classes (not the theme's td_faq_1 ones),
+             so the photo and the text always start at the same top line. --}}
+        <div class="pm_wrap" id="pmWrap">
 
             {{-- Left: photo --}}
-            <div class="td_faq_1_left wow zoomIn" data-wow-duration="1.1s" data-wow-delay="0.2s">
+            <div class="pm_left wow zoomIn" data-wow-duration="1.1s" data-wow-delay="0.2s">
                 @if ($principal->photo_url)
-                    <div class="td_faq_1_img pm_photo"
-                        style="background-image: url('{{ $principal->photo_url }}');"
-                        role="img" aria-label="{{ $principal->name }}"></div>
+                    <img class="pm_photo" src="{{ $principal->photo_url }}" alt="{{ $principal->name }}">
                 @else
-                    <div class="td_faq_1_img pm_photo pm_photo_fallback td_center">
+                    <div class="pm_photo pm_photo_fallback td_center">
                         <span class="pm_initial td_white_color">{{ $principal->initial }}</span>
                     </div>
                 @endif
             </div>
 
             {{-- Right: heading, message, name, sign --}}
-            <div class="td_faq_1_right">
-                <div class="td_section_heading td_style_1 td_mb_30">
+            <div class="pm_right">
+                <div class="td_section_heading td_style_1 td_mb_30 pm_heading">
                     <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color wow fadeInDown" data-wow-delay="0.2s">
                         Principal's Message
                     </p>
                     <h2 class="td_section_title td_fs_48 mb-0 wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.35s">{{ $principal->heading }}</h2>
-                </div>
 
-               <div class="pm_message td_fs_18 td_heading_color wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.5s">
                     <span class="pm_quote td_accent_color" aria-hidden="true">
                         <svg width="65" height="46" viewBox="0 0 65 46" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path opacity="0.08"
@@ -77,7 +75,9 @@
                                 fill="currentColor" stroke="currentColor" stroke-width="2" />
                         </svg>
                     </span>
+                </div>
 
+                <div class="pm_message td_fs_18 td_heading_color wow fadeInUp" id="pmMessage" data-wow-duration="1s" data-wow-delay="0.5s">
                     @php
                         $message = trim((string) $principal->excerpt);
                         $isHtml  = $message !== strip_tags($message);
@@ -126,16 +126,41 @@
     @keyframes fadeInUp    { from { opacity: 0; transform: translate3d(0,50px,0); }  to { opacity: 1; transform: none; } }
     @keyframes fadeInDown  { from { opacity: 0; transform: translate3d(0,-40px,0); } to { opacity: 1; transform: none; } }
     @keyframes zoomIn      { from { opacity: 0; transform: scale(.85); } }
-    /* Photo: keep the face in view for portrait images */
-    .pm_wrap .pm_photo { background-size: cover; background-repeat: no-repeat; background-position: center top; }
-    .pm_wrap .pm_photo_fallback { background-color: var(--heading-color); }
+
+    /* =====================================================================
+       Settings you can change
+       ===================================================================== */
+    .pm_wrap {
+        --pm-height: clamp(560px, 80vh, 700px);   /* height of the photo on side-by-side screens */
+        --pm-sticky-top: 110px;                   /* header height + a small gap */
+        --pm-photo-pos: center top;               /* which part of the photo stays visible */
+    }
+
+    /* ---------- Layout: stacked by default (tablet / phone) ---------- */
+    .pm_wrap { display: flex; flex-direction: column; }
+
+    .pm_left { width: 100%; height: 480px; background-color: #f4f5f7; }
+    .pm_photo {
+        display: block;
+        width: 100%;
+        height: 100%;
+        max-width: none;
+        object-fit: cover;
+        object-position: var(--pm-photo-pos);
+    }
+    .pm_photo_fallback { background-color: var(--heading-color); }
     .pm_initial { font-size: 180px; line-height: 1; font-weight: 700; opacity: .9; }
+
+    .pm_right { width: 100%; max-width: 720px; margin: 0 auto; padding: 45px 12px 0; }
+
+    /* Heading + quote mark */
+    .pm_heading { position: relative; }
+    .pm_quote { position: absolute; right: 0; bottom: -6px; pointer-events: none; }
 
     /* Message */
     .pm_message { position: relative; line-height: 1.75em; opacity: .85; }
     .pm_message p { margin-bottom: 20px; }
     .pm_message p:last-of-type { margin-bottom: 0; }
-    .pm_quote { position: absolute; right: 0; top: -70px; pointer-events: none; }
 
     /* Name + signature */
     .pm_sign_block {
@@ -163,18 +188,39 @@
         opacity: .9;
     }
 
-    /* ---------- Responsive ---------- */
+    /* ---------- Side by side (desktop / laptop): photo stays in view, text scrolls with the page ---------- */
+    @media (min-width: 992px) {
+        .pm_wrap {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            align-items: start;                       /* photo and text start on the same top line */
+        }
+
+        /* Photo: fixed height, sticks below the header while the long message scrolls past */
+        .pm_left {
+            height: var(--pm-height);
+            position: sticky;
+            top: var(--pm-sticky-top);
+        }
+
+        /* Text: full message, as tall as it needs to be */
+        .pm_right {
+            max-width: none;
+            margin: 0;
+            padding: 4px clamp(24px, 3.2vw, 60px) 4px clamp(40px, 6vw, 115px);
+        }
+    }
+
+    /* ---------- Smaller screens ---------- */
     @media (max-width: 1199px) {
         .pm_initial { font-size: 140px; }
     }
-    @media (max-width: 991px) {
-        /* Theme reverses this layout on tablet/mobile; keep the photo on top instead */
-        .td_faq_1.td_style_1.td_type_1.pm_wrap { flex-direction: column; }
-        .pm_wrap .td_faq_1_img { min-height: 480px; }
-        .pm_quote { top: -60px; }
+    @media (max-width: 767px) {
+        .pm_right { max-width: 540px; }
     }
     @media (max-width: 575px) {
-        .pm_wrap .td_faq_1_img { min-height: 360px; }
+        .pm_left { height: 360px; }
+        .pm_right { padding-top: 36px; }
         .pm_message { line-height: 1.65em; }
         .pm_signature { font-size: 38px; }
         .pm_quote svg { width: 48px; height: 34px; }
