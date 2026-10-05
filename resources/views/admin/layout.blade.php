@@ -448,13 +448,13 @@
 /* ===== Mobile phones ===== */
 @media (max-width: 560px) {
     .topbar {
-        padding: 12px 14px;
+        padding: 12px 6px;
         gap: 8px;
     }
 
     .topbar h3 {
         font-size: 14px;
-        overflow: hidden;
+        /* overflow: hidden; */
         text-overflow: ellipsis;
         white-space: nowrap;
         flex: 1;
