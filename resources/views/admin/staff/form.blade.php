@@ -280,7 +280,7 @@
                 {{-- Module Permissions (staff role only) --}}
                 <div id="permissions-field" style="{{ $currentRole === 'admin' ? 'display:none;' : '' }}">
                     <label style="display:block;font-size:12.5px;font-weight:600;color:var(--muted,#667085);margin-bottom:8px;">
-                        Allowed Modules
+                        Allowed Modules <span class="req">*</span>
                     </label>
                     <div class="permissions-grid">
                         @foreach (\App\Models\User::MODULES as $key => $label)
@@ -618,6 +618,16 @@ function submitStaffForm() {
     form.querySelectorAll('.field-error').forEach(el => el.remove());
     form.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
 
+
+// At least one Allowed Module when Login Access is ON
+const loginOn   = document.getElementById('has_login').checked;
+const anyModule = form.querySelector('input[name="login_permissions[]"]:checked');
+if (loginOn && !anyModule) {
+    showStaffValidationErrors({ login_permissions: ['Please select at least one module.'] });
+    return;
+}
+
+
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
 
@@ -682,7 +692,8 @@ function showStaffValidationErrors(errors) {
         login_email: f => f.querySelector('[name="login_email"]'),
       login_password: f => f.querySelector('.password-wrap'),
         login_role: f => document.getElementById('role_staff'),
-        login_permissions: f => document.getElementById('permissions-field'),
+       // login_permissions: f => document.getElementById('permissions-field'),
+        login_permissions: f => f.querySelector('.permissions-grid'),
     };
 
     const noBorderFields = ['is_head_of_staff', 'show_on_home', 'has_login', 'login_role', 'login_permissions'];

@@ -35,7 +35,7 @@ class StaffRequest extends FormRequest
                 'integer',
                 Rule::exists('management_designations', 'id')->where(function ($q) use ($currentDesignation) {
                     $q->where(function ($w) use ($currentDesignation) {
-                        $w->where(fn ($x) => $x->whereNull('deleted_at')->where('type', 'staff'));
+                        $w->where(fn($x) => $x->whereNull('deleted_at')->where('type', 'staff'));
                         if ($currentDesignation) {
                             $w->orWhere('id', $currentDesignation);
                         }
@@ -56,7 +56,7 @@ class StaffRequest extends FormRequest
                 'max:5120',
             ],
 
-             'head_type' => [
+            'head_type' => [
                 'nullable',
                 Rule::in(['HOD', 'HOS']),
             ],
@@ -115,7 +115,15 @@ class StaffRequest extends FormRequest
             // Role + module permissions — only meaningful while "has_login" is on.
             'login_role' => ['nullable', Rule::in(['admin', 'staff'])],
 
-            'login_permissions'   => ['nullable', 'array'],
+            // 'login_permissions'   => ['nullable', 'array'],
+
+            'login_permissions' => [
+                // At least one module when login is ON (admin role is exempt).
+                Rule::requiredIf(fn() => $this->boolean('has_login') && $this->input('login_role', 'staff') !== 'admin'),
+                'array',
+                'min:1',
+            ],
+
             'login_permissions.*' => [Rule::in(array_keys(User::MODULES))],
         ];
     }
@@ -139,6 +147,9 @@ class StaffRequest extends FormRequest
             'login_password.min'     => 'Password must be at least 8 characters.',
             'login_email.required_if'  => 'Please enter an email address to enable login for this staff member.',
             'login_password.required'  => 'Please set a password to enable login for this staff member.',
+
+            'login_permissions.required' => 'Please select at least one module.',
+            'login_permissions.min'      => 'Please select at least one module.',
 
         ];
     }
