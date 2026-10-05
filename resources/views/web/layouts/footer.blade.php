@@ -1,7 +1,7 @@
 @php
     // TODO: keep these the same as the header
-    $ftPhone   = '99884567809';
-    $ftEmail   = 'al-azhar@gmail.com';
+    $ftPhone   = '894 333 7011';
+    $ftEmail   = 'alazharmala@gmail.com';
     $ftAddress = 'Al Azhar Central School, Mala, Thrissur, Kerala, India';
     $ftHours   = 'Mon – Sat, 9:00 AM – 4:00 PM';
     $ftLogo    = asset('images/logo1.png');

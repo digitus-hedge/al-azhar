@@ -142,7 +142,6 @@
                             <div class="dept_card wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInRight'][$loop->index % 4] }}"
                                 data-wow-duration="0.9s" data-wow-delay="{{ 0.15 + ($loop->index % 4) * 0.1 }}s">
                                 <div class="dept_card_img">
-                                    <span class="dept_badge">{{ $group['label'] }}</span>
                                     <img src="{{ $photo($member) }}" alt="{{ $member->name }}" loading="lazy">
                                 </div>
                                 <div class="dept_card_info">
