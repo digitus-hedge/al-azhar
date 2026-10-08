@@ -514,10 +514,11 @@
 
     /* ---------- Fee structure ---------- */
     .acd_fees_intro { max-width: 640px; }
-    .acd_fees_grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; align-items: start; }
+    .acd_fees_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: stretch; }
     .acd_fee_card {
         background: #fff; border: 1px solid var(--acd-line); border-radius: 18px; overflow: hidden;
         box-shadow: 0 24px 50px -36px rgba(0, 0, 27, .45);
+        height: 100%;
     }
     .acd_fee_head {
         display: flex; align-items: center; gap: 14px; padding: 20px 24px;
@@ -530,7 +531,10 @@
     .acd_fee_title { margin: 0; font-size: 20px; font-weight: 600; color: var(--acd); line-height: 1.3; }
     .acd_fee_sub { font-size: 14px; color: #6b7489; }
 
-    .acd_fee_table { width: 100%; border-collapse: collapse; margin: 0; }
+    .acd_fee_table { width: 100%; border-collapse: collapse; margin: 0; table-layout: fixed; }
+.acd_fee_table th:first-child { width: 38%; }
+.acd_fee_table th.acd_fee_col_inst { width: 30%; }
+.acd_fee_table td.acd_fee_col_inst { white-space: nowrap; font-variant-numeric: tabular-nums; }
     .acd_fee_table th {
         padding: 14px 24px 10px; font-size: 12px; font-weight: 600; letter-spacing: 1px;
         text-transform: uppercase; color: #8a93a6; text-align: left; border: 0;
@@ -547,6 +551,7 @@
     .acd_fee_total {
         display: inline-block; padding: 5px 12px; border-radius: 20px;
         background: var(--acd-soft); color: var(--acd); font-weight: 700; white-space: nowrap;
+        font-variant-numeric: tabular-nums;
     }
     .acd_fee_inst_m { display: none; font-size: 13px; color: #8a93a6; margin-top: 2px; }
 
@@ -706,6 +711,7 @@
         .acd_fee_head { padding: 16px 18px; }
         .acd_fee_table th, .acd_fee_table td { padding-left: 18px; padding-right: 18px; }
         .acd_fee_col_inst { display: none; }
+        .acd_fee_table th:first-child { width: 55%; }
         .acd_fee_inst_m { display: block; }
     }
     @media (max-width: 420px) {
