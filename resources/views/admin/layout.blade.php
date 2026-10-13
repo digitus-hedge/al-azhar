@@ -825,7 +825,7 @@
     // Pattern "name*" (no dot) matches the list page AND its create/edit pages.
     $homeOpen        = request()->routeIs('admin.home.*');
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
-    $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*');
+    $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*','admin.curriculums*');
     $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*','admin.fees*','admin.academics*');
     $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*');
 
@@ -923,6 +923,16 @@
         </div>
     @endif
 
+
+    @if ($isAdmin)
+    <div class="nav-group">
+        <a class="nav-item {{ request()->routeIs('admin.blogs*') ? 'active' : '' }}"
+           href="{{ route('admin.blogs') }}">
+            <i class="bi bi-journal-text nav-ico"></i> Blogs
+        </a>
+    </div>
+@endif
+
     {{-- Events --}}
     @if ($can('events'))
         <div class="nav-group">
@@ -966,6 +976,15 @@
                         </a>
                     </li>
                 @endif
+
+                @if ($isAdmin)
+    <li>
+        <a class="nav-item {{ request()->routeIs('admin.curriculums*') ? 'active' : '' }}"
+           href="{{ route('admin.curriculums') }}">
+            <i class="bi bi-journal-bookmark nav-ico"></i> Curriculum
+        </a>
+    </li>
+@endif
             </ul>
         </div>
     @endif

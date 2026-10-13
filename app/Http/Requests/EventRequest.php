@@ -24,6 +24,9 @@ class EventRequest extends FormRequest
             'description'  => ['required', 'string', 'max:2000'],
             'event_date'   => ['required', 'date'],
             'event_time'   => ['required', 'date_format:H:i'],
+                    'response_date' => ['nullable', 'date', 'after_or_equal:event_date'],  // CHANGED
+
+
             'venue'        => ['required', 'string', 'max:255'],
                'image' => [
        $isUpdate ? 'required_if:remove_image,1' : 'required',
@@ -47,6 +50,8 @@ class EventRequest extends FormRequest
             'event_date.date'        => 'Please enter a valid date.',
             'event_time.required'    => 'Please choose the event time.',
             'event_time.date_format' => 'Please enter a valid time.',
+            'response_date.date'           => 'Please enter a valid response date.',
+            'response_date.after_or_equal' => 'Response date must be on or after the event date.',  // CHANGED
             'venue.required'         => 'Please enter the venue.',
             'image.required'         => 'Please upload an event image.',
             'image.required_if'      => 'Please upload a new image to replace the removed one.',

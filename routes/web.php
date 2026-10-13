@@ -22,8 +22,10 @@ use App\Http\Controllers\Admin\MandatoryDisclosureController;
 use App\Http\Controllers\Admin\ManagementMemberController;
 use App\Http\Controllers\Admin\ManagementDesignationController;
 use App\Http\Controllers\Admin\ContactNewController;
+use App\Http\Controllers\Admin\CurriculumController;
 use App\Http\Controllers\Admin\CareerEnquiryController;
 use App\Http\Controllers\Admin\CareerController;
+use App\Http\Controllers\Admin\BlogController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\DepartmentController as WebDepartmentController;
@@ -175,12 +177,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
             // Careers Enquiries
-            Route::get('career-enquiries',                 [CareerEnquiryController::class, 'index'])
-                ->name('career-enquiries');
-
+            Route::get('career-enquiries',                 [CareerEnquiryController::class, 'index'])->name('career-enquiries');
             Route::get('career-enquiries/{careerEnquiry}', [CareerEnquiryController::class, 'show'])
                 ->whereNumber('careerEnquiry')
                 ->name('career-enquiries.show');
+
+            // Curriculum
+            Route::get('curriculums',                   [CurriculumController::class, 'index'])->name('curriculums');
+            Route::get('curriculums/create',            [CurriculumController::class, 'create'])->name('curriculums.create');
+            Route::post('curriculums',                  [CurriculumController::class, 'store'])->name('curriculums.store');
+            Route::get('curriculums/{curriculum}/edit', [CurriculumController::class, 'edit'])->name('curriculums.edit');
+            Route::put('curriculums/{curriculum}',      [CurriculumController::class, 'update'])->name('curriculums.update');
+            Route::delete('curriculums/{curriculum}',   [CurriculumController::class, 'destroy'])->name('curriculums.destroy');
+
+            // Blogs
+            Route::get('blogs',               [BlogController::class, 'index'])->name('blogs');
+            Route::get('blogs/create',        [BlogController::class, 'create'])->name('blogs.create');
+            Route::post('blogs',               [BlogController::class, 'store'])->name('blogs.store');
+            Route::get('blogs/{blog}/edit',   [BlogController::class, 'edit'])->name('blogs.edit');
+            Route::put('blogs/{blog}',        [BlogController::class, 'update'])->name('blogs.update');
+            Route::delete('blogs/{blog}',        [BlogController::class, 'destroy'])->name('blogs.destroy');
 
 
 
