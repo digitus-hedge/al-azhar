@@ -16,7 +16,7 @@ class StatRequest extends FormRequest
         return [
             // Fixed set of 4 stats: Academics, Boarding, Events, Facilities.
             'items'               => 'required|array|size:4',
-            'items.*.label'       => 'required|string|in:Academics,Boarding,Events,Facilities',
+            'items.*.label'       => 'required|string|in:Academics,Hostel,Events,Facilities',
             'items.*.description' => 'required|string|max:150',
         ];
     }

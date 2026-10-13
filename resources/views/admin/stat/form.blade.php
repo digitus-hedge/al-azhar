@@ -28,7 +28,7 @@
 
 @php
     // Fixed set of stats — the admin only fills in value + description, the label is preset.
-    $presetLabels = ['Academics', 'Boarding', 'Events', 'Facilities'];
+    $presetLabels = ['Academics', 'Hostel', 'Events', 'Facilities'];
     $existingByLabel = collect(old('items', $stat->items ?? []))->keyBy('label');
 @endphp
 
@@ -63,7 +63,7 @@
 @php
     $placeholders = [
         'Academics'  => 'e.g. SSLC & Plus Two with a 100% pass rate',
-        'Boarding'   => 'e.g. Safe, supervised residential hostels',
+        'Hostel'   => 'e.g. Safe, supervised residential hostels',
         'Events'     => 'e.g. Cultural, sports & academic events all year',
         'Facilities' => 'e.g. Labs, library, sports grounds & more',
     ];
