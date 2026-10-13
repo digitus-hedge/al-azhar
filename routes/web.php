@@ -44,6 +44,8 @@ use App\Http\Controllers\Web\WebBoardingController;
 use App\Http\Controllers\Web\AcademicController as WebAcademicController;
 use App\Http\Controllers\Web\WebCareerController;
 use App\Http\Controllers\Web\WebBlogController;
+use App\Http\Controllers\Web\WebCurriculumController;
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -93,6 +95,10 @@ Route::post('/careers/apply', [WebCareerController::class, 'apply'])->name('care
 
 Route::get('/blogs', [WebBlogController::class, 'index'])->name('blogs');
 Route::get('/blogs/{slug}', [WebBlogController::class, 'show'])->name('blogs.show');
+
+Route::get('/curriculum', [WebCurriculumController::class, 'index'])->name('curriculum');
+
+
 
 //admin panel
 Route::prefix('admin')->name('admin.')->group(function () {

@@ -32,6 +32,7 @@
             ['Departments', $hdLink('departments.index')],
             ['Careers', $hdLink('careers')],
         ]],
+        ['Curriculum', url('/curriculum'), request()->is('/curriculum'), []],
         ['Campus Life', $hdLink('facilities.index'), request()->routeIs('facilities.*', 'gallery.*', 'events.*', 'boarding'), [
             ['Facilities',      $hdLink('facilities.index')],
             ['Blogs',          $hdLink('blogs')],

@@ -75,37 +75,14 @@ class EventController extends Controller
 
 public function storeResponse(StoreEventResponseRequest $request): RedirectResponse
 {
-    // Honeypot: bot, pretend success
     if ($request->filled('website')) {
-        return redirect()
-            ->route('events.index')
-            ->with('response_success', 'Thank you! Your response has been recorded.');
+        return back()->with('response_success', 'Thank you! Your response has been recorded.');
     }
 
     $event = Event::find($request->input('event_id'));
 
-    // Event missing or inactive
-    if (!$event) {
-        return redirect()
-            ->route('events.index')
-            ->with('response_error', 'Sorry, this event could not be found.');
-    }
-
-    if (!$event->is_active) {
-        return redirect()
-            ->route('events.index')
-            ->with('response_error', 'Sorry, this event is no longer available.');
-    }
-
-    // Response window closed
     if (!$event->is_open_for_response) {
-        $reason = empty($event->response_date)
-            ? 'no response window is set for this event'
-            : 'the response window closed on ' . \Illuminate\Support\Carbon::parse($event->response_date)->format('d M Y');
-
-        return redirect()
-            ->route('events.index')
-            ->with('response_error', "Sorry, responses for this event are closed ({$reason}).");
+        return back()->with('response_error', 'Sorry, responses for this event are closed.');
     }
 
     EventResponse::create([
@@ -116,9 +93,7 @@ public function storeResponse(StoreEventResponseRequest $request): RedirectRespo
         'ip_address' => $request->ip(),
     ]);
 
-    return redirect()
-        ->route('events.index')
-        ->with('response_success', 'Thank you! Your response has been recorded.')
-        ->withFragment('event-' . $event->id);
+    return back()
+        ->with('response_success', 'Thank you! Your response has been recorded.');
 }
 }
