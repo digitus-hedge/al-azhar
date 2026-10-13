@@ -26,6 +26,8 @@ class Event extends Model
 
     protected $casts = [
         'event_date' => 'date',
+            'response_date' => 'date',   // ← THIS is what's missing
+
         'event_time' => 'datetime:H:i',
         'is_active'  => 'boolean',
         'sort_order' => 'integer',

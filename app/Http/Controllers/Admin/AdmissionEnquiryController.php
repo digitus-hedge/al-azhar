@@ -217,11 +217,17 @@ class AdmissionEnquiryController extends Controller
                 'ID',
                 'Received On',
                 'Student Name',
+                'Gender',          // NEW
                 'Parent Name',
                 'Phone / WhatsApp',
                 'Email',
+                  'City',            // NEW
+    'District',        // NEW
+    'State',           // NEW
                 'Grade',
                 'Hostel Needed',
+                    'Transport Needed', // NEW
+
                 'Message',
                 'Status',
                 'Contacted On',
@@ -237,11 +243,17 @@ class AdmissionEnquiryController extends Controller
                             $e->id,
                             $e->created_at?->format('d-m-Y h:i A'),
                             $e->student_name,
+                                $e->gender ? ucfirst($e->gender) : '',          // NEW
+
                             $e->parent_name,
                             $e->parent_phone,
                             $e->parent_email,
+                            $e->city,                                        // NEW
+                            $e->district,                                    // NEW
+                            $e->state,                                       // NEW
                             $e->grade,
                             $e->needs_hostel ? 'Yes' : 'No',
+                            $e->needs_transport ? 'Yes' : 'No',              // NEW
                             $e->message,
                             $e->status_label,
                             $e->contacted_at?->format('d-m-Y h:i A'),

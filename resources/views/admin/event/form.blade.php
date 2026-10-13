@@ -79,9 +79,9 @@
         <div class="field-top">
             <label class="field-label">Response Date</label>
         </div>
-        <input type="date" name="response_date"
-               value="{{ old('response_date', optional($event->response_date)->format('Y-m-d')) }}"
-               class="{{ $errors->has('response_date') ? 'input-error' : '' }}">
+      <input type="date" name="response_date"
+       value="{{ old('response_date', optional($event->response_date)->format('Y-m-d')) }}"
+       class="{{ $errors->has('response_date') ? 'input-error' : '' }}">
         @error('response_date')
             <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
         @enderror

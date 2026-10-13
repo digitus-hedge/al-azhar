@@ -43,6 +43,10 @@
                 <dl class="details">
                     <dt>Student's name</dt>
                     <dd>{{ $enquiry->student_name }}</dd>
+
+                     <dt>Gender</dt>
+    <dd>{{ $enquiry->gender ? ucfirst($enquiry->gender) : '—' }}</dd>  {{-- NEW --}}
+
                     <dt>Grade seeking admission</dt>
                     <dd>{{ $enquiry->grade }}</dd>
                     <dt>Hostel facility</dt>
@@ -53,8 +57,37 @@
                             Not needed
                         @endif
                     </dd>
+
+
+                    <dt>Transport facility</dt>
+    <dd>
+        @if ($enquiry->needs_transport)
+            <span class="badge-yes"><i class="bi bi-bus-front-fill"></i> Needed</span>
+        @else
+            Not needed
+        @endif
+    </dd>
+
                 </dl>
             </div>
+
+
+            {{-- Location --}}
+<div class="card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-geo-alt"></i></span> Location</h2>
+    </div>
+    <dl class="details">
+        <dt>City</dt>
+        <dd>{{ $enquiry->city ?? '—' }}</dd>
+
+        <dt>District</dt>
+        <dd>{{ $enquiry->district ?? '—' }}</dd>
+
+        <dt>State</dt>
+        <dd>{{ $enquiry->state ?? '—' }}</dd>
+    </dl>
+</div>
 
             {{-- Message --}}
             <div class="card">
@@ -119,18 +152,24 @@
                     <h2><span class="icon"><i class="bi bi-person"></i></span> Parent</h2>
                 </div>
                 <div class="parent-name">{{ $enquiry->parent_name }}</div>
-                <div class="sub">{{ $enquiry->parent_phone }}</div>
-                @if ($enquiry->parent_email)
-                    <div class="sub">{{ $enquiry->parent_email }}</div>
-                @endif
+            
 
-                <div class="contact-btns">
+<div class="sub">
+    <i class="bi bi-telephone"></i> {{ $enquiry->parent_phone }}
+</div>
+
+@if ($enquiry->parent_email)
+    <div class="sub">
+        <i class="bi bi-envelope"></i> {{ $enquiry->parent_email }}
+    </div>
+@endif
+                <!-- <div class="contact-btns">
                     <a href="tel:{{ $enquiry->parent_phone }}" class="c-btn"><i class="bi bi-telephone-fill"></i> Call</a>
                     <a href="https://wa.me/{{ $enquiry->whatsapp_number }}?text={{ $waText }}" target="_blank" rel="noopener" class="c-btn wa"><i class="bi bi-whatsapp"></i> WhatsApp</a>
                     @if ($enquiry->parent_email)
                         <a href="mailto:{{ $enquiry->parent_email }}?subject={{ rawurlencode('Admission enquiry – ' . $enquiry->student_name) }}" class="c-btn"><i class="bi bi-envelope-fill"></i> Email</a>
                     @endif
-                </div>
+                </div> -->
             </div>
 
             {{-- Other enquiries from this parent --}}
@@ -330,6 +369,45 @@ function confirmDelete() {
     .st-option.is-locked { cursor: not-allowed; }
     .st-option input:disabled + .st-card { opacity: .55; cursor: not-allowed; pointer-events: none; }
     .st-option input:disabled:checked + .st-card { opacity: .8; } /* current "New" still readable */
+
+
+    /* ------- Parent card phone / email rows ------- */
+.sub {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--muted, #667085);
+    margin-top: 6px;
+    line-height: 1.4;
+}
+
+.sub i {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: #EEF4FF;
+    color: #002F5F;
+    font-size: 12px;
+    flex-shrink: 0;
+}
+
+/* Email icon in a soft green pill */
+.sub i.bi-envelope,
+.sub i.bi-envelope-fill {
+    background: #E9F8EF;
+    color: #12875A;
+}
+
+/* Phone icon in soft navy pill (default color above already handles it) */
+.sub i.bi-telephone,
+.sub i.bi-telephone-fill {
+    background: #EEF4FF;
+    color: #002F5F;
+}
 </style>
 
 @endsection

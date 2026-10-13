@@ -827,7 +827,7 @@
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
     $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*','admin.curriculums*');
     $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*','admin.fees*','admin.academics*');
-    $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*');
+    $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*','admin.hostel-enquiries*');
 
            $careerOpen = request()->routeIs('admin.careers*', 'admin.career-enquiries*');
 
@@ -1037,6 +1037,18 @@
                         </a>
                     </li>
                 @endif
+
+                  {{-- NEW: Hostel Enquiries --}}
+            @if ($isAdmin)
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.hostel-enquiries*') ? 'active' : '' }}"
+                       href="{{ route('admin.hostel-enquiries') }}">
+                        <i class="bi bi-house-door nav-ico"></i> Hostel Enquiries
+                    </a>
+                </li>
+            @endif
+
+            
             </ul>
         </div>
     @endif

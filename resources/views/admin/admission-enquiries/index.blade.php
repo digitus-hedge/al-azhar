@@ -136,21 +136,32 @@
                                     <div class="when">{{ $e->created_at->format('d M Y') }}</div>
                                     <div class="sub">{{ $e->created_at->format('h:i A') }} &middot; {{ $e->created_at->diffForHumans() }}</div>
                                 </td>
-                                <td>
-                                    <a href="{{ route('admin.admission-enquiries.show', $e) }}" class="name-link">
-                                        @if ($e->status === 'new')<span class="dot-new" title="New"></span>@endif
-                                        <b>{{ $e->student_name }}</b>
-                                    </a>
-                                    <div class="sub">Grade: {{ $e->grade }}</div>
-                                    @if ($e->message)
-                                        <div class="msg" title="{{ $e->message }}"><i class="bi bi-chat-left-text"></i> {{ \Illuminate\Support\Str::limit($e->message, 50) }}</div>
-                                    @endif
-                                </td>
+                               <td>
+    <a href="{{ route('admin.admission-enquiries.show', $e) }}" class="name-link">
+        @if ($e->status === 'new')<span class="dot-new" title="New"></span>@endif
+        <b>{{ $e->student_name }}</b>
+    </a>
+    <div class="sub">
+        Grade: {{ $e->grade }}
+        @if ($e->gender)
+            <span class="gender-sep">&middot;</span>
+            <b class="gender-val">{{ ucfirst($e->gender) }}</b>
+        @endif
+    </div>
+    @if ($e->message)
+        <div class="msg" title="{{ $e->message }}">
+            <i class="bi bi-chat-left-text"></i>
+            {{ \Illuminate\Support\Str::limit($e->message, 50) }}
+        </div>
+    @endif
+</td>
                                 <td>
                                     <div>{{ $e->parent_name }}</div>
                                     <div class="contact">
                                         <a href="tel:{{ $e->parent_phone }}" title="Call"><i class="bi bi-telephone"></i> {{ $e->parent_phone }}</a>
-                                        <a href="https://wa.me/{{ $e->whatsapp_number }}" target="_blank" rel="noopener" class="wa" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+                                        <a href="https://wa.me/{{ $e->whatsapp_number }}" target="_blank" rel="noopener" class="wa" title="WhatsApp">
+                                            <!-- <i class="bi bi-whatsapp"></i> -->
+                                        </a>
                                     </div>
                                     @if ($e->parent_email)
                                         <div class="sub"><a href="mailto:{{ $e->parent_email }}" class="mail">{{ $e->parent_email }}</a></div>
@@ -378,6 +389,16 @@ function confirmDeleteEnquiry(id, name) {
     .empty-ico{ width:56px; height:56px; border-radius:999px; background:#EEF0F6; display:inline-flex; align-items:center; justify-content:center; font-size:24px; color:#AEB4C4; margin-bottom:12px; }
     .empty h3{ font-size:16px; margin:0 0 6px; color: var(--ink,#171B2C); }
     .empty p{ font-size:13px; color: var(--muted,#667085); margin:0; }
+
+    .sub .gender-sep {
+    margin: 0 4px;
+    color: var(--faint, #9AA1B2);
+}
+
+.sub .gender-val {
+    color: var(--ink, #171B2C);
+    font-weight: 600;
+}
 </style>
 
 @endsection

@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\CurriculumController;
 use App\Http\Controllers\Admin\CareerEnquiryController;
 use App\Http\Controllers\Admin\CareerController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\HostelEnquiryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\DepartmentController as WebDepartmentController;
@@ -189,6 +190,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('curriculums/{curriculum}/edit', [CurriculumController::class, 'edit'])->name('curriculums.edit');
             Route::put('curriculums/{curriculum}',      [CurriculumController::class, 'update'])->name('curriculums.update');
             Route::delete('curriculums/{curriculum}',   [CurriculumController::class, 'destroy'])->name('curriculums.destroy');
+
+
+
+            // Hostel Enquiries (list + view + status update + delete)
+            Route::get('hostel-enquiries',   [HostelEnquiryController::class, 'index'])->name('hostel-enquiries');
+            
+            Route::get('hostel-enquiries/{hostelEnquiry}',[HostelEnquiryController::class, 'show'])
+                                        ->whereNumber('hostelEnquiry')->name('hostel-enquiries.show');
+            
+            Route::patch('hostel-enquiries/{hostelEnquiry}/status',[HostelEnquiryController::class, 'updateStatus'])
+                                        ->whereNumber('hostelEnquiry')->name('hostel-enquiries.status');
+            
+            Route::delete('hostel-enquiries/{hostelEnquiry}', [HostelEnquiryController::class, 'destroy'])->whereNumber('hostelEnquiry')
+                                        ->name('hostel-enquiries.destroy');
+
 
             // Blogs
             Route::get('blogs',               [BlogController::class, 'index'])->name('blogs');
