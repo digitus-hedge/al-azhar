@@ -73,6 +73,21 @@
                         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                     @enderror
                 </div>
+
+                 {{-- NEW: Response Date --}}
+    <div class="field">
+        <div class="field-top">
+            <label class="field-label">Response Date</label>
+        </div>
+        <input type="date" name="response_date"
+               value="{{ old('response_date', optional($event->response_date)->format('Y-m-d')) }}"
+               class="{{ $errors->has('response_date') ? 'input-error' : '' }}">
+        @error('response_date')
+            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+    </div>
+
+
             </div>
             <div class="field" style="margin-top:28px;">
                 <div class="field-top"><label class="field-label">Venue <span class="req">*</span></label></div>
@@ -262,6 +277,7 @@ function showValidationErrors(errors) {
         title:       () => form.querySelector('[name="title"]'),
         event_date:  () => form.querySelector('[name="event_date"]'),
         event_time:  () => form.querySelector('[name="event_time"]'),
+        response_date:() => form.querySelector('[name="response_date"]'),  // NEW
         venue:       () => form.querySelector('[name="venue"]'),
         description: () => form.querySelector('[name="description"]'),
         link:        () => form.querySelector('[name="link"]'),
