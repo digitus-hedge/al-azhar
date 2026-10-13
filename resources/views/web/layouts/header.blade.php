@@ -169,6 +169,53 @@
 <!-- End Header Section -->
 
 <style>
+
+    /* ========= Fonts for the header ========= */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Apply Poppins to all header text */
+.ah, .ah *,
+.ah_drawer, .ah_drawer * {
+    font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* Keep SVG icons untouched (they're vector, no font) — but ensure Font Awesome stays as icon font */
+.ah .fa, .ah .fas, .ah .far, .ah .fab,
+.ah [class^="fa-"], .ah [class*=" fa-"],
+.ah_drawer .fa, .ah_drawer [class^="fa-"], .ah_drawer [class*=" fa-"] {
+    font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "FontAwesome" !important;
+}
+
+/* Use Lora for the brand name / logo text if any text is shown next to the logo */
+.ah_logo span, .ah_drawer_head .ah_logo span {
+    font-family: 'Lora', Georgia, serif !important;
+    font-weight: 600 !important;
+}
+
+/* Menu items — Poppins Medium */
+.ah_menu > li > a,
+.ah_mnav > ul > li > a,
+.ah_mnav_toggle {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.2px;
+}
+
+/* CTA button — Poppins SemiBold */
+.ah_cta, .ah_cta_block {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+}
+
+/* Top bar contact + submenu items — Poppins */
+.ah_top, .ah_contact, .ah_contact *,
+.ah_sub, .ah_sub a,
+.ah_mnav_sub, .ah_mnav_sub a {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+
     .ah, .ah_drawer { --ah: var(--heading-color, #00539B); --ah-dark: #002F5F; }
 
     /* Sits over the page banner / hero like the theme header did */

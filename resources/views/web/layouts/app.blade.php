@@ -40,7 +40,25 @@
     <link rel="stylesheet" href="{{ asset('global/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/dev.css') }}">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+
+         /* Emergency inline fallback — ensures fonts apply even if app.css is cached */
+    html body, html body * { font-family: 'Poppins', sans-serif !important; }
+    html body h1, html body h2, html body h3, html body h4, html body h5, html body h6,
+    html body .td_section_title, html body .td_hero_title, html body .td_card_title,
+    html body .td_post_title, html body [class*="td_fs_48"], html body [class*="td_fs_36"],
+    html body [class*="td_fs_24"], html body [class*="td_fs_30"] {
+        font-family: 'Lora', Georgia, serif !important;
+        font-weight: 600 !important;
+    }
+    html body .home_pm_sign { font-family: 'Great Vibes', cursive !important; }
+    html body .fa, html body .fas, html body .far, html body .fab,
+    html body [class^="fa-"], html body [class*=" fa-"] {
+        font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands", "FontAwesome" !important;
+    }
         /* Hide animated elements until WOW reveals them (stops the flash on load) */
         .js-anim .wow { visibility: hidden; }
 
