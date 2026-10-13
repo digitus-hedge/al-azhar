@@ -111,7 +111,7 @@
                             <th>{!! $sortLink('email', 'Email') !!}</th>
                             <th>Phone</th>
                             <th>{!! $sortLink('apply_for', 'Apply For') !!}</th>
-                            <th>Career</th>
+                            <!-- <th>Career</th> -->
                             <th>Nationality</th>
                             <th>CV</th>
                             <th>{!! $sortLink('created_at', 'Submitted') !!}</th>
@@ -132,7 +132,7 @@
                                     @else — @endif
                                 </td>
                                 <td data-label="Apply For">{{ $item->apply_for ?? '—' }}</td>
-                                <td data-label="Career">{{ $item->career?->title ?? '—' }}</td>
+                                <!-- <td data-label="Career">{{ $item->career?->title ?? '—' }}</td> -->
                                 <td data-label="Nationality">{{ $item->nationality ?? '—' }}</td>
                                 <td data-label="CV">
                                     @if ($item->cv)

@@ -50,10 +50,10 @@
                 <div class="dt-label">Applying For</div>
                 <div class="dt-val">{{ $item->apply_for ?? '—' }}</div>
             </div>
-            <div class="detail">
+            <!-- <div class="detail">
                 <div class="dt-label">Linked Career</div>
                 <div class="dt-val">{{ $item->career?->title ?? '—' }}</div>
-            </div>
+            </div> -->
             <div class="detail">
                 <div class="dt-label">CV / Resume</div>
                 <div class="dt-val">
