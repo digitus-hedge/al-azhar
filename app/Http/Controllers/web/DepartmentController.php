@@ -51,21 +51,25 @@ class DepartmentController extends Controller
      * Each group: ['key' => 'HOD', 'label' => 'Head of Department', 'people' => Collection]
      */
     protected function headGroups(?int $departmentId = null): Collection
-    {
-        $heads = Staff::query()
-            ->whereIn('head_type', array_keys(Staff::HEAD_TYPES))
-            ->when($departmentId, fn ($q) => $q->where('department_id', $departmentId))
-            ->with(['staffDesignation', 'department'])
-            ->orderBy('sort_order')
-            ->orderBy('name')
-            ->get();
+{
+    $heads = Staff::query()
+        ->whereIn('head_type', array_keys(Staff::HEAD_TYPES))
+        ->when($departmentId, fn ($q) => $q->where('department_id', $departmentId))
+        ->with(['staffDesignation', 'department'])
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
 
-        return collect(Staff::HEAD_TYPES)
-            ->map(fn ($label, $key) => [
-                'key'    => $key,
-                'label'  => $label,
-                'people' => $heads->where('head_type', $key)->values(),
-            ])
-            ->values();
-    }
+    // Force HOS to appear before HOD on the public page
+    $orderedKeys = ['HOS', 'HOD'];
+
+    return collect($orderedKeys)
+        ->filter(fn ($key) => array_key_exists($key, Staff::HEAD_TYPES))
+        ->map(fn ($key) => [
+            'key'    => $key,
+            'label'  => Staff::HEAD_TYPES[$key],
+            'people' => $heads->where('head_type', $key)->values(),
+        ])
+        ->values();
+}
 }

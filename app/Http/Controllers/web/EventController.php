@@ -22,7 +22,7 @@ class EventController extends Controller
         $type  = in_array($request->query('type'), ['upcoming', 'past'], true) ? $request->query('type') : 'all';
         $today = now()->toDateString();
 
-        $query = Event::query()->where('is_active', true);
+        $query = Event::query();
 
         if ($type === 'upcoming') {
             $query->whereDate('event_date', '>=', $today)
@@ -48,8 +48,6 @@ class EventController extends Controller
      */
     public function show(Event $event): View
     {
-        abort_unless($event->is_active, 404);
-
         $moreEvents = Event::where('is_active', true)
             ->whereKeyNot($event->getKey())
             ->whereDate('event_date', '>=', now()->toDateString())

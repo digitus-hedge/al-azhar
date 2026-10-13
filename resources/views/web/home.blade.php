@@ -279,9 +279,9 @@ section { overflow-x: clip; }
                         </ul>
                     </div>
 
-                    <a href="{{ url('/about-us') }}" class="td_btn td_style_1 td_radius_30 td_medium wow zoomIn" data-wow-delay="0.8s">
+                    <a href="{{ url('/policies-objectives') }}" class="td_btn td_style_1 td_radius_30 td_medium wow zoomIn" data-wow-delay="0.8s">
                         <span class="td_btn_in td_white_color td_accent_bg">
-                            <span>More About</span>
+                            <span>Policies &amp; Objectives</span>
                             <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M15.1575 4.34302L3.84375 15.6567" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                 <path d="M15.157 11.4142C15.157 11.4142 16.0887 5.2748 15.157 4.34311C14.2253 3.41142 8.08594 4.34314 8.08594 4.34314" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -421,14 +421,25 @@ section { overflow-x: clip; }
                 <div class="home_adm_btns">
                     <a href="{{ route('admission') }}#admission-form" class="td_btn td_style_1 td_radius_30 td_medium td_fs_18">
                         <span class="td_btn_in td_heading_color td_white_bg">
-                            <span>Enquire Now</span>
+                            <span>Apply Now</span>
                             <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M15.1575 4.34302L3.84375 15.6567" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                                 <path d="M15.157 11.4142C15.157 11.4142 16.0887 5.2748 15.157 4.34311C14.2253 3.41142 8.08594 4.34314 8.08594 4.34314" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
                             </svg>
                         </span>
                     </a>
-                    <a href="{{ route('admission') }}" class="home_adm_outline">Admission Details</a>
+                    <a href="{{ asset('uploads/prospectus/SaaS blueprint wotrdmap.pdf') }}"
+                        target="_blank"
+                        rel="noopener"
+                        download="Al-Azhar-Central-School-Prospectus.pdf"
+                        class="home_adm_outline home_adm_download">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;flex-shrink:0;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                            Download Prospectus
+                        </a>
                 </div>
             </div>
 
@@ -527,6 +538,18 @@ section { overflow-x: clip; }
         .home_adm_btns .td_btn, .home_adm_outline { width: 100%; justify-content: center; }
         .home_adm_card { padding: 26px 20px; }
     }
+
+    .home_adm_download {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+}
+.home_adm_download svg {
+    transition: transform .3s ease;
+}
+.home_adm_download:hover svg {
+    transform: translateY(2px);
+}
 </style>
 <!-- End Admission CTA -->
 
@@ -1036,7 +1059,7 @@ section { overflow-x: clip; }
                 <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase home_ev_accent">
                     Events
                 </p>
-                <h2 class="td_section_title td_fs_48 mb-0">Upcoming &amp; Recent Events</h2>
+                <h2 class="td_section_title td_fs_48 mb-0">Upcoming Events</h2>
             </div>
             <a href="{{ route('events.index') }}" class="td_btn td_style_1 td_radius_30 td_medium">
                 <span class="td_btn_in td_white_color td_accent_bg">
@@ -1152,6 +1175,261 @@ section { overflow-x: clip; }
 @endif
 <!-- End Events Section -->
 
+<!-- Start Floating Upcoming Event Widget (Circular) -->
+@php
+    $nextEvent = ($homeEvents ?? collect())->first();
+@endphp
+
+@if ($nextEvent)
+    @php
+        $nextDate  = $evDate($nextEvent);
+        $nextImage = $evImage($nextEvent);
+        $nextUrl   = route('events.show', $nextEvent);
+        $nextDesc  = \Illuminate\Support\Str::limit(
+            trim(preg_replace('/\s+/', ' ', strip_tags((string) ($nextEvent->short_description ?? $nextEvent->excerpt ?? $nextEvent->description ?? '')))),
+            45
+        );
+    @endphp
+
+<a href="{{ $nextUrl }}" class="home_fev_circle" id="homeFevCircle" aria-label="View upcoming event: {{ $nextEvent->title }}">
+    {{-- Rotating ribbon --}}
+    <span class="home_fev_ribbon">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+            <defs>
+                <path id="homeFevRibbonPath" d="M 100,100 m -82,0 a 82,82 0 1,1 164,0 a 82,82 0 1,1 -164,0"/>
+            </defs>
+            <text font-size="11" font-weight="700" letter-spacing="2.5" fill="#fff">
+                <textPath href="#homeFevRibbonPath">
+                    UPCOMING EVENT • CLICK TO VIEW •
+                </textPath>
+            </text>
+        </svg>
+    </span>
+
+    {{-- Top half: image only --}}
+    <span class="home_fev_top">
+        @if ($nextImage)
+            <img src="{{ $nextImage }}" alt="{{ $nextEvent->title }}" loading="lazy">
+        @else
+            <span class="home_fev_noimg">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <path d="M16 2v4M8 2v4M3 10h18"/>
+                    <circle cx="12" cy="15" r="2"/>
+                </svg>
+            </span>
+        @endif
+    </span>
+
+    {{-- Bottom half: title + short description --}}
+    <span class="home_fev_bot">
+        <span class="home_fev_title">{{ \Illuminate\Support\Str::limit($nextEvent->title, 32) }}</span>
+        @if ($nextDesc !== '')
+            <span class="home_fev_desc">{{ $nextDesc }}</span>
+        @endif
+    </span>
+
+    {{-- Close button (appears on hover) --}}
+    <button type="button" class="home_fev_x" aria-label="Hide"
+        onclick="event.preventDefault(); event.stopPropagation(); document.getElementById('homeFevCircle').classList.add('is-hidden');">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+    </button>
+</a>
+
+<style>
+    .home_fev_circle {
+        position: fixed;
+        left: 20px;
+        bottom: 20px;
+        z-index: 9998;
+        display: flex;
+        flex-direction: column;
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        background: #fff;
+        overflow: hidden;
+        box-shadow:
+            0 20px 40px -10px rgba(0, 47, 95, 0.4),
+            0 8px 16px -4px rgba(0, 47, 95, 0.25),
+            0 0 0 1px rgba(0, 0, 27, 0.04);
+        text-decoration: none !important;
+        color: inherit;
+        transition:
+            transform .4s cubic-bezier(0.4, 0, 0.2, 1),
+            box-shadow .4s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity .4s ease,
+            visibility .4s ease;
+        opacity: 0;
+        transform: translateY(25px) scale(0.85);
+        animation: homeFevEntry .7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s forwards;
+    }
+
+    @keyframes homeFevEntry {
+        to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .home_fev_circle:hover {
+        transform: translateY(-6px) scale(1.04);
+        box-shadow:
+            0 28px 50px -12px rgba(0, 47, 95, 0.55),
+            0 12px 22px -6px rgba(0, 47, 95, 0.35),
+            0 0 0 1px rgba(0, 83, 155, 0.2);
+        color: inherit;
+    }
+
+    .home_fev_circle.is-hidden {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(15px) scale(0.5);
+        pointer-events: none;
+    }
+
+    /* ===== Rotating ribbon around the circle ===== */
+    .home_fev_ribbon {
+        position: absolute;
+        inset: -18px;
+        pointer-events: none;
+        animation: homeFevSpin 20s linear infinite;
+        z-index: 0;
+    }
+    .home_fev_ribbon svg {
+        width: 100%;
+        height: 100%;
+        filter: drop-shadow(0 2px 3px rgba(0, 47, 95, 0.4));
+    }
+    @keyframes homeFevSpin {
+        from { transform: rotate(0deg); }
+        to   { transform: rotate(360deg); }
+    }
+
+    /* ===== Top half: image only ===== */
+    .home_fev_top {
+        position: relative;
+        flex: 1;
+        min-height: 55%;
+        overflow: hidden;
+        background: linear-gradient(135deg, #00539B, #002F5F);
+    }
+    .home_fev_top img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .8s ease;
+    }
+    .home_fev_circle:hover .home_fev_top img {
+        transform: scale(1.1);
+    }
+    .home_fev_top::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(0,0,27,0) 55%, rgba(0,47,95,0.35) 100%);
+    }
+
+    .home_fev_noimg {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ===== Bottom half: text only ===== */
+    .home_fev_bot {
+        flex: 1;
+        min-height: 45%;
+        padding: 8px 16px 10px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        background: #fff;
+    }
+
+    .home_fev_title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 11px;
+        font-weight: 700;
+        line-height: 1.25;
+        color: var(--heading-color, #00539B);
+        margin-bottom: 3px;
+        padding: 0 2px;
+    }
+
+    .home_fev_desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        font-size: 9.5px;
+        line-height: 1.3;
+        color: #6b7489;
+        padding: 0 2px;
+    }
+
+    /* ===== Close button ===== */
+    .home_fev_x {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        width: 20px;
+        height: 20px;
+        border: 0;
+        border-radius: 50%;
+        background: rgba(0, 0, 27, 0.6);
+        backdrop-filter: blur(8px);
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        opacity: 0;
+        transform: scale(0.7);
+        transition: all .3s ease;
+    }
+    .home_fev_circle:hover .home_fev_x {
+        opacity: 1;
+        transform: scale(1);
+    }
+    .home_fev_x:hover {
+        background: #c62839;
+        transform: scale(1.15) rotate(90deg);
+    }
+
+    /* ===== Mobile ===== */
+    @media (max-width: 575px) {
+        .home_fev_circle {
+            left: 14px;
+            bottom: 14px;
+            width: 140px;
+            height: 140px;
+        }
+        .home_fev_ribbon { inset: -14px; }
+        .home_fev_ribbon svg text { font-size: 10px; letter-spacing: 2px; }
+        .home_fev_title { font-size: 10px; }
+        .home_fev_desc { font-size: 9px; -webkit-line-clamp: 2; }
+        .home_fev_bot { padding: 6px 12px 8px; }
+    }
+
+    @media print {
+        .home_fev_circle { display: none !important; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .home_fev_ribbon { animation: none; }
+    }
+</style>
+@endif
+<!-- End Floating Upcoming Event Widget -->
     @endsection
 
 @push('scripts')

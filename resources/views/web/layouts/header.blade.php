@@ -27,13 +27,13 @@
             ['School Management',    $hdLink('school-management')],
             ['Mandatory Disclosure', $hdLink('mandatory-disclosure')],
         ]],
-        ['Departments', $hdLink('departments.index'), request()->routeIs('departments.*', 'academics'), [
-            ['Departments', $hdLink('departments.index')],
+        ['Academics', $hdLink('academics'), request()->routeIs('academics.*', 'departments'), [
             ['Academics',       $hdLink('academics')],
+            ['Departments', $hdLink('departments.index')],
         ]],
         ['Campus Life', $hdLink('facilities.index'), request()->routeIs('facilities.*', 'gallery.*', 'events.*', 'boarding'), [
             ['Facilities',      $hdLink('facilities.index')],
-            ['Boarding & Fees', $hdLink('boarding')],
+            ['Hostel', $hdLink('boarding')],
             ['Gallery',         $hdLink('gallery.index')],
             ['Events',          $hdLink('events.index')],
         ]],

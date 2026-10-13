@@ -79,6 +79,8 @@ Route::get('/academics', [WebAcademicController::class, 'index'])->name('academi
 
 Route::get('/boarding', WebBoardingController::class)->name('boarding');
 
+Route::view('/policies-objectives', 'web.policies-objectives')->name('policies-objectives');
+
 
 //admin panel
 Route::prefix('admin')->name('admin.')->group(function () {

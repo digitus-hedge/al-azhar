@@ -122,19 +122,20 @@
 </section>
 
 <style>
-    /* Same image shapes as the theme demo, whatever size your photos are */
-    /* Show the full photo, no cropping */
-.home_about .td_about_thumb_1 img,
-.home_about .td_about_thumb_2 img {
-    width: 100%;
-    height: auto;
-    aspect-ratio: auto;
-    object-fit: contain;
-    display: block;
-}
+    /* Match the home page About section exactly */
+    .home_about .td_about_thumb_1 img,
+    .home_about .td_about_thumb_2 img {
+        width: 100%;
+        object-fit: cover;
+        display: block;
+    }
+    .home_about .td_about_thumb_1 img { aspect-ratio: 476 / 492; }   /* tall left photo */
+    .home_about .td_about_thumb_2 img { aspect-ratio: 315 / 416; }   /* overlapping right photo */
+
+    /* Text spacing */
     .home_about_text p { margin: 0 0 12px; }
-.home_about_text p:last-child { margin-bottom: 0; }
-.home_about_text br:last-child { display: none; }
+    .home_about_text p:last-child { margin-bottom: 0; }
+    .home_about_text br:last-child { display: none; }
 </style>
 <!-- End About Section -->
 
@@ -247,60 +248,6 @@
 @endif
 <!-- End History & Values -->
 
-    <!-- Start Vision & Mission (from admin > About Section) -->
-@php
-    $vmAllowed = '<p><br><strong><b><em><i><u><ul><ol><li><a><h2><h3><h4><h5><span><blockquote>';
-    $vmVision  = trim(strip_tags((string) ($about->vision ?? ''), $vmAllowed));
-    $vmMission = trim(strip_tags((string) ($about->mission ?? ''), $vmAllowed));
-@endphp
-@if ($vmVision !== '' || $vmMission !== '')
-<section class="td_accent_bg td_shape_section_1 ab_vm">
-    <div class="td_height_100 td_height_lg_75"></div>
-    <div class="container">
-        <div class="td_section_heading td_style_1 text-center">
-            <p class="ab_vm_badge wow fadeInDown" data-wow-delay="0.2s">What Guides Us</p>
-            <h2 class="td_section_title td_fs_48 mb-0 td_white_color wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.35s">Our Vision &amp; Mission</h2>
-        </div>
-        <div class="td_height_50 td_height_lg_40"></div>
-
-        <div class="row td_gap_y_30">
-            @if ($vmVision !== '')
-                <div class="{{ $vmMission !== '' ? 'col-lg-6' : 'col-lg-10 offset-lg-1' }} wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
-                    <div class="ab_vm_card">
-                        <div class="ab_vm_head">
-                            <span class="ab_vm_icon wow zoomIn" data-wow-delay="0.5s">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
-                            </span>
-                            <div>
-                                <span class="ab_vm_num">01</span>
-                                <h3 class="ab_vm_title">Our Vision</h3>
-                            </div>
-                        </div>
-                        <div class="ab_vm_text">{!! $vmVision !!}</div>
-                    </div>
-                </div>
-            @endif
-
-            @if ($vmMission !== '')
-                <div class="{{ $vmVision !== '' ? 'col-lg-6' : 'col-lg-10 offset-lg-1' }} wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.25s">
-                    <div class="ab_vm_card">
-                        <div class="ab_vm_head">
-                            <span class="ab_vm_icon">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-                            </span>
-                            <div>
-                                <span class="ab_vm_num">02</span>
-                                <h3 class="ab_vm_title">Our Mission</h3>
-                            </div>
-                        </div>
-                        <div class="ab_vm_text">{!! $vmMission !!}</div>
-                    </div>
-                </div>
-            @endif
-        </div>
-    </div>
-    <div class="td_height_100 td_height_lg_75"></div>
-</section>
 
 <style>
     .ab_vm { position: relative; overflow: hidden; }
@@ -361,7 +308,6 @@
         .ab_vm_text { font-size: 16px; }
     }
 </style>
-@endif
 <!-- End Vision & Mission -->
 
 <style>

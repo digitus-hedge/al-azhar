@@ -13,10 +13,9 @@ class Staff extends Model
     use HasFactory, SoftDeletes, LogsActivity;
 
        public const HEAD_TYPES = [
-        'HOD' => 'Head of Department',
-        'HOS' => 'Head of Staff',
-    ];
-
+            'HOS' => 'Head of Staff',
+            'HOD' => 'Head of Department',
+        ];
     protected $fillable = [
         'name',
         'designation_id',   // was 'designation' (text) → now management_designations.id (type = staff)

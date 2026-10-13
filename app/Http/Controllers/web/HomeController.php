@@ -95,10 +95,6 @@ class HomeController extends Controller
     {
         $query = Event::query();
 
-        if ((new Event)->hasNamedScope('active')) {
-            $query->active();
-        }
-
         return $query->latest('id')->take(30)->get()
             ->each(function (Event $e) {
                 $e->home_date  = $this->eventDate($e);
