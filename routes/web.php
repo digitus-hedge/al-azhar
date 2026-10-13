@@ -15,12 +15,15 @@ use App\Http\Controllers\Admin\DepartmentController;
 use App\Http\Controllers\Admin\FeeController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\AcademicController;
 use App\Http\Controllers\Admin\AdmissionEnquiryController;
 use App\Http\Controllers\Admin\DisclosureCategoryController;
 use App\Http\Controllers\Admin\MandatoryDisclosureController;
 use App\Http\Controllers\Admin\ManagementMemberController;
 use App\Http\Controllers\Admin\ManagementDesignationController;
 use App\Http\Controllers\Admin\ContactNewController;
+use App\Http\Controllers\Admin\CareerEnquiryController;
+use App\Http\Controllers\Admin\CareerController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\DepartmentController as WebDepartmentController;
@@ -35,7 +38,7 @@ use App\Http\Controllers\Web\WebMandatoryDisclosureController;
 use App\Http\Controllers\Web\WebManagementController;
 use App\Http\Controllers\Admin\BoardingController;
 use App\Http\Controllers\Web\WebBoardingController;
-use App\Http\Controllers\Web\AcademicController;
+use App\Http\Controllers\Web\AcademicController as WebAcademicController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -72,7 +75,7 @@ Route::get('/news-notices/{newsNotice}/{slug?}', [WebNewsNoticeController::class
 Route::get('/mandatory-disclosure', [WebMandatoryDisclosureController::class, 'index'])->name('mandatory-disclosure');
 Route::get('/about-us/school-management', [WebManagementController::class, 'index'])->name('school-management');
 
-Route::get('/academics', [AcademicController::class, 'index'])->name('academics');
+Route::get('/academics', [WebAcademicController::class, 'index'])->name('academics');
 
 Route::get('/boarding', WebBoardingController::class)->name('boarding');
 
@@ -148,6 +151,34 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::put('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'update'])->name('mandatory-disclosures.update');
             Route::delete('mandatory-disclosures/{disclosure}', [MandatoryDisclosureController::class, 'destroy'])->name('mandatory-disclosures.destroy');
             Route::patch('mandatory-disclosures/{disclosure}/toggle', [MandatoryDisclosureController::class, 'toggle'])->name('mandatory-disclosures.toggle');
+
+
+            //  Academics
+            Route::get('academics',                 [AcademicController::class, 'index'])->name('academics');
+            Route::get('academics/create',          [AcademicController::class, 'create'])->name('academics.create');
+            Route::post('academics',                [AcademicController::class, 'store'])->name('academics.store');
+            Route::get('academics/{academic}/edit', [AcademicController::class, 'edit'])->name('academics.edit');
+            Route::put('academics/{academic}',      [AcademicController::class, 'update'])->name('academics.update');
+            Route::delete('academics/{academic}',   [AcademicController::class, 'destroy'])->name('academics.destroy');
+
+
+            // Careers
+            Route::get('careers',                [CareerController::class, 'index'])->name('careers');
+            Route::get('careers/create',         [CareerController::class, 'create'])->name('careers.create');
+            Route::post('careers',               [CareerController::class, 'store'])->name('careers.store');
+            Route::get('careers/{career}/edit',  [CareerController::class, 'edit'])->name('careers.edit');
+            Route::put('careers/{career}',       [CareerController::class, 'update'])->name('careers.update');
+            Route::delete('careers/{career}',    [CareerController::class, 'destroy'])->name('careers.destroy');
+
+
+            // Careers Enquiries
+            Route::get('career-enquiries',                 [CareerEnquiryController::class, 'index'])
+                ->name('career-enquiries');
+
+            Route::get('career-enquiries/{careerEnquiry}', [CareerEnquiryController::class, 'show'])
+                ->whereNumber('careerEnquiry')
+                ->name('career-enquiries.show');
+
 
 
             // Master > Management Designations

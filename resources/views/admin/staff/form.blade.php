@@ -302,6 +302,30 @@
             </div>
         </div>
 
+
+
+        {{-- Sort Order --}}
+<div class="card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-sort-numeric-down"></i></span> Sort Order</h2>
+    </div>
+
+    <div class="field" style="max-width:220px;">
+        <input type="number" name="sort_order" min="0"
+               value="{{ old('sort_order', $staffMember->sort_order ?? 0) }}"
+               class="{{ $errors->has('sort_order') ? 'input-error' : '' }}"
+               placeholder="0">
+        @error('sort_order')
+            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+        <span class="field-hint" style="display:block;margin-top:6px;">
+            <i class="bi bi-info-circle"></i>
+            Lower number = shown first on the website (e.g. 1 appears before 2).
+        </span>
+    </div>
+</div>
+
+
         {{-- Photo --}}
         <div class="card">
             <div class="section-title">
@@ -686,6 +710,7 @@ function showStaffValidationErrors(errors) {
         class_id: f => f.querySelector('[name="class_id"]'),
         photo: f => document.getElementById('drop-photo'),
         description: f => f.querySelector('[name="description"]'),
+        sort_order: f => f.querySelector('[name="sort_order"]'),
         is_head_of_staff: f => document.getElementById('head-of-staff-card'),
         show_on_home: f => document.getElementById('show-on-home-card'),
         has_login: f => document.getElementById('login-access-card'),
@@ -744,15 +769,18 @@ function showStaffValidationErrors(errors) {
     .section-sub{ font-size:12px; color: var(--faint,#9AA1B2); transition:color .15s; }
 
     .field{ margin-bottom:0; }
-    input[type=text], input[type=email], input[type=password], textarea, select{
-        width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
-        padding:11px 14px; font-size:14px; font-family:inherit; color: var(--ink,#171B2C);
-        outline:none; transition:box-shadow .15s, border-color .15s; background:#fff;
-    }
-    input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, textarea:focus, select:focus{
-        border-color: var(--orange,#BF0001);
-        box-shadow: 0 0 0 4px var(--orange-tint-strong,#FFE9D8);
-    }
+    input[type=text], input[type=email], input[type=password], input[type=number], textarea, select{
+    width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
+    padding:11px 14px; font-size:14px; font-family:inherit; color: var(--ink,#171B2C);
+    outline:none; transition:box-shadow .15s, border-color .15s; background:#fff;
+}
+input[type=text]:focus, input[type=email]:focus, input[type=password]:focus, input[type=number]:focus, textarea:focus, select:focus{
+    border-color: var(--orange,#BF0001);
+    box-shadow: 0 0 0 4px var(--orange-tint-strong,#FFE9D8);
+}
+
+/* Hide the ugly number spinner arrows for a cleaner look */
+
     .input-error{ border-color:#e74c3c !important; background:#fff8f8; }
     .field-error{ display:flex; align-items:center; gap:5px; color:#e74c3c; font-size:12.5px; margin-top:6px; }
 

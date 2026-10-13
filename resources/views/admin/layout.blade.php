@@ -660,7 +660,7 @@
 
 @php
     $homeOpen   = request()->routeIs('admin.home.*');
-    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*','admin.disclosure-categories*','admin.fees*');
+    $masterOpen = request()->routeIs('admin.departments*', 'admin.classes*','admin.disclosure-categories*','admin.fees*','admin.academics*');
 @endphp
 
 
@@ -826,8 +826,12 @@
     $homeOpen        = request()->routeIs('admin.home.*');
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
     $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*');
-    $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*','admin.fees*');
+    $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*','admin.fees*','admin.academics*');
     $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*');
+
+           $careerOpen = request()->routeIs('admin.careers*', 'admin.career-enquiries*');
+
+
 @endphp
 
 <nav class="nav">
@@ -1020,6 +1024,32 @@
 
 
 
+
+    @if ($isAdmin)
+    <div class="nav-group {{ $careerOpen ? 'expanded' : '' }}">
+        <a class="nav-item {{ $careerOpen ? 'parent-active' : '' }}" onclick="toggleSub(this)">
+            <i class="bi bi-briefcase nav-ico"></i>
+            Career
+            <i class="bi bi-chevron-right chev"></i>
+        </a>
+        <ul class="submenu">
+            <li>
+                <a class="nav-item {{ request()->routeIs('admin.careers*') ? 'active' : '' }}"
+                   href="{{ route('admin.careers') }}">
+                    <i class="bi bi-list-task nav-ico"></i> Careers
+                </a>
+            </li>
+            <li>
+                <a class="nav-item {{ request()->routeIs('admin.career-enquiries*') ? 'active' : '' }}"
+                   href="{{ route('admin.career-enquiries') }}">
+                    <i class="bi bi-envelope-paper nav-ico"></i> Career Enquiries
+                </a>
+            </li>
+        </ul>
+    </div>
+@endif
+
+
     @if ($isAdmin)
         {{-- Activity Logs --}}
         <div class="nav-group">
@@ -1068,6 +1098,16 @@
         <i class="bi bi-cash-coin nav-ico"></i> Fees
     </a>
 </li>
+
+
+ {{-- NEW: Academics --}}
+        <li>
+            <a class="nav-item {{ request()->routeIs('admin.academics*') ? 'active' : '' }}"
+               href="{{ route('admin.academics') }}">
+                <i class="bi bi-mortarboard nav-ico"></i> Academics
+            </a>
+        </li>
+
 
             </ul>
         </div>

@@ -46,6 +46,7 @@ class StaffRequest extends FormRequest
             'class_id'         => ['nullable', 'exists:classes,id'],
             'description'      => ['nullable', 'string', 'max:2000'],
             'show_on_home'     => ['nullable', 'boolean'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
 
             // Required only when creating (POST); optional when updating
             // (PUT via method spoofing) since an existing photo may be kept.
