@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Concerns\LogsActivity;   // ← this import
-
+use Illuminate\Database\Eloquent\Relations\HasMany;
 class Event extends Model
 {
     use HasFactory, SoftDeletes,LogsActivity;
@@ -33,6 +33,31 @@ class Event extends Model
         'sort_order' => 'integer',
     ];
 
+    /**
+ * Comments / responses submitted for this event.
+ */
+public function responses(): HasMany
+{
+    return $this->hasMany(EventResponse::class);
+}
+
+    /**
+ * The response window is open as long as:
+ *   - a response_date is set
+ *   - response_date (end of day) is still in the future
+ *
+ * This lets admins open responses before OR after the event.
+ */
+public function getIsOpenForResponseAttribute(): bool
+{
+    if (empty($this->response_date)) {
+        return false;
+    }
+
+    return \Illuminate\Support\Carbon::parse($this->response_date)
+        ->endOfDay()
+        ->isFuture();
+}
     /**
      * Only active events.
      */

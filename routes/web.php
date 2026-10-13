@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\BoardingController;
 use App\Http\Controllers\Web\WebBoardingController;
 use App\Http\Controllers\Web\AcademicController as WebAcademicController;
 use App\Http\Controllers\Web\WebCareerController;
+use App\Http\Controllers\Web\WebBlogController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -60,6 +61,9 @@ Route::post('/contact-us', [ContactController::class, 'store'])
 
 // Public events
 Route::get('/events', [WebEventController::class, 'index'])->name('events.index');
+
+Route::post('/events/response', [WebEventController::class, 'storeResponse'])
+    ->name('events.response.store');
 Route::get('/events/{event}', [WebEventController::class, 'show'])->name('events.show');
 
 Route::get('/admission', [AdmissionController::class, 'create'])->name('admission');
@@ -86,6 +90,10 @@ Route::post('/boarding/apply', [WebBoardingController::class, 'storeApplication'
 Route::view('/policies-objectives', 'web.policies-objectives')->name('policies-objectives');
 Route::get('/careers', [WebCareerController::class, 'index'])->name('careers');
 Route::post('/careers/apply', [WebCareerController::class, 'apply'])->name('careers.apply');
+
+Route::get('/blogs', [WebBlogController::class, 'index'])->name('blogs');
+Route::get('/blogs/{slug}', [WebBlogController::class, 'show'])->name('blogs.show');
+
 //admin panel
 Route::prefix('admin')->name('admin.')->group(function () {
 

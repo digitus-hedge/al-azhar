@@ -34,6 +34,7 @@
         ]],
         ['Campus Life', $hdLink('facilities.index'), request()->routeIs('facilities.*', 'gallery.*', 'events.*', 'boarding'), [
             ['Facilities',      $hdLink('facilities.index')],
+            ['Blogs',          $hdLink('blogs')],
             ['Hostel', $hdLink('boarding')],
             ['Gallery',         $hdLink('gallery.index')],
             ['Events',          $hdLink('events.index')],

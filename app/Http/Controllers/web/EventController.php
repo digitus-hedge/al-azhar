@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use App\Http\Requests\StoreEventResponseRequest;
+use App\Models\EventResponse;
+use Illuminate\Http\RedirectResponse;
 
 /**
  * Public (website) events pages.
@@ -69,4 +72,53 @@ class EventController extends Controller
 
         return view('web.event_details', compact('event', 'moreEvents'));
     }
+
+public function storeResponse(StoreEventResponseRequest $request): RedirectResponse
+{
+    // Honeypot: bot, pretend success
+    if ($request->filled('website')) {
+        return redirect()
+            ->route('events.index')
+            ->with('response_success', 'Thank you! Your response has been recorded.');
+    }
+
+    $event = Event::find($request->input('event_id'));
+
+    // Event missing or inactive
+    if (!$event) {
+        return redirect()
+            ->route('events.index')
+            ->with('response_error', 'Sorry, this event could not be found.');
+    }
+
+    if (!$event->is_active) {
+        return redirect()
+            ->route('events.index')
+            ->with('response_error', 'Sorry, this event is no longer available.');
+    }
+
+    // Response window closed
+    if (!$event->is_open_for_response) {
+        $reason = empty($event->response_date)
+            ? 'no response window is set for this event'
+            : 'the response window closed on ' . \Illuminate\Support\Carbon::parse($event->response_date)->format('d M Y');
+
+        return redirect()
+            ->route('events.index')
+            ->with('response_error', "Sorry, responses for this event are closed ({$reason}).");
+    }
+
+    EventResponse::create([
+        'event_id'   => $event->id,
+        'name'       => $request->validated()['name'],
+        'phone'      => $request->validated()['phone'],
+        'comment'    => $request->validated()['comment'] ?? null,
+        'ip_address' => $request->ip(),
+    ]);
+
+    return redirect()
+        ->route('events.index')
+        ->with('response_success', 'Thank you! Your response has been recorded.')
+        ->withFragment('event-' . $event->id);
+}
 }
