@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-
+use App\Models\Concerns\LogsActivity;
 /**
  * File: app/Models/Curriculum.php
  *
@@ -18,7 +18,7 @@ use Illuminate\Support\Str;
  */
 class Curriculum extends Model
 {
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'curriculums';
 

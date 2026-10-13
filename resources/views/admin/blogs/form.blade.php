@@ -71,6 +71,27 @@
             </div>
         </div>
 
+
+        {{-- Journal Link --}}
+<div class="card">
+    <div class="section-title">
+        <h2><span class="icon"><i class="bi bi-link-45deg"></i></span> Journal Link</h2>
+    </div>
+
+    <div class="field">
+        <input type="url" name="journal_link"
+               value="{{ old('journal_link', $item->journal_link) }}"
+               class="{{ $errors->has('journal_link') ? 'input-error' : '' }}"
+               placeholder="https://example.com/journal/article">
+        @error('journal_link')
+            <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
+        @enderror
+        <span class="field-hint" style="display:block;margin-top:6px;">
+            <i class="bi bi-info-circle"></i> Optional — external link to the full journal / article.
+        </span>
+    </div>
+</div>
+
         {{-- Image --}}
         <div class="card" id="imageSection">
             <div class="section-title">
@@ -271,11 +292,11 @@
     .icon{ display:inline-flex; color: var(--orange,#BF0001); }
 
     .field{ margin-bottom:0; }
-    input[type=text], input[type=number], input[type=datetime-local], textarea, select{
-        width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
-        padding:11px 14px; font-size:14px; font-family:inherit; color: var(--ink,#171B2C);
-        outline:none; transition:box-shadow .15s, border-color .15s; background:#fff;
-    }
+    input[type=text], input[type=number], input[type=datetime-local], input[type=url], textarea, select{
+    width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
+    padding:11px 14px; font-size:14px; font-family:inherit; color: var(--ink,#171B2C);
+    outline:none; transition:box-shadow .15s, border-color .15s; background:#fff;
+}
     input:focus, textarea:focus, select:focus{
         border-color: var(--orange,#BF0001);
         box-shadow: 0 0 0 4px var(--orange-tint-strong,#FFE9D8);

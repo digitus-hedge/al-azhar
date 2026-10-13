@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-
+use App\Models\Concerns\LogsActivity;   // ← this import
 /**
  * File: app/Models/Blog.php
  *
@@ -20,7 +20,7 @@ use Illuminate\Support\Str;
  */
 class Blog extends Model
 {
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'blogs';
 
@@ -28,6 +28,7 @@ class Blog extends Model
         'title',
         'slug',
         'description',
+        'journal_link',   // NEW
         'published_at',
         'image',
         'sort_order',

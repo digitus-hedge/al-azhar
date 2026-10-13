@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use App\Models\Concerns\LogsActivity;
 /**
  * File: app/Models/CareerEnquiry.php
  *
@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class CareerEnquiry extends Model
 {
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'career_enquiries';
 

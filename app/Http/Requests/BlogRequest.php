@@ -38,6 +38,7 @@ class BlogRequest extends FormRequest
             ],
 
             'remove_image' => ['nullable', 'in:0,1'],
+            'journal_link' => ['nullable', 'url', 'max:2048'],
 
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_active'  => ['nullable', 'boolean'],
@@ -64,6 +65,8 @@ class BlogRequest extends FormRequest
             'image.mimes'          => 'Image must be a JPG, PNG or WEBP file.',
             'image.max'            => 'Image must not be larger than 5MB.',
             'published_at.date'    => 'Please enter a valid date & time.',
+            'journal_link.url'     => 'Please enter a valid URL (including https://).',
+            'journal_link.max'     => 'The URL must not be longer than 2048 characters.',
         ];
     }
     protected function prepareForValidation(): void

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-
+use App\Models\Concerns\LogsActivity;
 /**
  * File: app/Models/Academic.php
  *
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Academic extends Model
 {
-    use HasFactory;
+    use HasFactory,LogsActivity;
 
     protected $table = 'academics';
 
