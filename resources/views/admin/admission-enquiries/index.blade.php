@@ -159,12 +159,14 @@
                                     <div>{{ $e->parent_name }}</div>
                                     <div class="contact">
                                         <a href="tel:{{ $e->parent_phone }}" title="Call"><i class="bi bi-telephone"></i> {{ $e->parent_phone }}</a>
-                                        <a href="https://wa.me/{{ $e->whatsapp_number }}" target="_blank" rel="noopener" class="wa" title="WhatsApp">
-                                            <!-- <i class="bi bi-whatsapp"></i> -->
-                                        </a>
+                                      
                                     </div>
                                     @if ($e->parent_email)
-                                        <div class="sub"><a href="mailto:{{ $e->parent_email }}" class="mail">{{ $e->parent_email }}</a></div>
+                                    <div class="sub">
+                                    <a href="mailto:{{ $e->parent_email }}" class="mail" title="Email">
+                                    <i class="bi bi-envelope"></i> {{ $e->parent_email }}
+                                    </a>
+                                    </div>
                                     @endif
                                 </td>
                                 <td>
