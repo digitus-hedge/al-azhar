@@ -13,53 +13,54 @@ class StoreAdmissionEnquiryRequest extends FormRequest
         return true;
     }
 
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'student_name' => trim((string) $this->student_name),
-            'parent_name'  => trim((string) $this->parent_name),
-            'parent_phone' => trim((string) $this->parent_phone),
-            'parent_email' => $this->parent_email ? strtolower(trim($this->parent_email)) : null,
-            'message'      => $this->message ? trim($this->message) : null,
-        ]);
-    }
-
     public function rules(): array
     {
         return [
-            'student_name' => ['required', 'string', 'min:2', 'max:150'],
-            'parent_name'  => ['required', 'string', 'min:2', 'max:150'],
-            'parent_phone' => ['required', 'string', 'max:20', 'regex:/^\+?[0-9\s\-()]{10,20}$/'],
-            'parent_email' => ['nullable', 'email', 'max:191'],
-            'grade'        => ['required', Rule::in(AdmissionEnquiry::GRADES)],
-            'needs_hostel' => ['required', 'boolean'],
-            'message'      => ['nullable', 'string', 'max:2000'],
+            'student_name'    => ['required', 'string', 'max:150'],
+            'gender'          => ['required', Rule::in(array_keys(AdmissionEnquiry::GENDERS))],
+
+            'parent_name'     => ['required', 'string', 'max:150'],
+            'parent_phone'    => ['required', 'string', 'max:20', 'regex:/^[0-9+\-\s()]{7,20}$/'],
+            'parent_email'    => ['nullable', 'email', 'max:191'],
+
+            'state'           => ['required', 'string', 'max:100'],
+            'district'        => ['required', 'string', 'max:100'],
+            'city'            => ['required', 'string', 'max:100'],
+
+            'grade'           => ['required', Rule::in(AdmissionEnquiry::GRADES)],
+
+            'needs_hostel'    => ['required', 'boolean'],
+            'needs_transport' => ['required', 'boolean'],
+
+            'message'         => ['nullable', 'string', 'max:2000'],
+
+            // Honeypot — must be empty.
+            'website'         => ['nullable', 'string', 'max:0'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'student_name.required' => "Please enter the student's name.",
-            'parent_name.required'  => "Please enter the parent's name.",
-            'parent_phone.required' => 'Please enter a mobile / WhatsApp number.',
-            'parent_phone.regex'    => 'Please enter a valid mobile number (at least 10 digits).',
-            'parent_email.email'    => 'Please enter a valid email address.',
-            'grade.required'        => 'Please select the grade.',
-            'grade.in'              => 'Please select a grade from the list.',
-            'needs_hostel.required' => 'Please choose Yes or No.',
+            'parent_phone.regex'    => 'Please enter a valid phone number.',
+            'gender.in'             => 'Please select a valid gender.',
+            'grade.in'              => 'Please select a valid grade.',
+            'needs_hostel.required' => 'Please choose Yes or No for hostel facility.',
+            'needs_transport.required' => 'Please choose Yes or No for transportation.',
         ];
     }
 
-    /** Only the fields the model should receive (honeypot excluded). */
-    public function validated($key = null, $default = null)
+    protected function prepareForValidation(): void
     {
-        $data = parent::validated($key, $default);
-
-        if ($key === null) {
-            $data['needs_hostel'] = (bool) $data['needs_hostel'];
-        }
-
-        return $data;
+        $this->merge([
+            'needs_hostel'    => $this->filled('needs_hostel') ? (bool) $this->input('needs_hostel') : null,
+            'needs_transport' => $this->filled('needs_transport') ? (bool) $this->input('needs_transport') : null,
+            'student_name'    => trim((string) $this->input('student_name')),
+            'parent_name'     => trim((string) $this->input('parent_name')),
+            'state'           => trim((string) $this->input('state')),
+            'district'        => trim((string) $this->input('district')),
+            'city'            => trim((string) $this->input('city')),
+            'parent_email'    => $this->input('parent_email') ? trim((string) $this->input('parent_email')) : null,
+        ]);
     }
 }

@@ -30,6 +30,7 @@
         ['Academics', $hdLink('academics'), request()->routeIs('academics.*', 'departments'), [
             ['Academics',       $hdLink('academics')],
             ['Departments', $hdLink('departments.index')],
+            ['Careers', $hdLink('careers')],
         ]],
         ['Campus Life', $hdLink('facilities.index'), request()->routeIs('facilities.*', 'gallery.*', 'events.*', 'boarding'), [
             ['Facilities',      $hdLink('facilities.index')],
@@ -41,7 +42,7 @@
         ['Contact Us', $hdLink('contact.index'), request()->routeIs('contact.*'), []],
     ];
     $hdAdmission = $hdLink('admission');
-    $hdLogo = asset('images/logo1.png');
+    $hdLogo = asset('images/full_logo.png');
 @endphp
 
 <!-- Start Header Section -->

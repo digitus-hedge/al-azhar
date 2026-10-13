@@ -39,7 +39,7 @@ use App\Http\Controllers\Web\WebManagementController;
 use App\Http\Controllers\Admin\BoardingController;
 use App\Http\Controllers\Web\WebBoardingController;
 use App\Http\Controllers\Web\AcademicController as WebAcademicController;
-
+use App\Http\Controllers\Web\WebCareerController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -77,11 +77,12 @@ Route::get('/about-us/school-management', [WebManagementController::class, 'inde
 
 Route::get('/academics', [WebAcademicController::class, 'index'])->name('academics');
 
-Route::get('/boarding', WebBoardingController::class)->name('boarding');
-
+Route::get('/boarding', [WebBoardingController::class, 'index'])->name('boarding');
+Route::post('/boarding/apply', [WebBoardingController::class, 'storeApplication'])
+    ->name('boarding.apply');
 Route::view('/policies-objectives', 'web.policies-objectives')->name('policies-objectives');
-
-
+Route::get('/careers', [WebCareerController::class, 'index'])->name('careers');
+Route::post('/careers/apply', [WebCareerController::class, 'apply'])->name('careers.apply');
 //admin panel
 Route::prefix('admin')->name('admin.')->group(function () {
 

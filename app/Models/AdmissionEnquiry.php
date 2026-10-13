@@ -15,35 +15,46 @@ class AdmissionEnquiry extends Model
     protected string $activityLabel  = 'student_name';
     protected array  $activityIgnore = ['ip_address'];
 
-   public const STATUSES = [
-    'new'        => 'New',
-    'contacted'  => 'Contacted',
-    'in_process' => 'In Process',
-    'admitted'   => 'Admitted',
-];
+    public const STATUSES = [
+        'new'        => 'New',
+        'contacted'  => 'Contacted',
+        'in_process' => 'In Process',
+        'admitted'   => 'Admitted',
+    ];
 
-public const STATUS_ICONS = [
-    'new'        => 'bi-envelope-fill',
-    'contacted'  => 'bi-telephone-fill',
-    'in_process' => 'bi-hourglass-split',
-    'admitted'   => 'bi-check-circle-fill',
-];
+    public const STATUS_ICONS = [
+        'new'        => 'bi-envelope-fill',
+        'contacted'  => 'bi-telephone-fill',
+        'in_process' => 'bi-hourglass-split',
+        'admitted'   => 'bi-check-circle-fill',
+    ];
 
-public const GRADES = [
-    'Pre-KG', 'LKG', 'UKG',
-    'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
-    'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12',
-];
+    public const GRADES = [
+        'Pre-KG', 'LKG', 'UKG',
+        'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6',
+        'Grade 7', 'Grade 8', 'Grade 9', 'Grade 10', 'Grade 11', 'Grade 12',
+    ];
+
+    public const GENDERS = [
+        'male'   => 'Male',
+        'female' => 'Female',
+        'other'  => 'Other',
+    ];
 
     protected $fillable = [
-        'student_name', 'parent_name', 'parent_phone', 'parent_email',
-        'grade', 'needs_hostel', 'message',
+        'student_name', 'gender',
+        'parent_name', 'parent_phone', 'parent_email',
+        'state', 'district', 'city',
+        'grade',
+        'needs_hostel', 'needs_transport',
+        'message',
         'status', 'admin_notes', 'contacted_at', 'ip_address',
     ];
 
     protected $casts = [
-        'needs_hostel' => 'boolean',
-        'contacted_at' => 'datetime',
+        'needs_hostel'    => 'boolean',
+        'needs_transport' => 'boolean',
+        'contacted_at'    => 'datetime',
     ];
 
     /* ---------- Filters ---------- */
@@ -58,12 +69,19 @@ public const GRADES = [
                       ->orWhere('parent_phone', 'like', "%{$search}%")
                       ->orWhere('parent_email', 'like', "%{$search}%")
                       ->orWhere('grade', 'like', "%{$search}%")
+                      ->orWhere('state', 'like', "%{$search}%")
+                      ->orWhere('district', 'like', "%{$search}%")
+                      ->orWhere('city', 'like', "%{$search}%")
                       ->orWhere('message', 'like', "%{$search}%");
                 });
             })
             ->when($f['status'] ?? null, fn ($q, $v) => $q->where('status', $v))
             ->when(($f['hostel'] ?? null) !== null, fn ($q) => $q->where('needs_hostel', $f['hostel'] === 'yes'))
+            ->when(($f['transport'] ?? null) !== null, fn ($q) => $q->where('needs_transport', $f['transport'] === 'yes'))
+            ->when($f['gender'] ?? null, fn ($q, $v) => $q->where('gender', $v))
             ->when($f['grade'] ?? null, fn ($q, $v) => $q->where('grade', $v))
+            ->when($f['state'] ?? null, fn ($q, $v) => $q->where('state', $v))
+            ->when($f['district'] ?? null, fn ($q, $v) => $q->where('district', $v))
             ->when($f['from'] ?? null, fn ($q, $v) => $q->where('created_at', '>=', $v . ' 00:00:00'))
             ->when($f['to'] ?? null, fn ($q, $v) => $q->where('created_at', '<=', $v . ' 23:59:59'));
     }
@@ -80,6 +98,19 @@ public const GRADES = [
         return self::STATUS_ICONS[$this->status] ?? 'bi-dot';
     }
 
+    public function getGenderLabelAttribute(): string
+    {
+        return self::GENDERS[$this->gender] ?? ucfirst((string) $this->gender);
+    }
+
+    /** Full location string: "City, District, State" (filters empties). */
+    public function getLocationAttribute(): string
+    {
+        return collect([$this->city, $this->district, $this->state])
+            ->filter()
+            ->implode(', ');
+    }
+
     /** Digits only, with India code, for wa.me / tel: links. */
     public function getWhatsappNumberAttribute(): string
     {
@@ -89,19 +120,19 @@ public const GRADES = [
     }
 
     /**
- * Academic session shown on the form, e.g. "2026-27".
- * Set ADMISSION_SESSION in .env to override; otherwise from October onward
- * the next year's session is shown.
- */
-public static function currentSession(): string
-{
-    if ($fixed = config('app.admission_session')) {
-        return $fixed;
+     * Academic session shown on the form, e.g. "2026-27".
+     * Set ADMISSION_SESSION in .env to override; otherwise from October onward
+     * the next year's session is shown.
+     */
+    public static function currentSession(): string
+    {
+        if ($fixed = config('app.admission_session')) {
+            return $fixed;
+        }
+
+        $now   = now();
+        $start = $now->month >= 10 ? $now->year + 1 : $now->year;
+
+        return $start . '-' . substr((string) ($start + 1), -2);
     }
-
-    $now   = now();
-    $start = $now->month >= 10 ? $now->year + 1 : $now->year;
-
-    return $start . '-' . substr((string) ($start + 1), -2);
-}
 }

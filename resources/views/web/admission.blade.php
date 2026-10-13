@@ -113,8 +113,11 @@
                                                     autocomplete="off">
                                             </div>
 
-                                            {{-- Student / Parent --}}
-                                            <div class="contact_modal_form_item">
+                                            {{-- Section: Student --}}
+                                            <h6 class="adm_section_title">Student Details</h6>
+
+                                            {{-- Student Name / Gender --}}
+                                            <div class="contact_modal_form_item adm_align_start">
                                                 <div class="contact_modal_form_inner">
                                                     <label class="adm_label" for="student_name">Student's Name <span class="adm_req">*</span></label>
                                                     <input type="text" id="student_name"
@@ -127,45 +130,32 @@
                                                     @enderror
                                                 </div>
                                                 <div class="contact_modal_form_inner">
-                                                    <label class="adm_label" for="parent_name">Parent's Name <span class="adm_req">*</span></label>
-                                                    <input type="text" id="parent_name"
-                                                        class="form-control @error('parent_name') is-invalid @enderror"
-                                                        placeholder="Enter parent's full name" name="parent_name"
-                                                        value="{{ old('parent_name') }}" maxlength="150"
-                                                        autocomplete="name" required>
-                                                    @error('parent_name')
+                                                    <span class="adm_label" id="gender_label">Gender <span class="adm_req">*</span></span>
+                                                    <div class="adm_choice adm_choice_3 @error('gender') is-invalid @enderror"
+                                                        role="radiogroup" aria-labelledby="gender_label">
+                                                        <label class="adm_choice_item">
+                                                            <input type="radio" name="gender" value="male"
+                                                                @checked(old('gender') === 'male') required>
+                                                            <span>Male</span>
+                                                        </label>
+                                                        <label class="adm_choice_item">
+                                                            <input type="radio" name="gender" value="female"
+                                                                @checked(old('gender') === 'female')>
+                                                            <span>Female</span>
+                                                        </label>
+                                                        <label class="adm_choice_item">
+                                                            <input type="radio" name="gender" value="other"
+                                                                @checked(old('gender') === 'other')>
+                                                            <span>Other</span>
+                                                        </label>
+                                                    </div>
+                                                    @error('gender')
                                                         <small class="contact_error">{{ $message }}</small>
                                                     @enderror
                                                 </div>
                                             </div>
 
-                                            {{-- Phone / Email --}}
-                                            <div class="contact_modal_form_item">
-                                                <div class="contact_modal_form_inner">
-                                                    <label class="adm_label" for="parent_phone">Parent's Mobile / WhatsApp No <span class="adm_req">*</span></label>
-                                                    <input type="tel" id="parent_phone"
-                                                        class="form-control @error('parent_phone') is-invalid @enderror"
-                                                        placeholder="e.g. 98765 43210" name="parent_phone"
-                                                        value="{{ old('parent_phone') }}" maxlength="20"
-                                                        inputmode="tel" autocomplete="tel" required>
-                                                    @error('parent_phone')
-                                                        <small class="contact_error">{{ $message }}</small>
-                                                    @enderror
-                                                </div>
-                                                <div class="contact_modal_form_inner">
-                                                    <label class="adm_label" for="parent_email">Parent's Email</label>
-                                                    <input type="email" id="parent_email"
-                                                        class="form-control @error('parent_email') is-invalid @enderror"
-                                                        placeholder="e.g. name@example.com" name="parent_email"
-                                                        value="{{ old('parent_email') }}" maxlength="191"
-                                                        autocomplete="email">
-                                                    @error('parent_email')
-                                                        <small class="contact_error">{{ $message }}</small>
-                                                    @enderror
-                                                </div>
-                                            </div>
-
-                                            {{-- Grade / Hostel --}}
+                                            {{-- Grade --}}
                                             <div class="contact_modal_form_item adm_align_start">
                                                 <div class="contact_modal_form_inner">
                                                     <label class="adm_label" for="grade">Grade Seeking Admission Into <span class="adm_req">*</span></label>
@@ -181,6 +171,104 @@
                                                         <small class="contact_error">{{ $message }}</small>
                                                     @enderror
                                                 </div>
+                                                <div class="contact_modal_form_inner d-none d-lg-block"></div>
+                                            </div>
+
+                                            {{-- Section: Parent --}}
+                                            <h6 class="adm_section_title adm_section_title_spaced">Parent / Guardian</h6>
+
+                                            {{-- Parent Name / Phone --}}
+                                            <div class="contact_modal_form_item">
+                                                <div class="contact_modal_form_inner">
+                                                    <label class="adm_label" for="parent_name">Parent's Name <span class="adm_req">*</span></label>
+                                                    <input type="text" id="parent_name"
+                                                        class="form-control @error('parent_name') is-invalid @enderror"
+                                                        placeholder="Enter parent's full name" name="parent_name"
+                                                        value="{{ old('parent_name') }}" maxlength="150"
+                                                        autocomplete="name" required>
+                                                    @error('parent_name')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="contact_modal_form_inner">
+                                                    <label class="adm_label" for="parent_phone">Parent's Mobile / WhatsApp No <span class="adm_req">*</span></label>
+                                                    <input type="tel" id="parent_phone"
+                                                        class="form-control @error('parent_phone') is-invalid @enderror"
+                                                        placeholder="e.g. 98765 43210" name="parent_phone"
+                                                        value="{{ old('parent_phone') }}" maxlength="20"
+                                                        inputmode="tel" autocomplete="tel" required>
+                                                    @error('parent_phone')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            {{-- Email --}}
+                                            <div class="contact_modal_form_item">
+                                                <div class="contact_modal_form_inner">
+                                                    <label class="adm_label" for="parent_email">Parent's Email</label>
+                                                    <input type="email" id="parent_email"
+                                                        class="form-control @error('parent_email') is-invalid @enderror"
+                                                        placeholder="e.g. name@example.com" name="parent_email"
+                                                        value="{{ old('parent_email') }}" maxlength="191"
+                                                        autocomplete="email">
+                                                    @error('parent_email')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="contact_modal_form_inner d-none d-lg-block"></div>
+                                            </div>
+
+                                            {{-- Section: Location --}}
+                                            <h6 class="adm_section_title adm_section_title_spaced">Location</h6>
+
+                                            {{-- State / District --}}
+                                            <div class="contact_modal_form_item">
+                                                <div class="contact_modal_form_inner">
+                                                    <label class="adm_label" for="state">State <span class="adm_req">*</span></label>
+                                                    <input type="text" id="state"
+                                                        class="form-control @error('state') is-invalid @enderror"
+                                                        placeholder="e.g. Kerala" name="state"
+                                                        value="{{ old('state') }}" maxlength="100"
+                                                        autocomplete="address-level1" required>
+                                                    @error('state')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="contact_modal_form_inner">
+                                                    <label class="adm_label" for="district">District <span class="adm_req">*</span></label>
+                                                    <input type="text" id="district"
+                                                        class="form-control @error('district') is-invalid @enderror"
+                                                        placeholder="e.g. Thrissur" name="district"
+                                                        value="{{ old('district') }}" maxlength="100"
+                                                        required>
+                                                    @error('district')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                            </div>
+
+                                            {{-- City --}}
+                                            <div class="contact_modal_form_item">
+                                                <div class="contact_modal_form_inner">
+                                                    <label class="adm_label" for="city">City / Town / Village <span class="adm_req">*</span></label>
+                                                    <input type="text" id="city"
+                                                        class="form-control @error('city') is-invalid @enderror"
+                                                        placeholder="e.g. Mala, Chalakudy" name="city"
+                                                        value="{{ old('city') }}" maxlength="100"
+                                                        autocomplete="address-level2" required>
+                                                    @error('city')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="contact_modal_form_inner d-none d-lg-block"></div>
+                                            </div>
+
+                                            {{-- Section: Facilities --}}
+                                            <h6 class="adm_section_title adm_section_title_spaced">Facilities Needed</h6>
+
+                                            {{-- Hostel / Transportation --}}
+                                            <div class="contact_modal_form_item adm_align_start">
                                                 <div class="contact_modal_form_inner">
                                                     <span class="adm_label" id="hostel_label">Do you need Hostel facilities? <span class="adm_req">*</span></span>
                                                     <div class="adm_choice @error('needs_hostel') is-invalid @enderror"
@@ -197,6 +285,25 @@
                                                         </label>
                                                     </div>
                                                     @error('needs_hostel')
+                                                        <small class="contact_error">{{ $message }}</small>
+                                                    @enderror
+                                                </div>
+                                                <div class="contact_modal_form_inner">
+                                                    <span class="adm_label" id="transport_label">Do you need Transportation? <span class="adm_req">*</span></span>
+                                                    <div class="adm_choice @error('needs_transport') is-invalid @enderror"
+                                                        role="radiogroup" aria-labelledby="transport_label">
+                                                        <label class="adm_choice_item">
+                                                            <input type="radio" name="needs_transport" value="1"
+                                                                @checked(old('needs_transport') === '1') required>
+                                                            <span>Yes</span>
+                                                        </label>
+                                                        <label class="adm_choice_item">
+                                                            <input type="radio" name="needs_transport" value="0"
+                                                                @checked(old('needs_transport') === '0')>
+                                                            <span>No</span>
+                                                        </label>
+                                                    </div>
+                                                    @error('needs_transport')
                                                         <small class="contact_error">{{ $message }}</small>
                                                     @enderror
                                                 </div>
@@ -309,118 +416,169 @@
 
 @push('styles')
 <style>
-    /* Shared with Contact page */
+    /* ======== Shared with Contact page ======== */
     .contact_hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-    .contact_error { display: block; margin-top: 6px; color: #dc3545; font-size: 14px; }
-    .contact_modal_form .form-control.is-invalid { border-color: #dc3545; }
-    .contact_alert { border-radius: 10px; margin: 20px 0 0; }
+    .contact_error { display: block; margin-top: 6px; color: #dc3545; font-size: 13px; font-weight: 500; }
+    .contact_modal_form .form-control.is-invalid { border-color: #dc3545 !important; }
+    .contact_alert { border-radius: 12px; margin: 20px 0 0; }
     .contact_submit[disabled] { opacity: .7; pointer-events: none; }
 
-    /* ---------- Admission page ---------- */
+    /* ======== Admission page ======== */
     .adm_intro { max-width: 720px; }
 
-    .adm_form_header { flex-direction: column; align-items: flex-start; }
-    .adm_form_header .modal-title { margin: 10px 0 4px; }
+    /* ---- Form card ---- */
+    .adm_form_card .modal-content {
+        padding: 40px 42px 44px !important;
+        border-radius: 20px !important;
+        background: #fff !important;
+        box-shadow: 0 25px 60px -30px rgba(0, 47, 95, .25), 0 10px 30px -20px rgba(0, 0, 27, .08) !important;
+        border: 1px solid #eef1f6 !important;
+    }
+
+    /* ---- Header ---- */
+    .adm_form_header {
+        flex-direction: column; align-items: flex-start;
+        padding: 0 !important; border: 0 !important;
+        margin-bottom: 30px;
+    }
+    .adm_form_header .modal-title {
+        margin: 14px 0 6px;
+        font-size: 26px; font-weight: 700;
+        color: var(--heading-color, #00539B);
+    }
     .adm_badge {
         display: inline-block;
-        padding: 4px 14px;
+        padding: 6px 16px;
         border-radius: 30px;
-        background-color: var(--accent-color);
+        background: linear-gradient(135deg, var(--accent-color, #00539B), #002F5F);
         color: #fff;
-        letter-spacing: 1px;
+        letter-spacing: 1.2px;
+        font-size: 12px;
+        box-shadow: 0 8px 20px -10px rgba(0, 47, 95, .5);
     }
-    .adm_req { color: #dc3545; }
-    .adm_optional { font-weight: 400; opacity: .6; }
+    .adm_req { color: #dc3545; margin-left: 2px; }
+    .adm_optional { font-weight: 400; opacity: .55; font-size: 13px; }
 
+    /* ---- Labels ---- */
     .adm_label {
         display: block;
-        margin-bottom: 8px;
-        color: var(--heading-color);
-        font-size: 15px;
-        font-weight: 500;
-        line-height: 1.4em;
+        margin-bottom: 10px;
+        color: #2d3545;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: .2px;
     }
 
+    /* ---- Section titles ---- */
+    .adm_section_title {
+        display: flex; align-items: center; gap: 12px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--accent-color, #00539B);
+        margin: 0 0 22px;
+    }
+    .adm_section_title::after {
+        content: "";
+        flex: 1; height: 1px;
+        background: linear-gradient(to right, rgba(0, 83, 155, .25), transparent);
+    }
+    .adm_section_title_spaced { margin-top: 32px; }
+
+    /* ---- Inputs ---- */
     .adm_form .contact_modal_form_item.adm_align_start { align-items: flex-start; }
-    .adm_form textarea.form-control { resize: vertical; min-height: 120px; }
 
-    /* Select styled like the text inputs */
-    .contact_modal .modal-body select.adm_select {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        cursor: pointer;
-        padding-right: 50px;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2300539B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 24px center;
-        background-size: 14px;
+    .contact_modal .modal-body .form-control {
+        padding: 14px 18px !important;
+        font-size: 15px !important;
+        color: #2d3545 !important;
+        background-color: #f7f9fc !important;
+        border: 1.5px solid #e6eaf2 !important;
+        border-radius: 12px !important;
+        transition: all .25s ease !important;
+        box-shadow: none !important;
     }
-    .contact_modal .modal-body select.adm_select:invalid { color: #8a8a99; }
-    .contact_modal .modal-body select.adm_select option { color: var(--heading-color); }
+    .contact_modal .modal-body .form-control::placeholder { color: #9aa3b5 !important; }
+    .contact_modal .modal-body .form-control:focus {
+        background-color: #fff !important;
+        border-color: var(--accent-color, #00539B) !important;
+        box-shadow: 0 0 0 4px rgba(0, 83, 155, .1) !important;
+    }
+    .adm_form textarea.form-control { resize: vertical; min-height: 110px; }
 
-    /* Yes / No pills */
-    .adm_choice { display: flex; gap: 14px; flex-wrap: wrap; }
-    .adm_choice_item { position: relative; margin: 0; flex: 1 1 0; min-width: 110px; }
+    /* ---- Select ---- */
+    .contact_modal .modal-body select.adm_select {
+        -webkit-appearance: none; -moz-appearance: none; appearance: none;
+        cursor: pointer;
+        padding-right: 48px !important;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%2300539B' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+        background-repeat: no-repeat !important;
+        background-position: right 18px center !important;
+        background-size: 14px !important;
+    }
+    .contact_modal .modal-body select.adm_select:invalid { color: #9aa3b5 !important; }
+    .contact_modal .modal-body select.adm_select option { color: #2d3545; }
+
+    /* ---- Choice pills (Yes/No, Gender) ---- */
+    .adm_choice { display: flex; gap: 10px; flex-wrap: wrap; }
+    .adm_choice_item { position: relative; margin: 0; flex: 1 1 0; min-width: 100px; }
+    .adm_choice_3 .adm_choice_item { min-width: 80px; }
     .adm_choice_item input {
         position: absolute; opacity: 0; width: 100%; height: 100%; left: 0; top: 0; margin: 0; cursor: pointer;
     }
     .adm_choice_item span {
-        display: flex; align-items: center; justify-content: center; gap: 10px;
-        height: 62px;
-        padding: 0 20px;
-        border-radius: 10px;
-        background-color: #fff;
-        border: 1px solid #fff;
-        box-shadow: 2px 2px 20px 0 rgba(0, 0, 27, 0.05);
-        color: var(--heading-color);
-        font-weight: 500;
-        transition: all .3s ease;
+        display: flex; align-items: center; justify-content: center;
+        height: 52px;
+        padding: 0 18px;
+        border-radius: 12px;
+        background-color: #f7f9fc;
+        border: 1.5px solid #e6eaf2;
+        color: #2d3545;
+        font-weight: 600;
+        font-size: 14.5px;
+        transition: all .25s ease;
     }
-    .adm_choice_item span::before {
-        content: "";
-        width: 18px; height: 18px; flex: none;
-        border-radius: 50%;
-        border: 2px solid currentColor;
-        opacity: .5;
-        transition: all .3s ease;
-    }
+    .adm_choice_item:hover span { border-color: rgba(0, 83, 155, .35); background-color: #fff; }
     .adm_choice_item input:checked + span {
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
+        background: linear-gradient(135deg, var(--accent-color, #00539B), #002F5F);
+        border-color: var(--accent-color, #00539B);
         color: #fff;
-    }
-    .adm_choice_item input:checked + span::before {
-        opacity: 1;
-        border-width: 5px;
-        background-color: var(--accent-color);
-        border-color: #fff;
+        box-shadow: 0 10px 22px -10px rgba(0, 47, 95, .5);
     }
     .adm_choice_item input:focus-visible + span { outline: 2px solid var(--heading-color); outline-offset: 2px; }
     .adm_choice.is-invalid .adm_choice_item span { border-color: #dc3545; }
 
-    .adm_submit_row { flex-wrap: wrap; justify-content: flex-start !important; gap: 12px 24px !important; }
-    .adm_privacy { flex: 1 1 200px; }
+    /* ---- Submit row ---- */
+    .adm_submit_row {
+        flex-wrap: wrap;
+        justify-content: flex-start !important;
+        gap: 14px 24px !important;
+        margin-top: 10px !important;
+        padding-top: 24px;
+        border-top: 1px solid #eef1f6;
+    }
+    .adm_privacy { flex: 1 1 200px; font-size: 13px; }
 
-    /* Success box */
+    /* ---- Success box ---- */
     .adm_success {
         display: flex; gap: 15px; align-items: flex-start;
-        margin-top: 24px;
-        padding: 20px;
-        border-radius: 10px;
-        background-color: #fff;
+        margin-bottom: 24px;
+        padding: 18px 20px;
+        border-radius: 12px;
+        background-color: #e6f7ee;
         border-left: 4px solid #198754;
-        color: var(--heading-color);
+        color: #0f5132;
     }
     .adm_success h6 { color: #198754; }
     .adm_success_icon {
-        width: 40px; height: 40px; flex: none;
+        width: 36px; height: 36px; flex: none;
         border-radius: 50%;
         background-color: #198754;
         color: #fff;
     }
 
-    /* Steps */
+    /* ---- Steps ---- */
     .adm_steps { list-style: none; position: relative; }
     .adm_steps li { display: flex; gap: 18px; position: relative; }
     .adm_steps li:not(:last-child) { padding-bottom: 28px; }
@@ -433,14 +591,14 @@
     .adm_step_num {
         width: 46px; height: 46px; flex: none;
         border-radius: 50%;
-        background-color: var(--accent-color);
+        background: linear-gradient(135deg, var(--accent-color), #002F5F);
         color: #fff;
         box-shadow: 0 0 0 6px rgba(0, 47, 95, 0.1);
     }
     .adm_steps h3 { margin-top: 8px; }
 
-    /* Help card */
-    .adm_help { padding: 30px;margin-top: 30px; }
+    /* ---- Help card ---- */
+    .adm_help { padding: 30px; margin-top: 30px; }
     .adm_help_list li { display: flex; align-items: center; gap: 12px; color: #fff; word-break: break-word; }
     .adm_help_list li:not(:last-child) { margin-bottom: 14px; }
     .adm_help_list a:hover { color: rgba(255, 255, 255, 0.75); }
@@ -450,7 +608,7 @@
         background-color: rgba(255, 255, 255, 0.15);
     }
 
-    /* ---------- Responsive ---------- */
+    /* ======== Responsive ======== */
     @media (max-width: 1199px) {
         .contact_modal .modal-body .contact_modal_form_item { gap: 20px; }
     }
@@ -458,20 +616,20 @@
         .adm_side { max-width: 640px; }
     }
     @media (max-width: 767px) {
-        /* style.css already stacks .contact_modal_form_item into a column here */
-        .contact_modal .modal-body .contact_modal_form_item { gap: 20px; margin-top: 20px; align-items: stretch; }
-        .contact_modal .modal-body .form-control { padding: 15px 20px; }
-        .contact_modal .modal-body select.adm_select { background-position: right 20px center; }
-        .adm_choice_item span { height: 56px; }
+        .adm_form_card .modal-content { padding: 30px 24px 32px !important; }
+        .contact_modal .modal-body .contact_modal_form_item { gap: 18px; margin-top: 18px; align-items: stretch; }
+        .adm_choice_item span { height: 50px; }
         .adm_submit_row { align-items: stretch !important; }
         .adm_submit_row .td_btn { width: 100%; }
         .adm_privacy { text-align: center; }
         .adm_help { padding: 25px 20px; }
+        .adm_section_title_spaced { margin-top: 24px; }
     }
     @media (max-width: 420px) {
-        .contact_modal .modal-content { padding: 28px 15px 30px; }
-        .adm_label { font-size: 14px; }
+        .adm_form_card .modal-content { padding: 24px 18px 28px !important; }
         .adm_steps li { gap: 14px; }
+        .adm_choice { gap: 8px; }
+        .adm_choice_3 .adm_choice_item span { padding: 0 10px; font-size: 13.5px; }
     }
 </style>
 @endpush

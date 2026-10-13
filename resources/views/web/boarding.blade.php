@@ -121,8 +121,212 @@
             </div>
         </div>
         <div class="td_height_100 td_height_lg_50"></div>
-    </section>
+        </section>
     <!-- End Intro -->
+
+    <!-- Start Hostel Application Form -->
+    <section class="brd_apply" id="hostel-application-form">
+        <div class="td_height_100 td_height_lg_75"></div>
+        <div class="container">
+            <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
+                <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase brd_accent">
+                    <i></i> Apply For Hostel Admission <i></i>
+                </p>
+                <h2 class="td_section_title td_fs_48 mb-0">Hostel Application Form</h2>
+                <p class="td_fs_18 mb-0 mt-3" style="max-width:720px;margin:0 auto;color:#6b7489;">
+                    Fill in the details below and our hostel admissions team will get back to you shortly.
+                </p>
+            </div>
+            <div class="td_height_50 td_height_lg_40"></div>
+
+            {{-- Success message --}}
+            @if (session('success'))
+                <div class="brd_form_alert brd_form_alert_success wow fadeInDown" role="alert">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+                    </svg>
+                    <span>{{ session('success') }}</span>
+                </div>
+            @endif
+
+            {{-- Validation errors --}}
+            @if ($errors->any())
+                <div class="brd_form_alert brd_form_alert_error wow fadeInDown" role="alert">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <div>
+                        <strong>Please correct the errors below.</strong>
+                    </div>
+                </div>
+            @endif
+
+            <form action="{{ route('boarding.apply') }}" method="POST" class="brd_form wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
+                @csrf
+
+                {{-- Student Details --}}
+                <div class="brd_form_section">
+                    <div class="brd_form_section_head">
+                        <span class="brd_form_section_icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3a4 4 0 0 1 4 4v1H8V7a4 4 0 0 1 4-4z"/><path d="M5 21v-6a7 7 0 0 1 14 0v6"/><path d="M9 21v-3h6v3"/>
+                            </svg>
+                        </span>
+                        <h3>Student Details</h3>
+                    </div>
+
+                    <div class="row td_gap_y_20">
+                        <div class="col-lg-6">
+                            <div class="brd_field">
+                                <label for="student_name">Full Name <span class="brd_req">*</span></label>
+                                <input type="text" id="student_name" name="student_name"
+                                    value="{{ old('student_name') }}"
+                                    placeholder="e.g. Mohammed Ali"
+                                    class="{{ $errors->has('student_name') ? 'is-error' : '' }}"
+                                    required>
+                                @error('student_name')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="brd_field">
+                                <label for="age">Age <span class="brd_req">*</span></label>
+                                <input type="number" id="age" name="age" min="3" max="25"
+                                    value="{{ old('age') }}" placeholder="e.g. 10"
+                                    class="{{ $errors->has('age') ? 'is-error' : '' }}"
+                                    required>
+                                @error('age')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-lg-3 col-md-6">
+                            <div class="brd_field">
+                                <label for="gender">Gender <span class="brd_req">*</span></label>
+                                <select id="gender" name="gender"
+                                    class="{{ $errors->has('gender') ? 'is-error' : '' }}" required>
+                                    <option value="">Select</option>
+                                    @foreach (\App\Models\HostelApplication::GENDERS as $value => $label)
+                                        <option value="{{ $value }}" {{ old('gender') === $value ? 'selected' : '' }}>
+                                            {{ $label }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('gender')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="brd_field">
+                                <label for="class_id">Class <span class="brd_req">*</span></label>
+                                <select id="class_id" name="class_id"
+                                    class="{{ $errors->has('class_id') ? 'is-error' : '' }}" required>
+                                    <option value="">Select a class</option>
+                                    @foreach ($classes ?? [] as $class)
+                                        <option value="{{ $class->id }}" {{ (string) old('class_id') === (string) $class->id ? 'selected' : '' }}>
+                                            {{ $class->name }}{{ $class->code ? ' (' . $class->code . ')' : '' }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('class_id')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="brd_field">
+                                <label for="address">Residential Address <small>(optional)</small></label>
+                                <input type="text" id="address" name="address"
+                                    value="{{ old('address') }}"
+                                    placeholder="City / District"
+                                    class="{{ $errors->has('address') ? 'is-error' : '' }}">
+                                @error('address')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Parent Details --}}
+                <div class="brd_form_section">
+                    <div class="brd_form_section_head">
+                        <span class="brd_form_section_icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                            </svg>
+                        </span>
+                        <h3>Parent / Guardian Details</h3>
+                    </div>
+
+                    <div class="row td_gap_y_20">
+                        <div class="col-lg-6">
+                            <div class="brd_field">
+                                <label for="parent_name">Parent/Guardian Name <span class="brd_req">*</span></label>
+                                <input type="text" id="parent_name" name="parent_name"
+                                    value="{{ old('parent_name') }}"
+                                    placeholder="e.g. Mr. Ahmed Ali"
+                                    class="{{ $errors->has('parent_name') ? 'is-error' : '' }}"
+                                    required>
+                                @error('parent_name')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="brd_field">
+                                <label for="parent_phone">Phone Number <span class="brd_req">*</span></label>
+                                <input type="tel" id="parent_phone" name="parent_phone"
+                                    value="{{ old('parent_phone') }}"
+                                    placeholder="e.g. +91 98765 43210"
+                                    class="{{ $errors->has('parent_phone') ? 'is-error' : '' }}"
+                                    required>
+                                @error('parent_phone')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="brd_field">
+                                <label for="parent_email">Email Address <small>(optional)</small></label>
+                                <input type="email" id="parent_email" name="parent_email"
+                                    value="{{ old('parent_email') }}"
+                                    placeholder="e.g. parent@example.com"
+                                    class="{{ $errors->has('parent_email') ? 'is-error' : '' }}">
+                                @error('parent_email')
+                                    <span class="brd_field_error">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="brd_form_submit">
+                    <button type="submit" class="brd_form_submit_btn">
+                        <span>Submit Application</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                    <p class="brd_form_note">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                        </svg>
+                        Your information is safe with us and will only be used for admission purposes.
+                    </p>
+                </div>
+            </form>
+        </div>
+    </section>
+    <!-- End Hostel Application Form -->
 
     <!-- Start Photos & Videos -->
     @if ($hasMedia)
@@ -303,12 +507,12 @@
 @push('styles')
 <style>
     /* --heading-color (site blue) is used because --accent-color is broken under td_theme_2 */
-    .brd_intro, .brd_media, .brd_fees, .brd_cta_wrap, .brd_lb {
-        --brd: var(--heading-color, #00539B);
-        --brd-dark: #002F5F;
-        --brd-soft: #F4F7FB;
-        --brd-line: #E6EAF2;
-    }
+    .brd_intro, .brd_media, .brd_fees, .brd_cta_wrap, .brd_lb, .brd_apply {
+    --brd: var(--heading-color, #00539B);
+    --brd-dark: #002F5F;
+    --brd-soft: #F4F7FB;
+    --brd-line: #E6EAF2;
+}
     .brd_accent { color: var(--brd); }
     .td_section_heading .brd_accent i::before,
     .td_section_heading .brd_accent i::after { background-color: var(--brd); }
@@ -423,6 +627,208 @@
     .brd_lb_count { position: absolute; top: 28px; left: 24px; z-index: 3; color: rgba(255,255,255,.75); font-size: 15px; letter-spacing: 1px; }
     body.brd_lock { overflow: hidden; }
 
+    /* ========= Hostel Application Form ========= */
+.brd_apply { background: #F6F8FB; }
+
+/* Alerts */
+.brd_form_alert {
+    max-width: 900px;
+    margin: 0 auto 30px;
+    padding: 16px 22px;
+    border-radius: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+.brd_form_alert svg { flex: none; margin-top: 2px; }
+.brd_form_alert_success {
+    background: #e6f7ee;
+    color: #156e3f;
+    border: 1px solid #a4e0bc;
+}
+.brd_form_alert_error {
+    background: #fde8ea;
+    color: #a3182a;
+    border: 1px solid #f5b6bd;
+}
+
+/* Form container */
+.brd_form {
+    max-width: 900px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 20px;
+    padding: 40px 44px;
+    box-shadow: 0 30px 60px -30px rgba(0, 47, 95, 0.3);
+    border: 1px solid var(--brd-line);
+}
+
+/* Section grouping */
+.brd_form_section + .brd_form_section {
+    margin-top: 36px;
+    padding-top: 36px;
+    border-top: 1px dashed var(--brd-line);
+}
+.brd_form_section_head {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.brd_form_section_icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--brd), var(--brd-dark));
+    color: #fff;
+    flex: none;
+}
+.brd_form_section_head h3 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--brd);
+}
+
+/* Fields */
+.brd_field {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.brd_field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #3d4556;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.brd_field label small {
+    font-size: 12px;
+    font-weight: 400;
+    color: #8a93a6;
+    text-transform: none;
+    letter-spacing: 0;
+}
+.brd_req { color: #dc3545; font-weight: 700; }
+
+.brd_field input,
+.brd_field select,
+.brd_field textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--brd-line);
+    border-radius: 10px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #3d4556;
+    background: #fff;
+    transition: border-color .25s ease, box-shadow .25s ease, background .25s ease;
+    outline: none;
+}
+.brd_field textarea {
+    resize: vertical;
+    min-height: 100px;
+    line-height: 1.5;
+}
+.brd_field select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300539B' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 18px;
+    padding-right: 44px;
+    cursor: pointer;
+}
+.brd_field input:hover,
+.brd_field select:hover,
+.brd_field textarea:hover {
+    border-color: #c9d1e2;
+}
+.brd_field input:focus,
+.brd_field select:focus,
+.brd_field textarea:focus {
+    border-color: var(--brd);
+    box-shadow: 0 0 0 4px rgba(0, 83, 155, 0.1);
+    background: #fcfdff;
+}
+.brd_field input::placeholder,
+.brd_field textarea::placeholder {
+    color: #a7afc0;
+}
+.brd_field input.is-error,
+.brd_field select.is-error,
+.brd_field textarea.is-error {
+    border-color: #dc3545;
+    background: #fff8f9;
+}
+.brd_field_error {
+    font-size: 12.5px;
+    color: #dc3545;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+}
+
+/* Submit */
+.brd_form_submit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-top: 36px;
+    padding-top: 32px;
+    border-top: 1px dashed var(--brd-line);
+}
+.brd_form_submit_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 40px;
+    border: 0;
+    border-radius: 30px;
+    background: linear-gradient(135deg, var(--brd), var(--brd-dark));
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 15px 30px -10px rgba(0, 47, 95, 0.5);
+    transition: transform .3s ease, box-shadow .3s ease;
+    letter-spacing: 0.3px;
+}
+.brd_form_submit_btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 40px -10px rgba(0, 47, 95, 0.6);
+}
+.brd_form_submit_btn:active { transform: translateY(-1px); }
+.brd_form_submit_btn svg { transition: transform .3s ease; }
+.brd_form_submit_btn:hover svg { transform: translateX(4px); }
+
+.brd_form_note {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+    font-size: 13px;
+    color: #8a93a6;
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .brd_form { padding: 28px 20px; border-radius: 16px; }
+    .brd_form_section_head h3 { font-size: 19px; }
+    .brd_form_section_icon { width: 38px; height: 38px; border-radius: 10px; }
+    .brd_form_submit_btn { width: 100%; justify-content: center; padding: 14px 24px; }
+    .brd_form_alert { padding: 14px 16px; font-size: 14px; }
+}
     /* ---------- Fees & QR ---------- */
     .brd_pay {
         display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; align-items: center;

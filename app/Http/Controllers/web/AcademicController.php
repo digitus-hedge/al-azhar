@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Web;
 
 use App\Http\Controllers\Controller;
+use App\Models\Academic;
 use App\Models\Fee;
 
 class AcademicController extends Controller
 {
     /**
-     * Academics page with the class-wise fee structure.
+     * Academics page with the class-wise fee structure and academic level details.
      */
     public function index()
     {
@@ -26,6 +27,12 @@ class AcademicController extends Controller
             ))
             ->values();
 
-        return view('web.academics', compact('fees'));
+        // Academic details keyed by lowercase name — fetches ALL records
+        // (no is_active filter) so modals show whenever admin adds content.
+        $academicDetails = Academic::query()
+            ->get()
+            ->keyBy(fn ($a) => \Illuminate\Support\Str::lower(trim($a->name)));
+
+        return view('web.academics', compact('fees', 'academicDetails'));
     }
 }

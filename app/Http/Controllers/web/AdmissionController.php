@@ -15,12 +15,13 @@ use Throwable;
 class AdmissionController extends Controller
 {
     public function create(): View
-    {
-        return view('web.admission', [
-            'grades'  => AdmissionEnquiry::GRADES,
-            'session' => AdmissionEnquiry::currentSession(),
-        ]);
-    }
+{
+    return view('web.admission', [
+        'grades'  => AdmissionEnquiry::GRADES,
+        'genders' => AdmissionEnquiry::GENDERS,
+        'session' => AdmissionEnquiry::currentSession(),
+    ]);
+}
 
     public function store(StoreAdmissionEnquiryRequest $request): RedirectResponse
     {

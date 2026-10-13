@@ -9,13 +9,16 @@
     // Put the campus photo at public/images/academics.jpg
     $acdImage = asset('images/academic.png');
 
-    $levels = [
-        ['title' => 'Preschool',                 'sub' => 'First steps into learning',  'icon' => '<path d="M12 3a4 4 0 0 1 4 4v1H8V7a4 4 0 0 1 4-4z"/><path d="M5 21v-6a7 7 0 0 1 14 0v6"/><path d="M9 21v-3h6v3"/>'],
-        ['title' => 'LKG and UKG',               'sub' => 'Montessori stream',           'icon' => '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="17.5" r="3.5"/>'],
-        ['title' => 'Primary Level',             'sub' => 'Classes I – V',               'icon' => '<path d="M2 5a2 2 0 0 1 2-2h6v17H4a2 2 0 0 0-2 2V5zM22 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2V5z"/>'],
-        ['title' => 'Secondary Level',           'sub' => 'Classes VI – X',              'icon' => '<path d="M9 3h6v4l4 9a3 3 0 0 1-2.7 4.3H7.7A3 3 0 0 1 5 16l4-9V3z"/><path d="M8 3h8M7 14h10"/>'],
-        ['title' => 'Senior Secondary Level',    'sub' => 'Classes XI – XII',            'icon' => '<path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/>'],
+   $levels = [
+        ['title' => 'Preschool',              'sub' => 'First steps into learning', 'icon' => '<path d="M12 3a4 4 0 0 1 4 4v1H8V7a4 4 0 0 1 4-4z"/><path d="M5 21v-6a7 7 0 0 1 14 0v6"/><path d="M9 21v-3h6v3"/>'],
+        ['title' => 'LKG and UKG',            'sub' => 'Montessori stream',          'icon' => '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="17.5" r="3.5"/>'],
+        ['title' => 'Primary Level',          'sub' => 'Classes I – V',              'icon' => '<path d="M2 5a2 2 0 0 1 2-2h6v17H4a2 2 0 0 0-2 2V5zM22 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2V5z"/>'],
+        ['title' => 'Secondary Level',        'sub' => 'Classes VI – X',             'icon' => '<path d="M9 3h6v4l4 9a3 3 0 0 1-2.7 4.3H7.7A3 3 0 0 1 5 16l4-9V3z"/><path d="M8 3h8M7 14h10"/>'],
+        ['title' => 'Senior Secondary Level', 'sub' => 'Classes XI – XII',           'icon' => '<path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/>'],
     ];
+
+    // Admin-managed details, keyed by lowercase name
+    $academicDetails = $academicDetails ?? collect();
 
     $values = ['Ethics & morality', 'Civility', 'Kindness', 'Discipline', 'Honesty'];
 
@@ -166,20 +169,77 @@
                 <h2 class="td_section_title td_fs_48 mb-0">Our Academic Levels</h2>
             </div>
             <div class="td_height_50 td_height_lg_40"></div>
-
             <div class="acd_level_grid">
-                @foreach ($levels as $i => $level)
-                    <div class="acd_level wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInUp', 'fadeInRight'][$i] }}"
-                        data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + $i * 0.1 }}s">
-                        <span class="acd_level_num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
-                        <span class="acd_level_icon">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">{!! $level['icon'] !!}</svg>
-                        </span>
-                        <h3 class="acd_level_title">{{ $level['title'] }}</h3>
-                        <p class="acd_level_sub mb-0">{{ $level['sub'] }}</p>
-                    </div>
-                @endforeach
+    @php
+        $animations = ['fadeInLeft', 'fadeInUp', 'fadeInUp', 'fadeInUp', 'fadeInRight'];
+        $levelData = [];
+    @endphp
+    @foreach ($levels as $i => $level)
+        @php
+            $animClass = $animations[$i] ?? $animations[$i % count($animations)];
+            $lookupKey = \Illuminate\Support\Str::lower(trim($level['title']));
+            $detail = ($academicDetails ?? collect())->get($lookupKey);
+            $description = (string) ($detail?->description ?? '');
+            $hasDetails = !empty(trim(strip_tags($description)));
+
+            // Collect data for JSON injection
+            $levelData[$i] = [
+                'title'       => $level['title'],
+                'sub'         => $level['sub'] ?? '',
+                'icon'        => $level['icon'],
+                'description' => $description,
+            ];
+        @endphp
+        <button type="button"
+            class="acd_level wow {{ $animClass }}"
+            data-wow-duration="0.9s"
+            data-wow-delay="{{ 0.1 + $i * 0.1 }}s"
+            data-level-index="{{ $i }}"
+            @if ($hasDetails) data-has-details="1" @endif
+            aria-label="View details for {{ $level['title'] }}">
+            <span class="acd_level_num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
+            <span class="acd_level_icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">{!! $level['icon'] !!}</svg>
+            </span>
+            <h3 class="acd_level_title">{{ $level['title'] }}</h3>
+            <p class="acd_level_sub mb-0">{{ $level['sub'] }}</p>
+            @if ($hasDetails)
+                <span class="acd_level_more">
+                    View Details
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            @endif
+        </button>
+    @endforeach
+</div>
+
+{{-- Level data embedded as JSON — handles any special characters safely --}}
+<script type="application/json" id="acdLevelData">{!! json_encode($levelData, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+
+{{-- Modal --}}
+<div class="acd_modal" id="acdModal" aria-hidden="true" role="dialog" aria-label="Academic level details">
+    <div class="acd_modal_bg" data-close></div>
+    <div class="acd_modal_box">
+        <button type="button" class="acd_modal_close" data-close aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                <path d="M18 6 6 18M6 6l12 12"/>
+            </svg>
+        </button>
+
+        <div class="acd_modal_head">
+            <span class="acd_modal_icon" id="acdModalIcon"></span>
+            <div>
+                <small id="acdModalSub"></small>
+                <h3 id="acdModalTitle"></h3>
             </div>
+        </div>
+
+        <div class="acd_modal_body" id="acdModalBody">
+        </div>
+    </div>
+</div>
         </div>
         <div class="td_height_100 td_height_lg_75"></div>
     </section>
@@ -512,6 +572,195 @@
     .acd_level_title { font-size: 19px; font-weight: 600; color: var(--acd); margin: 0 0 6px; line-height: 1.3; }
     .acd_level_sub { font-size: 14px; color: #6b7489; }
 
+    /* ---------- Level cards made clickable (buttons) ---------- */
+button.acd_level {
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+    text-align: center;
+}
+/* Only make clickable cards show a pointer */
+button.acd_level[data-has-details="1"] { cursor: pointer; }
+button.acd_level:not([data-has-details="1"]) { cursor: default; }
+
+.acd_level_more {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 14px; padding: 4px 12px; border-radius: 20px;
+    background: var(--acd-soft); color: var(--acd);
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    transition: all .3s ease;
+}
+.acd_level:hover .acd_level_more {
+    background: var(--acd); color: #fff;
+}
+.acd_level_more svg { transition: transform .3s ease; }
+.acd_level:hover .acd_level_more svg { transform: translateX(3px); }
+
+/* ---------- Modal ---------- */
+.acd_modal {
+    position: fixed; inset: 0; z-index: 99999;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; visibility: hidden;
+    transition: opacity .3s ease, visibility .3s ease;
+    padding: 20px;
+}
+.acd_modal.is-open { opacity: 1; visibility: visible; }
+.acd_modal_bg {
+    position: absolute; inset: 0;
+    background: rgba(0, 20, 40, 0.75);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+.acd_modal_box {
+    position: relative;
+    width: 100%; max-width: 720px;
+    max-height: calc(100vh - 40px);
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 40px 80px -20px rgba(0, 0, 27, 0.5);
+    transform: translateY(30px) scale(0.95);
+    transition: transform .4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    display: flex;
+    flex-direction: column;
+}
+.acd_modal.is-open .acd_modal_box {
+    transform: translateY(0) scale(1);
+}
+.acd_modal_close {
+    position: absolute; top: 14px; right: 14px; z-index: 2;
+    width: 36px; height: 36px; border-radius: 50%;
+    border: 0; cursor: pointer;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--heading-color, #00539B);
+    display: flex; align-items: center; justify-content: center;
+    transition: background .25s ease, transform .25s ease;
+    backdrop-filter: blur(10px);
+}
+.acd_modal_close:hover {
+    background: #fff;
+    transform: rotate(90deg) scale(1.1);
+}
+
+.acd_modal_head {
+    display: flex; align-items: center; gap: 18px;
+    padding: 32px 32px 24px;
+    background: linear-gradient(135deg, var(--heading-color, #00539B) 0%, #002F5F 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+}
+.acd_modal_head::before {
+    content: ""; position: absolute;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    right: -70px; top: -70px;
+}
+.acd_modal_head > * { position: relative; z-index: 1; }
+.acd_modal_icon {
+    width: 60px; height: 60px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff; flex: none;
+    backdrop-filter: blur(10px);
+}
+.acd_modal_head small {
+    display: block; font-size: 12.5px;
+    opacity: 0.85; margin-bottom: 4px;
+    text-transform: uppercase; letter-spacing: 1px; font-weight: 600;
+}
+.acd_modal_head h3 {
+    margin: 0; font-size: 26px; font-weight: 700;
+    color: #fff; line-height: 1.2;
+}
+
+.acd_modal_body {
+    padding: 32px 36px 36px;
+    overflow-y: auto;
+    flex: 1;
+    font-size: 16px; line-height: 1.75;
+    color: #3d4556;
+}
+.acd_modal_body::-webkit-scrollbar { width: 8px; }
+.acd_modal_body::-webkit-scrollbar-track { background: transparent; }
+.acd_modal_body::-webkit-scrollbar-thumb {
+    background: #d6dbe8; border-radius: 4px;
+}
+
+/* CKEditor content styling (matches site style) */
+.acd_modal_body p { margin: 0 0 14px; }
+.acd_modal_body p:last-child { margin-bottom: 0; }
+.acd_modal_body h2, .acd_modal_body h3,
+.acd_modal_body h4, .acd_modal_body h5 {
+    color: var(--heading-color, #00539B); font-weight: 600;
+    margin: 20px 0 10px; line-height: 1.3;
+}
+.acd_modal_body h2 { font-size: 22px; }
+.acd_modal_body h3 { font-size: 20px; }
+.acd_modal_body h4, .acd_modal_body h5 { font-size: 17px; }
+.acd_modal_body > h2:first-child,
+.acd_modal_body > h3:first-child { margin-top: 0; }
+.acd_modal_body strong, .acd_modal_body b {
+    color: var(--heading-color, #00539B); font-weight: 600;
+}
+.acd_modal_body a {
+    color: var(--heading-color, #00539B); text-decoration: underline;
+}
+.acd_modal_body ul, .acd_modal_body ol {
+    padding-left: 0; margin-bottom: 16px; list-style: none;
+}
+.acd_modal_body li {
+    position: relative; padding-left: 28px; margin-bottom: 8px;
+}
+.acd_modal_body li::before {
+    content: ""; position: absolute; left: 0; top: 8px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--heading-color, #00539B) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M20 6 9 17l-5-5'/%3E%3C/svg%3E") center / 10px no-repeat;
+}
+.acd_modal_body blockquote {
+    margin: 16px 0; padding: 12px 20px;
+    border-left: 3px solid var(--heading-color, #00539B);
+    background: #F4F7FB;
+    border-radius: 0 10px 10px 0;
+    font-style: italic;
+}
+.acd_modal_body table {
+    width: 100%; margin-bottom: 16px;
+    border-collapse: collapse;
+    font-size: 14.5px;
+}
+.acd_modal_body th, .acd_modal_body td {
+    padding: 10px 14px; border: 1px solid #E6EAF2;
+    text-align: left;
+}
+.acd_modal_body th {
+    background: #F4F7FB;
+    color: var(--heading-color, #00539B); font-weight: 600;
+}
+.acd_modal_body img {
+    max-width: 100%; height: auto;
+    border-radius: 10px; margin: 10px 0;
+}
+
+/* Lock body scroll when modal is open */
+body.acd_modal_lock { overflow: hidden; }
+
+/* Mobile */
+@media (max-width: 575px) {
+    .acd_modal { padding: 12px; }
+    .acd_modal_box { border-radius: 16px; }
+    .acd_modal_head {
+        padding: 24px 20px 20px;
+        gap: 14px;
+    }
+    .acd_modal_icon { width: 50px; height: 50px; border-radius: 12px; }
+    .acd_modal_head h3 { font-size: 20px; }
+    .acd_modal_body {
+        padding: 24px 20px 28px;
+        font-size: 15px;
+    }
+}
     /* ---------- Fee structure ---------- */
     .acd_fees_intro { max-width: 640px; }
     .acd_fees_grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; align-items: stretch; }
@@ -679,6 +928,64 @@
     .acd_cta_btn:hover { color: var(--acd); transform: translateY(-2px); box-shadow: 0 14px 28px -14px rgba(0,0,0,.5); }
     .acd_cta_btn:hover .acd_cta_btn_icon { transform: translateX(4px) rotate(-45deg); }
 
+    /* ========= Modal content color override ========= */
+/* Force dark text for any content inside the modal — overrides theme classes
+   like td_white_color that make text white (invisible on white background) */
+.acd_modal_body,
+.acd_modal_body * {
+    color: #3d4556 !important;
+    opacity: 1 !important;
+}
+.acd_modal_body h1,
+.acd_modal_body h2,
+.acd_modal_body h3,
+.acd_modal_body h4,
+.acd_modal_body h5,
+.acd_modal_body h6,
+.acd_modal_body strong,
+.acd_modal_body b {
+    color: var(--heading-color, #00539B) !important;
+}
+.acd_modal_body a {
+    color: var(--heading-color, #00539B) !important;
+    text-decoration: underline;
+}
+.acd_modal_body a:hover {
+    color: #002F5F !important;
+}
+
+/* Also override background classes that might cause invisible content */
+.acd_modal_body [class*="td_accent_bg"],
+.acd_modal_body [class*="td_heading_bg"] {
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+/* Reset font-size classes that may be too large for a modal */
+.acd_modal_body .td_fs_48,
+.acd_modal_body .td_fs_36 {
+    font-size: 22px !important;
+}
+.acd_modal_body .td_fs_32,
+.acd_modal_body .td_fs_24 {
+    font-size: 20px !important;
+}
+.acd_modal_body .td_fs_18 {
+    font-size: 16px !important;
+}
+
+/* Disable WOW animations inside modal (they may hide content) */
+.acd_modal_body .wow {
+    visibility: visible !important;
+    animation-name: none !important;
+    animation: none !important;
+    opacity: 1 !important;
+}
+
+/* Common theme spacing classes - keep sensible margins */
+.acd_modal_body .td_mb_20 { margin-bottom: 16px !important; }
+.acd_modal_body .td_mb_10 { margin-bottom: 10px !important; }
+.acd_modal_body .mb-0 { margin-bottom: 0 !important; }
     /* ---------- Responsive ---------- */
     @media (min-width: 992px) {
         .acd_intro_text { padding-left: 60px; }
@@ -718,4 +1025,92 @@
         .acd_level_grid { grid-template-columns: 1fr; }
     }
 </style>
+@endpush
+
+@push('scripts')
+<script>
+(function () {
+    function init() {
+        var modal   = document.getElementById('acdModal');
+        var titleEl = document.getElementById('acdModalTitle');
+        var subEl   = document.getElementById('acdModalSub');
+        var iconEl  = document.getElementById('acdModalIcon');
+        var bodyEl  = document.getElementById('acdModalBody');
+        var cards   = document.querySelectorAll('.acd_level[data-has-details="1"]');
+        var dataEl  = document.getElementById('acdLevelData');
+
+        if (!modal || !cards.length || !dataEl) {
+            console.warn('[Academic Modal] Setup incomplete', {
+                modal: !!modal,
+                cardsCount: cards.length,
+                dataEl: !!dataEl
+            });
+            return;
+        }
+
+        // Parse the JSON data
+        var levelData;
+        try {
+            levelData = JSON.parse(dataEl.textContent);
+            console.log('[Academic Modal] Loaded data:', levelData);
+        } catch (e) {
+            console.error('[Academic Modal] Failed to parse data:', e);
+            return;
+        }
+
+        function open(index) {
+            var data = levelData[index];
+            if (!data) {
+                console.warn('[Academic Modal] No data for index', index);
+                return;
+            }
+
+            console.log('[Academic Modal] Opening level', index, data.title);
+            console.log('[Academic Modal] Description length:', (data.description || '').length);
+
+            titleEl.textContent = data.title || '';
+            subEl.textContent   = data.sub || '';
+            iconEl.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + (data.icon || '') + '</svg>';
+
+            if (data.description && data.description.trim()) {
+                bodyEl.innerHTML = data.description;
+            } else {
+                bodyEl.innerHTML = '<p style="color:#999;text-align:center;padding:20px;">No details available for this level.</p>';
+            }
+
+            modal.classList.add('is-open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('acd_modal_lock');
+            bodyEl.scrollTop = 0;
+        }
+
+        function close() {
+            modal.classList.remove('is-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.classList.remove('acd_modal_lock');
+        }
+
+        cards.forEach(function (card) {
+            card.addEventListener('click', function (e) {
+                e.preventDefault();
+                open(card.getAttribute('data-level-index'));
+            });
+        });
+
+        modal.querySelectorAll('[data-close]').forEach(function (el) {
+            el.addEventListener('click', close);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+</script>
 @endpush
