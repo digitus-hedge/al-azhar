@@ -156,6 +156,53 @@ section { overflow-x: clip; }
 @keyframes fadeInUp    { from { opacity: 0; transform: translate3d(0,50px,0); }  to { opacity: 1; transform: none; } }
 @keyframes fadeInDown  { from { opacity: 0; transform: translate3d(0,-40px,0); } to { opacity: 1; transform: none; } }
 @keyframes zoomIn      { from { opacity: 0; transform: scale(.85); }             to { opacity: 1; transform: none; } }
+
+/* ========= Home Stats Section — match header fonts ========= */
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+
+/* Target the stats section — adjust the class name if yours differs */
+.home_stats, .home_stats *,
+.td_funfact, .td_funfact *,
+.home_nn_stats, .home_nn_stats *,
+[class*="stat"] .td_funfact,
+[class*="stat"] .td_funfact * {
+    font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif !important;
+}
+
+/* The big number — Lora SemiBold for an editorial feel */
+.home_stats .td_funfact_number,
+.home_stats h2, .home_stats h3,
+.td_funfact .td_funfact_number,
+.td_funfact h2, .td_funfact h3,
+[class*="stat"] strong,
+[class*="stat"] .counter,
+[class*="stat"] [class*="number"] {
+    font-family: 'Lora', Georgia, 'Times New Roman', serif !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.5px;
+}
+
+/* Labels under each number — Poppins Medium */
+.home_stats .td_funfact_title,
+.home_stats small,
+.home_stats p,
+.td_funfact .td_funfact_title,
+.td_funfact small,
+.td_funfact p,
+[class*="stat"] small,
+[class*="stat"] [class*="label"],
+[class*="stat"] [class*="title"] {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.3px;
+}
+
+/* Section heading above the stats */
+.home_stats .td_section_title,
+[class*="stat"] .td_section_title {
+    font-family: 'Lora', Georgia, serif !important;
+    font-weight: 600 !important;
+}
 </style>
 @if (!empty($stats))
     @php
@@ -428,7 +475,7 @@ section { overflow-x: clip; }
                             </svg>
                         </span>
                     </a>
-                    <a href="{{ asset('uploads/prospectus/SaaS blueprint wotrdmap.pdf') }}"
+                    <a href="{{ asset('uploads/prospectus/demo_school_prospectus.pdf') }}"
                         target="_blank"
                         rel="noopener"
                         download="Al-Azhar-Central-School-Prospectus.pdf"
