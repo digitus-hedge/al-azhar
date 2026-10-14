@@ -33,7 +33,7 @@
     ];
 @endphp
 
-@section('title', 'Boarding & Fees || Al Azhar Central School, Mala')
+@section('title', 'Hostel || Al Azhar Central School, Mala')
 @section('meta_description', \Illuminate\Support\Str::limit(
     trim(preg_replace('/\s+/', ' ', strip_tags((string) ($description ?? ''))))
         ?: 'Hostel facilities, boarding life and fee details at Al Azhar Central School, Mala. Safe, supervised residential care for students.',
@@ -50,7 +50,7 @@
     style="background-image: url('{{ asset('images/header.jpeg') }}');">
         <div class="container">
             <div class="td_page_heading_in">
-                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Boarding &amp; Fees</h1>
+                <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Hostel</h1>
             </div>
         </div>
         <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
@@ -85,7 +85,7 @@
                 <div class="col-lg-7">
                     <div class="td_section_heading td_style_1 td_mb_30">
                         <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase brd_accent wow fadeInDown" data-wow-delay="0.2s">
-                            Boarding &amp; Hostel
+                            Hostel
                         </p>
                         <h2 class="td_section_title td_fs_48 mb-0 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">{{ $title }}</h2>
                     </div>
