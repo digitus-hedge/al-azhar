@@ -7,20 +7,11 @@
 
 @section('content')
 
-<!-- Page Heading -->
-<section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-    data-src="{{ asset('images/header.jpeg') }}"
-    style="background-image: url('{{ asset('images/header.jpeg') }}');">
-    <div class="container">
-        <div class="td_page_heading_in">
-            <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Our Blog</h1>
-            <p class="td_white_color td_fs_18 mb-0 td_opacity_8 wow fadeInUp" data-wow-delay="0.3s">News, stories & updates from Al Azhar Central School</p>
-        </div>
-    </div>
-    <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
-    <div class="td_page_heading_shape_2 position-absolute td_hover_layer_5"></div>
-    <div class="td_page_heading_shape_6 position-absolute td_hover_layer_3"></div>
-</section>
+{{-- Shared page header --}}
+@include('web.layouts.page-header', [
+    'title'    => 'Our Blog',
+    'subtitle' => 'News, stories and updates from Al Azhar Central School, Mala.',
+])
 
 <!-- Blog Listing -->
 <section class="blg_wrap">

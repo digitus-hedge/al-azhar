@@ -20,43 +20,14 @@
 @endphp
 
 @section('content')
-
-<!-- Start Page Heading Section -->
-<section class="td_page_heading td_center td_bg_filed td_heading_bg text-center td_hobble"
-    data-src="{{ asset('images/header.jpeg') }}"
-    style="background-image: url('{{ asset('images/header.jpeg') }}');">
-    <div class="container">
-        <div class="td_page_heading_in">
-            <h1 class="td_white_color td_fs_48 td_mb_10 wow fadeInDown" data-wow-duration="0.9s" data-wow-delay="0.2s">Careers</h1>
-        </div>
-    </div>
-    <div class="td_page_heading_shape_1 position-absolute td_hover_layer_3"></div>
-    <div class="td_page_heading_shape_2 position-absolute td_hover_layer_5"></div>
-    @foreach (['td_page_heading_shape_3', 'td_page_heading_shape_4'] as $shape)
-      <span class="{{ $shape }} position-absolute">
-        <svg width="58" height="49" viewBox="0 0 58 49" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path opacity="0.2"
-            d="M2.00391 46.9086C8.15358 39.6828 13.0063 31.1947 17.3986 22.8314C17.7378 22.1855 24.3145 8.7469 25.3114 7.19042C30.3973 -0.749718 29.5578 15.0972 29.5911 15.9962C29.6605 17.8644 29.7062 28.9991 29.7143 31.6371C29.729 36.4089 29.5594 35.5953 29.9606 31.4832C30.5072 25.8808 31.0938 21.6345 31.9927 15.9346C32.4274 13.1779 32.8769 10.4226 33.409 7.68305C33.7667 5.84148 34.2728 0.65867 35.1332 2.32571C36.2755 4.53885 35.6173 7.28718 35.6874 9.77672C35.8174 14.3916 34.9248 20.0463 35.9337 24.5864C36.2728 26.1124 36.7224 21.5597 37.0421 20.0296C37.0843 19.828 38.2738 9.93996 40.86 14.9493C42.2649 17.6706 43.9104 24.5791 44.4932 27.1419C44.7774 28.3918 45.7668 40.064 47.8184 41.0587C48.6263 41.4504 55.6961 24.5153 56.3163 23.0777"
-            stroke="white" stroke-width="3" stroke-linecap="round" />
-        </svg>
-      </span>
-    @endforeach
-    <span class="td_page_heading_shape_5 position-absolute">
-      <svg width="154" height="134" viewBox="0 0 154 134" fill="none" xmlns="http://www.w3.org/2000/svg">
-        @foreach ([3.014, 33.154, 61.858, 91.998, 120.846, 150.986] as $cx)
-          @foreach ([3.01, 28.663, 54.46, 80.257, 105.194, 130.99] as $cy)
-            <circle cx="{{ $cx }}" cy="{{ $cy }}" r="3.014" fill="#A7A7CA" />
-          @endforeach
-        @endforeach
-      </svg>
-    </span>
-    <div class="td_page_heading_shape_6 position-absolute td_hover_layer_3"></div>
-</section>
-<!-- End Page Heading Section -->
+{{-- Shared page header --}}
+@include('web.layouts.page-header', [
+    'title'    => 'Careers',
+    'subtitle' => 'Join the Al Azhar family — teach, lead and inspire the next generation of learners.',
+])
 
 <!-- Start Intro Section -->
-<section class="crr_intro">
-    <div class="td_height_100 td_height_lg_75"></div>
+<section class="crr_intro" style="padding-top: 20px;">
     <div class="container">
         <div class="row align-items-center td_gap_y_40">
             {{-- Left: Content --}}
@@ -385,10 +356,6 @@
     .crr_accent { color: var(--crr); }
     .td_section_heading .crr_accent i::before,
     .td_section_heading .crr_accent i::after { background-color: var(--crr); }
-
-    .td_page_heading .breadcrumb-item + .breadcrumb-item::before {
-        content: "/" !important; color: #fff; padding: 0 8px;
-    }
 
     /* ========= Intro Stats ========= */
     .crr_stats { display: flex; flex-direction: column; gap: 14px; }

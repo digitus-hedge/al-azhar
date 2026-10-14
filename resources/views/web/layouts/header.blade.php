@@ -76,7 +76,7 @@
     {{-- ===== Row 2: logo + menu ===== --}}
     <div class="ah_main">
         <div class="container ah_main_in">
-            <a class="ah_logo" href="{{ url('/') }}" aria-label="Al Azhar Central School – Home">
+            <a class="ah_logo" href="{{ url('/') }}" aria-label="Al Azhar Central School - Home">
                 <img src="{{ $hdLogo }}" alt="Al Azhar Central School">
             </a>
 
@@ -187,10 +187,7 @@
 }
 
 /* Use Lora for the brand name / logo text if any text is shown next to the logo */
-.ah_logo span, .ah_drawer_head .ah_logo span {
-    font-family: 'Lora', Georgia, serif !important;
-    font-weight: 600 !important;
-}
+
 
 /* Menu items — Poppins Medium */
 .ah_menu > li > a,
@@ -243,7 +240,7 @@
     .ah_main { background: var(--ah); transition: box-shadow .3s ease; }
     .ah_main_in { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 90px; }
     .ah_logo { flex: none; display: inline-flex; align-items: center; }
-    .ah_logo img { max-height: 62px; width: auto; }
+    .ah_logo img { max-height: 90px; width: auto; }
 
     .ah_nav { display: flex; align-items: center; gap: 22px; margin-left: auto; }
     .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
