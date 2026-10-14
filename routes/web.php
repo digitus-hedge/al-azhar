@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PrincipalDeskController;
 use App\Http\Controllers\Admin\ClassController;
 use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\DepartmentController;
+use App\Http\Controllers\Admin\EventResponseController;
 use App\Http\Controllers\Admin\FeeController;
 use App\Http\Controllers\Admin\FacilityController;
 use App\Http\Controllers\Admin\ActivityLogController;
@@ -227,6 +228,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('blogs/{blog}/edit',   [BlogController::class, 'edit'])->name('blogs.edit');
             Route::put('blogs/{blog}',        [BlogController::class, 'update'])->name('blogs.update');
             Route::delete('blogs/{blog}',        [BlogController::class, 'destroy'])->name('blogs.destroy');
+
+
+
+                Route::get('event-responses', [EventResponseController::class, 'index'])
+    ->name('event-responses.index');
+Route::get('event-responses/{id}', [EventResponseController::class, 'show'])
+    ->name('event-responses.show');
+Route::delete('event-responses/{id}', [EventResponseController::class, 'destroy'])
+    ->name('event-responses.destroy');
+
 
 
 

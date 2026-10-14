@@ -209,24 +209,69 @@
                 </table>
             </div>
 
-            <div class="list-footer">
-                <div class="per-page">
-                    <span class="showing">Showing {{ $enquiries->firstItem() }}–{{ $enquiries->lastItem() }} of {{ $enquiries->total() }}</span>
-                    <form method="GET" action="{{ route('admin.admission-enquiries') }}">
-                        @foreach (request()->except(['per_page', 'page']) as $k => $v)
-                            @if (is_string($v))
-                                <input type="hidden" name="{{ $k }}" value="{{ $v }}">
-                            @endif
-                        @endforeach
-                        <select name="per_page" onchange="this.form.submit()">
-                            @foreach ($perPageOptions as $n)
-                                <option value="{{ $n }}" @selected($perPage === $n)>{{ $n }} / page</option>
-                            @endforeach
-                        </select>
-                    </form>
-                </div>
-                {{ $enquiries->links() }}
-            </div>
+      <div class="list-footer">
+    <div class="per-page">
+        <span class="showing">
+            Showing <b>{{ $enquiries->firstItem() }}</b>–<b>{{ $enquiries->lastItem() }}</b>
+            of <b>{{ $enquiries->total() }}</b>
+        </span>
+        <form method="GET" action="{{ route('admin.admission-enquiries') }}">
+            @foreach (request()->except(['per_page', 'page']) as $k => $v)
+                @if (is_string($v))
+                    <input type="hidden" name="{{ $k }}" value="{{ $v }}">
+                @endif
+            @endforeach
+            <select name="per_page" onchange="this.form.submit()">
+                @foreach ($perPageOptions as $n)
+                    <option value="{{ $n }}" @selected($perPage === $n)>{{ $n }} / page</option>
+                @endforeach
+            </select>
+        </form>
+    </div>
+
+    @if ($enquiries->hasPages())
+        @php
+            $pageUrl = fn (int $page) => request()->fullUrlWithQuery(['page' => $page > 1 ? $page : null]);
+            $current = $enquiries->currentPage();
+            $last    = $enquiries->lastPage();
+            $start   = max(1, $current - 2);
+            $end     = min($last, $start + 4);
+            $start   = max(1, min($start, $end - 4));
+        @endphp
+
+        <nav class="pager-links" role="navigation" aria-label="Pagination">
+            @if ($current <= 1)
+                <span class="pager-btn pager-btn-disabled"><i class="bi bi-chevron-left"></i></span>
+            @else
+                <a href="{{ $pageUrl($current - 1) }}" class="pager-btn" rel="prev"><i class="bi bi-chevron-left"></i></a>
+            @endif
+
+            @if ($start > 1)
+                <a href="{{ $pageUrl(1) }}" class="pager-btn">1</a>
+                @if ($start > 2)<span class="pager-dots">&hellip;</span>@endif
+            @endif
+
+            @for ($page = $start; $page <= $end; $page++)
+                @if ($page == $current)
+                    <span class="pager-btn pager-btn-active">{{ $page }}</span>
+                @else
+                    <a href="{{ $pageUrl($page) }}" class="pager-btn">{{ $page }}</a>
+                @endif
+            @endfor
+
+            @if ($end < $last)
+                @if ($end < $last - 1)<span class="pager-dots">&hellip;</span>@endif
+                <a href="{{ $pageUrl($last) }}" class="pager-btn">{{ $last }}</a>
+            @endif
+
+            @if ($current >= $last)
+                <span class="pager-btn pager-btn-disabled"><i class="bi bi-chevron-right"></i></span>
+            @else
+                <a href="{{ $pageUrl($current + 1) }}" class="pager-btn" rel="next"><i class="bi bi-chevron-right"></i></a>
+            @endif
+        </nav>
+    @endif
+</div>
         @endif
     </div>
 </div>
@@ -386,6 +431,37 @@ function confirmDeleteEnquiry(id, name) {
     .per-page select{ border:1px solid var(--input-border,#DBDFEA); border-radius:8px; padding:6px 10px; font-size:12.5px; background:#fff; }
     .showing{ font-size:12.5px; color: var(--faint,#9AA1B2); }
     .list-footer nav{ margin:0; }
+
+
+    /* ================= PAGINATION ================= */
+.pager-links{ display:flex; align-items:center; gap:4px; flex-wrap:wrap; }
+.pager-btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:32px; height:32px; padding:0 8px; border-radius:8px;
+    border:1px solid var(--line,#E9EBF2); background:#fff;
+    font-size:12.5px; font-weight:600; color: var(--muted,#667085);
+    text-decoration:none; cursor:pointer;
+    transition:background .15s, color .15s, border-color .15s;
+}
+.pager-btn:hover{ background: var(--canvas,#F6F7FB); color: var(--ink,#171B2C); }
+.pager-btn-active{
+    background:linear-gradient(135deg, #0F1526, #1D2439);
+    border-color:transparent; color:#fff;
+}
+.pager-btn-active:hover{ color:#fff; }
+.pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
+.pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
+.pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
+.showing b{ color: var(--ink,#171B2C); font-weight:600; }
+
+@media (max-width: 640px){
+    .list-footer{ flex-direction:column; align-items:stretch; gap:12px; }
+    .per-page{ justify-content:space-between; flex-wrap:wrap; }
+    .pager-links{ justify-content:center; }
+    .pager-btn{ min-width:36px; height:36px; }
+}
+
 
     .empty{ text-align:center; padding:56px 20px; }
     .empty-ico{ width:56px; height:56px; border-radius:999px; background:#EEF0F6; display:inline-flex; align-items:center; justify-content:center; font-size:24px; color:#AEB4C4; margin-bottom:12px; }

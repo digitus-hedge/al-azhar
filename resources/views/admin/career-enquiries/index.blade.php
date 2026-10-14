@@ -111,7 +111,6 @@
                             <th>{!! $sortLink('email', 'Email') !!}</th>
                             <th>Phone</th>
                             <th>{!! $sortLink('apply_for', 'Apply For') !!}</th>
-                            <!-- <th>Career</th> -->
                             <th>Nationality</th>
                             <th>CV</th>
                             <th>{!! $sortLink('created_at', 'Submitted') !!}</th>
@@ -132,7 +131,6 @@
                                     @else — @endif
                                 </td>
                                 <td data-label="Apply For">{{ $item->apply_for ?? '—' }}</td>
-                                <!-- <td data-label="Career">{{ $item->career?->title ?? '—' }}</td> -->
                                 <td data-label="Nationality">{{ $item->nationality ?? '—' }}</td>
                                 <td data-label="CV">
                                     @if ($item->cv)
@@ -155,9 +153,68 @@
         @endif
     </div>
 
+    {{-- ============== PAGINATION ============== --}}
     @if ($items->hasPages())
-        {{ $items->appends(request()->query())->links() }}
+        @php
+            $pageUrl = function (int $page) use ($search, $careerId, $sortBy, $sortDir, $perPage) {
+                return route('admin.career-enquiries', array_filter([
+                    'q'         => $search ?: null,
+                    'career_id' => $careerId ?: null,
+                    'sort'      => $sortBy !== 'created_at' ? $sortBy : null,
+                    'dir'       => $sortDir !== 'desc' ? $sortDir : null,
+                    'per_page'  => $perPage !== 10 ? $perPage : null,
+                    'page'      => $page > 1 ? $page : null,
+                ]));
+            };
+
+            $current = $items->currentPage();
+            $last    = $items->lastPage();
+            $start   = max(1, $current - 2);
+            $end     = min($last, $start + 4);
+            $start   = max(1, min($start, $end - 4));
+        @endphp
+
+        <nav class="pager" role="navigation" aria-label="Pagination">
+            <div class="pager-status">
+                Showing <b>{{ $items->firstItem() }}</b> to <b>{{ $items->lastItem() }}</b>
+                of <b>{{ $items->total() }}</b> {{ Str::plural('result', $items->total()) }}
+            </div>
+
+            <div class="pager-links">
+                @if ($current <= 1)
+                    <span class="pager-btn pager-btn-disabled"><i class="bi bi-chevron-left"></i></span>
+                @else
+                    <a href="{{ $pageUrl($current - 1) }}" class="pager-btn" rel="prev"><i class="bi bi-chevron-left"></i></a>
+                @endif
+
+                @if ($start > 1)
+                    <a href="{{ $pageUrl(1) }}" class="pager-btn">1</a>
+                    @if ($start > 2)<span class="pager-dots">&hellip;</span>@endif
+                @endif
+
+                @for ($page = $start; $page <= $end; $page++)
+                    @if ($page == $current)
+                        <span class="pager-btn pager-btn-active">{{ $page }}</span>
+                    @else
+                        <a href="{{ $pageUrl($page) }}" class="pager-btn">{{ $page }}</a>
+                    @endif
+                @endfor
+
+                @if ($end < $last)
+                    @if ($end < $last - 1)<span class="pager-dots">&hellip;</span>@endif
+                    <a href="{{ $pageUrl($last) }}" class="pager-btn">{{ $last }}</a>
+                @endif
+
+                @if ($current >= $last)
+                    <span class="pager-btn pager-btn-disabled"><i class="bi bi-chevron-right"></i></span>
+                @else
+                    <a href="{{ $pageUrl($current + 1) }}" class="pager-btn" rel="next"><i class="bi bi-chevron-right"></i></a>
+                @endif
+            </div>
+        </nav>
     @endif
+    {{-- ============== END PAGINATION ============== --}}
+
 </div>
 
 <script>
@@ -242,6 +299,32 @@
         background:#fff; border:1px solid var(--orange-border,#F3D8C2); border-radius:8px; padding:7px 0;
     }
 
+    /* ================= PAGINATION ================= */
+    .pager{
+        display:flex; align-items:center; justify-content:space-between;
+        gap:16px; flex-wrap:wrap; margin-top:20px;
+    }
+    .pager-status{ font-size:12.5px; color: var(--faint,#9AA1B2); }
+    .pager-status b{ color: var(--ink,#171B2C); font-weight:600; }
+    .pager-links{ display:flex; align-items:center; gap:4px; }
+    .pager-btn{
+        display:inline-flex; align-items:center; justify-content:center;
+        min-width:32px; height:32px; padding:0 8px; border-radius:8px;
+        border:1px solid var(--line,#E9EBF2); background:#fff;
+        font-size:12.5px; font-weight:600; color: var(--muted,#667085);
+        text-decoration:none; cursor:pointer;
+        transition:background .15s, color .15s, border-color .15s;
+    }
+    .pager-btn:hover{ background: var(--canvas,#F6F7FB); color: var(--ink,#171B2C); }
+    .pager-btn-active{
+        background:linear-gradient(135deg, #0F1526, #1D2439);
+        border-color:transparent; color:#fff;
+    }
+    .pager-btn-active:hover{ color:#fff; }
+    .pager-btn-disabled{ opacity:.4; cursor:not-allowed; }
+    .pager-btn-disabled:hover{ background:#fff; color: var(--muted,#667085); }
+    .pager-dots{ padding:0 4px; color: var(--faint,#9AA1B2); font-size:12.5px; }
+
     @media (max-width: 900px){
         .toolbar{ flex-direction:column; align-items:stretch; }
     }
@@ -252,6 +335,11 @@
         .news-table tr{ padding:14px 16px; border-bottom:1px solid var(--line,#E9EBF2); }
         .news-table td{ padding:4px 0; border:none; }
         .news-table td[data-label]::before{ content: attr(data-label) ": "; color: var(--faint,#9AA1B2); font-weight:600; font-size:11.5px; }
+
+        /* Pagination mobile */
+        .pager{ flex-direction:column; align-items:center; gap:12px; }
+        .pager-links{ flex-wrap:wrap; justify-content:center; }
+        .pager-btn{ min-width:36px; height:36px; }
     }
 </style>
 
