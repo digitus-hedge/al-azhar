@@ -33,9 +33,9 @@ class AdmissionEnquiryController extends Controller
         $filters = $this->filters($request);
         $sortBy  = in_array($request->query('sort'), $this->sortable, true) ? $request->query('sort') : 'created_at';
         $sortDir = strtolower((string) $request->query('dir', 'desc')) === 'asc' ? 'asc' : 'desc';
-        $perPage = (int) $request->query('per_page', 25);
+        $perPage = (int) $request->query('per_page', 10);
         if (! in_array($perPage, $this->perPageOptions, true)) {
-            $perPage = 25;
+            $perPage = 10;
         }
 
         $enquiries = AdmissionEnquiry::query()

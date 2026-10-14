@@ -827,9 +827,8 @@
     $institutionOpen = request()->routeIs('admin.about*', 'admin.school-management*', 'admin.principal-desk*', 'admin.mandatory-disclosures*');
     $campusOpen      = request()->routeIs('admin.facilities*', 'admin.gallery*', 'admin.boarding*','admin.curriculums*');
     $masterOpen      = request()->routeIs('admin.departments*', 'admin.classes*', 'admin.designations*', 'admin.disclosure-categories*','admin.fees*','admin.academics*');
-    $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*','admin.hostel-enquiries*');
-
-           $careerOpen = request()->routeIs('admin.careers*', 'admin.career-enquiries*');
+    $enquiriesOpen   = request()->routeIs('admin.admission-enquiries*', 'admin.contacts*','admin.hostel-enquiries*','admin.event-responses*');
+    $careerOpen      = request()->routeIs('admin.careers*', 'admin.career-enquiries*');
 
 
 @endphp
@@ -1046,6 +1045,15 @@
                         <i class="bi bi-house-door nav-ico"></i> Hostel Enquiries
                     </a>
                 </li>
+            @endif
+
+            @if ($isAdmin)
+            <li>
+         <a class="nav-item {{ request()->routeIs('admin.event-responses*') ? 'active' : '' }}"
+   href="{{ route('admin.event-responses.index') }}">
+    <i class="bi bi-calendar-check nav-ico"></i> Event Responses
+</a>
+            </li>
             @endif
 
             
