@@ -1311,14 +1311,25 @@ section { overflow-x: clip; }
             visibility .4s ease;
         opacity: 0;
         transform: translateY(25px) scale(0.85);
-        animation: homeFevEntry .7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s forwards;
+        animation:
+        homeFevEntry .7s cubic-bezier(0.34, 1.56, 0.64, 1) 1.2s forwards,
+        homeFevJump 2.2s ease-in-out 2s infinite;
     }
-
+    
     @keyframes homeFevEntry {
         to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
+    @keyframes homeFevJump {
+        0%, 100% { transform: translateY(0) scale(1); }
+        40%      { transform: translateY(-10px) scale(1.02); }
+        55%      { transform: translateY(0) scale(1); }
+        70%      { transform: translateY(-5px) scale(1.01); }
+        85%      { transform: translateY(0) scale(1); }
+    }
     .home_fev_circle:hover {
+         animation-play-state: running, paused;
+        transform: translateY(-6px) scale(1.04);
         transform: translateY(-6px) scale(1.04);
         box-shadow:
             0 28px 50px -12px rgba(0, 47, 95, 0.55),
@@ -1471,8 +1482,10 @@ section { overflow-x: clip; }
         .home_fev_circle { display: none !important; }
     }
 
+    /* Respect reduced-motion users */
     @media (prefers-reduced-motion: reduce) {
         .home_fev_ribbon { animation: none; }
+        .home_fev_circle { animation: homeFevEntry .7s ease forwards; }
     }
 </style>
 @endif
