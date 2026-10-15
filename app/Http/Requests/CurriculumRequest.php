@@ -21,21 +21,19 @@ class CurriculumRequest extends FormRequest
 
         return [
             'title' => [
-                'required', 'string', 'max:255',
+                'required', 'string', 'min:5', 'max:70',
                 Rule::unique('curriculums', 'title')->ignore($curriculumId),
             ],
-            'description' => ['required', 'string'],
+            'description' => ['required', 'string', 'min:20', 'max:160'],
 
-            // Image is always optional
-            'image' => [
-                'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:5120',
-            ],
+            // Multiple images — each one validated individually
+            'images'   => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
 
-            'remove_image' => ['nullable', 'in:0,1'],
-            'is_active'    => ['nullable', 'boolean'],
+            // JSON array of existing image paths the user has removed
+            'removed_images' => ['nullable', 'string'],
+
+            'is_active' => ['nullable', 'boolean'],
         ];
     }
 
@@ -43,8 +41,9 @@ class CurriculumRequest extends FormRequest
     {
         return [
             'title'       => 'title',
-            'description' => 'description',
-            'image'       => 'image',
+            'description' => 'short description',
+            'images'      => 'images',
+            'images.*'    => 'image',
         ];
     }
 
@@ -52,10 +51,18 @@ class CurriculumRequest extends FormRequest
     {
         return [
             'title.required'       => 'Please enter the curriculum title.',
+            'title.min'            => 'Title should be at least 5 characters.',
+            'title.max'            => 'Title should be 70 characters or less for SEO.',
             'title.unique'         => 'A curriculum with this title already exists.',
-            'description.required' => 'Please write the curriculum description.',
-            'image.mimes'          => 'Image must be a JPG, PNG or WEBP file.',
-            'image.max'            => 'Image must not be larger than 5MB.',
+
+            'description.required' => 'Please write a short description.',
+            'description.min'      => 'Description should be at least 20 characters.',
+            'description.max'      => 'Short description should be 160 characters or less so it displays fully in search results.',
+
+            'images.max'           => 'You can upload at most 10 images.',
+            'images.*.image'       => 'Each file must be an image.',
+            'images.*.mimes'       => 'Images must be JPG, PNG or WEBP.',
+            'images.*.max'         => 'Each image must not be larger than 5MB.',
         ];
     }
 

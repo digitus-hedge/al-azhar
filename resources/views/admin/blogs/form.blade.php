@@ -365,6 +365,35 @@
         box-shadow:0 4px 12px -4px rgba(15,21,38,0.4);
     }
     .btn-save:hover{ transform:translateY(-1px); }
+
+
+    /* Keep the editor confined to its own card */
+.tox.tox-tinymce {
+  position: relative;
+  z-index: 0;              /* new stacking context, caps everything inside */
+  isolation: isolate;      /* hard isolate so inner z-index can't escape */
+  overflow: hidden;        /* clip any sticky/absolute children */
+}
+
+/* Lower the toolbar's internal z-index so it can't fight page UI */
+.tox:not(.tox-tinymce-inline) .tox-editor-header {
+  z-index: 1;
+}
+
+/* Lift the action bar above the editor */
+.form-actions,                /* whatever wraps Cancel + Create Blog */
+.blog-footer-actions {
+  position: relative;
+  z-index: 10;
+  background: #fff;           /* so the editor can't bleed through */
+}
+
+/* If the Create Blog button is fixed/sticky at the bottom */
+.btn-create-blog {
+  position: relative;
+  z-index: 11;
+}
+
 </style>
 
 @endsection

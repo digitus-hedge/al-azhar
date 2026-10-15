@@ -110,7 +110,7 @@
                     <thead>
                         <tr>
                             <th>Sl No</th>
-                            <th>Image</th>
+                            <th>Images</th>
                             <th>{!! $sortLink('title', 'Title') !!}</th>
                             <th>Description</th>
                             <th style="text-align:right;">Actions</th>
@@ -118,18 +118,32 @@
                     </thead>
                     <tbody>
                         @foreach ($items as $item)
+                            @php
+                                // Normalise images to an array no matter how the model is cast
+                                $images = $item->images ?? [];
+                                if (is_string($images)) {
+                                    $images = json_decode($images, true) ?: [];
+                                }
+                                $firstImage  = $images[0] ?? null;
+                                $extraCount  = max(0, count($images) - 1);
+                            @endphp
                             <tr>
                                 <td data-label="Sl No">{{ $items->firstItem() + $loop->index }}</td>
-                                <td data-label="Image">
-                                    @if ($item->image)
-                                        <img src="{{ Storage::url($item->image) }}" alt="" class="thumb">
-                                    @else
-                                        <div class="thumb thumb-placeholder"><i class="bi bi-image"></i></div>
-                                    @endif
+                                <td data-label="Images">
+                                    <div class="thumb-wrap">
+                                        @if ($firstImage)
+                                            <img src="{{ Storage::url($firstImage) }}" alt="" class="thumb">
+                                        @else
+                                            <div class="thumb thumb-placeholder"><i class="bi bi-image"></i></div>
+                                        @endif
+                                        @if ($extraCount > 0)
+                                            <span class="thumb-count" title="{{ $extraCount }} more image{{ $extraCount === 1 ? '' : 's' }}">+{{ $extraCount }}</span>
+                                        @endif
+                                    </div>
                                 </td>
                                 <td data-label="Title"><b>{{ $item->title }}</b></td>
                                 <td data-label="Description" style="max-width:420px;">
-                                    <span class="desc-clip">{{ Str::limit(strip_tags($item->description ?? ''), 110) ?: '—' }}</span>
+                                    <span class="desc-clip">{{ Str::limit(strip_tags($item->description ?? ''), 160) ?: '—' }}</span>
                                 </td>
                                 <td data-label="Actions" style="text-align:right;white-space:nowrap;">
                                     <a href="{{ route('admin.curriculums.edit', $item) }}" class="icon-btn" title="Edit">
@@ -305,6 +319,7 @@ document.querySelectorAll('.delete-btn').forEach(function (btn) {
     .news-table tbody tr:hover{ background:#FAFBFD; }
     .desc-clip{ color: var(--muted,#667085); font-size:12.5px; }
 
+    .thumb-wrap{ position:relative; display:inline-block; }
     .thumb{
         width:52px; height:52px; border-radius:8px; object-fit:cover;
         border:1px solid var(--line,#E9EBF2); background:#FAFBFD; display:block;
@@ -312,6 +327,16 @@ document.querySelectorAll('.delete-btn').forEach(function (btn) {
     .thumb-placeholder{
         display:flex; align-items:center; justify-content:center;
         color:#AEB4C4; font-size:18px;
+    }
+    .thumb-count{
+        position:absolute; top:-6px; right:-8px;
+        min-width:22px; height:22px; padding:0 6px;
+        border-radius:999px;
+        background:#0F1526; color:#fff;
+        font-size:10.5px; font-weight:700;
+        display:flex; align-items:center; justify-content:center;
+        box-shadow:0 2px 6px -2px rgba(15,21,38,0.4);
+        border:2px solid #fff;
     }
 
     .icon-btn{
@@ -367,7 +392,6 @@ document.querySelectorAll('.delete-btn').forEach(function (btn) {
         .news-table td{ padding:4px 0; border:none; }
         .news-table td[data-label]::before{ content: attr(data-label) ": "; color: var(--faint,#9AA1B2); font-weight:600; font-size:11.5px; }
 
-        /* Pagination mobile */
         .pager{ flex-direction:column; align-items:center; gap:12px; }
         .pager-links{ flex-wrap:wrap; justify-content:center; }
         .pager-btn{ min-width:36px; height:36px; }

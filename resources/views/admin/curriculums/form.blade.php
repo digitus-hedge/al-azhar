@@ -23,7 +23,7 @@
     <div class="header">
         <div>
             <h1>{{ $item->exists ? 'Edit Curriculum' : 'Add Curriculum' }}</h1>
-            <p>Enter the curriculum title, description and optional image.</p>
+            <p>Enter the curriculum title, short description and up to 10 cover images.</p>
         </div>
     </div>
 
@@ -32,84 +32,112 @@
         @csrf
         @if ($item->exists) @method('PUT') @endif
 
-        {{-- Title --}}
+        {{-- =============== TITLE =============== --}}
         <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-type"></i></span> Title <span class="req">*</span></h2>
             </div>
 
             <div class="field">
-                <input type="text" name="title" value="{{ old('title', $item->title) }}"
+                <input type="text" name="title" id="titleInput"
+                       value="{{ old('title', $item->title) }}"
                        class="{{ $errors->has('title') ? 'input-error' : '' }}"
-                       placeholder="Enter curriculum title">
+                       placeholder="e.g. Learning Beyond the Classroom: Developing Skills for Life"
+                       maxlength="70" required>
+                <div class="field-counter">
+                    <span><span id="titleCount">0</span> / 70 characters</span>
+                    <small class="field-hint">Keep under 60 for best SEO</small>
+                </div>
                 @error('title')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                 @enderror
             </div>
         </div>
 
-        {{-- Image --}}
-        <div class="card" id="imageSection">
-            <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-image"></i></span> Cover Image</h2>
-            </div>
-
-            <div class="notice caution">
-                <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>Recommended:</b> 1200 &times; 630px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
-            </div>
-
-            @error('image')
-                <div class="notice caution" style="margin-bottom:16px;">
-                    <i class="bi bi-exclamation-circle" style="margin-top:1px;"></i>
-                    <p>{{ $message }}</p>
-                </div>
-            @enderror
-
-            <div class="image-slot" style="max-width:320px;">
-                <div class="drop img-slot {{ $item->image ? 'filled' : '' }}" id="imageDrop" onclick="triggerImageInput()">
-                    <img id="imagePreview"
-                         src="{{ $item->image ? Storage::url($item->image) : '' }}"
-                         alt="Preview"
-                         style="{{ $item->image ? '' : 'display:none;' }}">
-
-                    <div class="drop-empty" id="dropEmpty" style="{{ $item->image ? 'display:none;' : '' }}">
-                        <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
-                        <div class="drop-title">Add image</div>
-                        <div class="drop-sub">click to upload</div>
-                    </div>
-
-                    <button type="button" class="remove-img-btn" id="removeImageBtn"
-                            onclick="removeCurriculumImage(event)"
-                            style="{{ $item->image ? '' : 'display:none;' }}" title="Remove image">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-
-                    <div class="uploaded-tag" id="uploadedTag" style="{{ $item->image ? '' : 'display:none;' }}">
-                        <i class="bi bi-check-circle"></i> Uploaded
-                    </div>
-                </div>
-                <input type="file" name="image" id="imageInput" accept="image/*" hidden>
-                <input type="hidden" name="remove_image" id="removeImageInput" value="0">
-            </div>
-        </div>
-
-        {{-- Description with TinyMCE --}}
+        {{-- =============== DESCRIPTION (plain textarea, 160 chars) =============== --}}
         <div class="card">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Description <span class="req">*</span></h2>
+                <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Short Description <span class="req">*</span></h2>
             </div>
 
             <div class="field">
-                <textarea name="description" id="description-input" rows="12"
+                <textarea name="description" id="descriptionInput" rows="4"
                           class="{{ $errors->has('description') ? 'input-error' : '' }}"
-                          placeholder="Write the curriculum description...">{{ old('description', $item->description) }}</textarea>
+                          placeholder="A short summary shown on the blog list and link previews..."
+                          maxlength="160" required>{{ old('description', $item->description) }}</textarea>
+                <div class="field-counter">
+                    <span><span id="descCount">0</span> / 160 characters</span>
+                    <small class="field-hint">Shown in search results &amp; social previews</small>
+                </div>
                 @error('description')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
                 @enderror
             </div>
         </div>
 
+        {{-- =============== MULTIPLE IMAGES =============== --}}
+        <div class="card" id="imageSection">
+            <div class="section-title">
+                <h2><span class="icon"><i class="bi bi-images"></i></span> Cover Images</h2>
+                <span class="help-badge">Up to 10 images</span>
+            </div>
+
+            <div class="notice caution">
+                <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
+                <p><b>Recommended:</b> 1200 &times; 630px &middot; JPG, PNG, WEBP &middot; up to 5MB each.</p>
+            </div>
+
+            @error('images')
+                <div class="notice caution" style="margin-bottom:16px;">
+                    <i class="bi bi-exclamation-circle" style="margin-top:1px;"></i>
+                    <p>{{ $message }}</p>
+                </div>
+            @enderror
+            @error('images.*')
+                <div class="notice caution" style="margin-bottom:16px;">
+                    <i class="bi bi-exclamation-circle" style="margin-top:1px;"></i>
+                    <p>{{ $message }}</p>
+                </div>
+            @enderror
+
+            {{-- Grid of existing + new images --}}
+            <div class="image-grid" id="imageGrid">
+                {{-- Existing images (from DB) --}}
+                @if (!empty($item->images) && is_array($item->images))
+                    @foreach ($item->images as $index => $existingImage)
+                        <div class="image-tile existing" data-existing="{{ $existingImage }}">
+                            <img src="{{ Storage::url($existingImage) }}" alt="Image {{ $index + 1 }}">
+                            <button type="button" class="remove-img-btn" onclick="removeExistingImage(this, '{{ $existingImage }}')" title="Remove image">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                            <div class="uploaded-tag"><i class="bi bi-check-circle"></i> Uploaded</div>
+                        </div>
+                    @endforeach
+                @endif
+
+                {{-- "Add image" tile — triggers the file picker --}}
+                <div class="image-tile drop" id="addImageTile" onclick="document.getElementById('imageInput').click()">
+                    <div class="drop-empty">
+                        <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
+                        <div class="drop-title">Add images</div>
+                        <div class="drop-sub">click to upload</div>
+                    </div>
+                </div>
+            </div>
+
+            {{--
+                File input — must stay INSIDE the <form> tag.
+                Note: we use CSS to hide it (not the `hidden` HTML attr) because
+                some browsers skip `hidden` inputs when the form submits.
+            --}}
+            <input type="file" name="images[]" id="imageInput" accept="image/*" multiple
+                   style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
+
+            {{-- Hidden list of existing images the user chose to remove --}}
+            <input type="hidden" name="removed_images" id="removedImagesInput" value="[]">
+        </div>
+
+        {{-- =============== SAVE BAR =============== --}}
         <div class="savebar">
             <div class="savebar-inner">
                 <span class="savebar-status">All changes save to the live Curriculum section</span>
@@ -125,88 +153,145 @@
     </form>
 </div>
 
-{{-- TinyMCE --}}
-<script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
-    tinymce.init({
-        selector: '#description-input',
-        height: 420,
-        menubar: false,
-        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen wordcount',
-        toolbar: 'undo redo | blocks | bold italic forecolor | ' +
-            'alignleft aligncenter alignright alignjustify | ' +
-            'bullist numlist outdent indent | link image | code preview fullscreen | removeformat help',
-        content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size:14px }',
-        branding: false,
-        promotion: false,
-        setup: function (editor) {
-            editor.on('change keyup blur', function () { editor.save(); });
-            editor.on('init', function () {
-                const textarea = editor.getElement();
-                const next = textarea.nextElementSibling;
-                if (textarea.classList.contains('input-error')) {
-                    editor.getContainer().classList.add('input-error');
-                }
-                if (next && next.classList.contains('field-error')) {
-                    editor.getContainer().insertAdjacentElement('afterend', next);
-                }
+/* ================================================================
+   CHARACTER COUNTERS for title (70) and description (160)
+   ================================================================ */
+(function () {
+    const fields = [
+        { input: 'titleInput',       counter: 'titleCount', max: 70  },
+        { input: 'descriptionInput', counter: 'descCount',  max: 160 },
+    ];
+
+    fields.forEach(function (f) {
+        const input   = document.getElementById(f.input);
+        const counter = document.getElementById(f.counter);
+        if (!input || !counter) return;
+
+        const update = function () {
+            const len = input.value.length;
+            counter.textContent = len;
+            counter.parentElement.classList.toggle('near-limit', len > f.max * 0.9);
+        };
+        input.addEventListener('input', update);
+        update();
+    });
+})();
+
+/* ================================================================
+   MULTIPLE IMAGE UPLOAD — rewritten so files reliably reach the server.
+
+   Key design choices:
+   - We DO NOT touch input.files or input.value after a selection.
+     In Chrome/Edge, assigning `this.value = ''` clears .files
+     silently, which was the bug that saved [] in the DB.
+   - Each file-picker call keeps its own files in the input. Instead of
+     merging across multiple picks client-side, we rely on the user
+     picking all files in ONE picker open. (Users can CTRL/CMD-click.)
+   - If the user opens the picker again, the new selection REPLACES the
+     old one — which matches the native <input type="file" multiple>
+     behaviour and avoids every browser-quirk around DataTransfer.
+   ================================================================ */
+(function () {
+    const MAX_IMAGES  = 10;
+    const grid        = document.getElementById('imageGrid');
+    const input       = document.getElementById('imageInput');
+    const addTile     = document.getElementById('addImageTile');
+    const removedList = document.getElementById('removedImagesInput');
+
+    function existingCount() {
+        return grid.querySelectorAll('.image-tile.existing').length;
+    }
+    function newCount() {
+        return grid.querySelectorAll('.image-tile.new').length;
+    }
+    function totalCount() {
+        return existingCount() + newCount();
+    }
+
+    function enforceLimit() {
+        addTile.style.display = (totalCount() >= MAX_IMAGES) ? 'none' : '';
+    }
+
+    function clearNewTiles() {
+        grid.querySelectorAll('.image-tile.new').forEach(function (t) { t.remove(); });
+    }
+
+    input.addEventListener('change', function () {
+        const files = Array.from(this.files || []);
+
+        // Picking again replaces the previous NEW selection
+        clearNewTiles();
+
+        // Check the overall limit against existing + newly picked
+        if (existingCount() + files.length > MAX_IMAGES) {
+            const allowed = Math.max(0, MAX_IMAGES - existingCount());
+            Swal.fire({
+                icon: 'warning',
+                title: 'Too many images',
+                text: 'You can upload at most ' + MAX_IMAGES + ' images in total. '
+                    + (allowed === 0
+                        ? 'Remove an existing image first.'
+                        : 'Only the first ' + allowed + ' from your selection will be used.'),
+                confirmButtonColor: '#BF0001'
             });
         }
+
+        files.forEach(function (file, idx) {
+            // Preview tile — label-only. We NEVER mutate input.files.
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const tile = document.createElement('div');
+                tile.className = 'image-tile new';
+                tile.innerHTML =
+                    '<img src="' + e.target.result + '" alt="New image">' +
+                    '<div class="uploaded-tag selected"><i class="bi bi-check-circle"></i> Selected</div>';
+                grid.insertBefore(tile, addTile);
+                enforceLimit();
+            };
+            reader.readAsDataURL(file);
+        });
+
+        enforceLimit();
     });
 
-    document.getElementById('curriculumForm').addEventListener('submit', function () {
-        if (window.tinymce) { tinymce.triggerSave(); }
-    }, true);
+    enforceLimit();
 
-    /* ---------------- Image upload / preview ---------------- */
+    window.removeExistingImage = function (btn, path) {
+        Swal.fire({
+            title: 'Remove this image?',
+            text: 'This image will be deleted when you save the form.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, remove it',
+            cancelButtonText: 'Cancel',
+            confirmButtonColor: '#e74c3c',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true,
+        }).then(function (result) {
+            if (!result.isConfirmed) return;
 
-    function triggerImageInput() {
-        document.getElementById('imageInput').click();
+            const tile = btn.closest('.image-tile');
+            tile.remove();
+
+            const removed = JSON.parse(removedList.value || '[]');
+            removed.push(path);
+            removedList.value = JSON.stringify(removed);
+
+            enforceLimit();
+        });
+    };
+})();
+
+/* ================================================================
+   Scroll to first error
+   ================================================================ */
+document.addEventListener('DOMContentLoaded', function () {
+    const firstErrorField = document.querySelector('.input-error');
+    if (firstErrorField) {
+        firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-
-    document.getElementById('imageInput').addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const preview = document.getElementById('imagePreview');
-            preview.src = e.target.result;
-            preview.style.display = '';
-
-            document.getElementById('dropEmpty').style.display = 'none';
-            document.getElementById('removeImageBtn').style.display = '';
-            document.getElementById('uploadedTag').innerHTML = '<i class="bi bi-check-circle"></i> Selected';
-            document.getElementById('uploadedTag').style.display = '';
-            document.getElementById('imageDrop').classList.add('filled');
-            document.getElementById('removeImageInput').value = '0';
-        };
-        reader.readAsDataURL(file);
-    });
-
-    function removeCurriculumImage(e) {
-        e.stopPropagation();
-
-        const input = document.getElementById('imageInput');
-        input.value = '';
-
-        const preview = document.getElementById('imagePreview');
-        preview.src = '';
-        preview.style.display = 'none';
-
-        document.getElementById('dropEmpty').style.display = '';
-        document.getElementById('removeImageBtn').style.display = 'none';
-        document.getElementById('uploadedTag').style.display = 'none';
-        document.getElementById('imageDrop').classList.remove('filled');
-        document.getElementById('removeImageInput').value = '1';
-    }
-
-    document.addEventListener('DOMContentLoaded', function () {
-        const firstErrorField = document.querySelector('.input-error');
-        if (firstErrorField) {
-            firstErrorField.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-    });
+});
 </script>
 
 <style>
@@ -223,21 +308,32 @@
     .section-title{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:6px; }
     .section-title h2{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:700; margin:0; color: var(--ink,#171B2C); }
     .icon{ display:inline-flex; color: var(--orange,#BF0001); }
+    .help-badge{
+        font-size:11px; font-weight:600; padding:3px 10px; border-radius:999px;
+        background: var(--canvas,#F6F7FB); color: var(--muted,#667085);
+    }
 
     .field{ margin-bottom:0; }
     input[type=text], textarea, select{
         width:100%; border:1px solid var(--input-border,#DBDFEA); border-radius:10px;
         padding:11px 14px; font-size:14px; font-family:inherit; color: var(--ink,#171B2C);
         outline:none; transition:box-shadow .15s, border-color .15s; background:#fff;
+        box-sizing:border-box;
     }
+    textarea{ resize:vertical; min-height:96px; line-height:1.55; }
     input:focus, textarea:focus, select:focus{
         border-color: var(--orange,#BF0001);
         box-shadow: 0 0 0 4px var(--orange-tint-strong,#FFE9D8);
     }
     .input-error{ border-color:#e74c3c !important; background:#fff8f8; }
-    .tox.tox-tinymce.input-error{ border:1px solid #e74c3c !important; }
-    .drop.input-error{ border:2px dashed #e74c3c !important; }
     .field-error{ display:flex; align-items:center; gap:5px; color:#e74c3c; font-size:12.5px; margin-top:6px; }
+
+    .field-counter{
+        display:flex; align-items:center; justify-content:space-between; gap:12px;
+        margin-top:6px; font-size:11.5px; color: var(--faint,#9AA1B2); font-weight:500;
+    }
+    .field-counter .field-hint{ font-size:11px; color: var(--faint,#9AA1B2); }
+    .field-counter.near-limit > span:first-child{ color:#BF0001; font-weight:600; }
 
     .notice{ margin-top:16px; display:flex; align-items:flex-start; gap:8px; background: var(--canvas,#F6F7FB); border-radius:10px; padding:10px 12px; }
     .notice p{ font-size:12px; color: var(--muted,#667085); margin:0; }
@@ -246,27 +342,35 @@
     .notice.caution p{ color:#8A6116; }
     .notice.caution p b{ color:#6B4A0E; font-weight:700; }
 
-    .drop{
-        position:relative; aspect-ratio:16/9; border-radius:12px;
-        border:2px dashed var(--input-border,#DBDFEA); background:#FAFBFD;
-        display:flex; flex-direction:column; align-items:center; justify-content:center;
-        cursor:pointer; overflow:hidden; transition:border-color .15s, background .15s; text-align:center;
+    .image-grid{
+        display:grid; grid-template-columns:repeat(auto-fill, minmax(170px, 1fr));
+        gap:12px;
     }
-    .drop:hover{ border-color: var(--orange,#BF0001); background: var(--orange-tint,#FFF8F3); }
-    .drop.filled{ border:2px solid transparent; background:#0F1220; }
-    .drop img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .image-tile{
+        position:relative; aspect-ratio:16/9; border-radius:12px; overflow:hidden;
+        background:#0F1220; display:flex; align-items:center; justify-content:center;
+    }
+    .image-tile img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .image-tile.drop{
+        background:#FAFBFD; border:2px dashed var(--input-border,#DBDFEA);
+        cursor:pointer; flex-direction:column; text-align:center;
+        transition:border-color .15s, background .15s;
+    }
+    .image-tile.drop:hover{ border-color: var(--orange,#BF0001); background: var(--orange-tint,#FFF8F3); }
     .ico-circle{ width:40px; height:40px; border-radius:999px; background:#EEF0F6; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
     .drop-title{ font-size:12px; font-weight:500; color: var(--muted,#667085); }
     .drop-sub{ font-size:11px; color:#B0B5C4; margin-top:2px; }
+
     .uploaded-tag{
-        position:absolute; left:0; right:0; bottom:0; padding:8px 12px;
+        position:absolute; left:0; right:0; bottom:0; padding:6px 10px;
         background:linear-gradient(to top, rgba(0,0,0,0.55), transparent);
         color:rgba(255,255,255,0.9); font-size:11px; display:flex; align-items:center; gap:4px;
     }
+    .uploaded-tag.selected{ color:#fff; }
     .remove-img-btn{
-        position:absolute; top:8px; right:8px; width:28px; height:28px; border-radius:999px;
+        position:absolute; top:6px; right:6px; width:26px; height:26px; border-radius:999px;
         background:rgba(0,0,0,0.6); border:none; color:#fff; display:flex; align-items:center;
-        justify-content:center; cursor:pointer; transition:background .15s; z-index:3; font-size:13px;
+        justify-content:center; cursor:pointer; transition:background .15s; z-index:3; font-size:12px;
     }
     .remove-img-btn:hover{ background:rgba(0,0,0,0.85); }
 

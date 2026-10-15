@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CurriculumRequest;
 use App\Models\Curriculum;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 /**
@@ -54,6 +55,7 @@ class CurriculumController extends Controller
     {
         $item = new Curriculum([
             'is_active' => true,
+            'images'    => [],
         ]);
 
         return view('admin.curriculums.form', compact('item'));
@@ -63,13 +65,31 @@ class CurriculumController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            $data['image'] = $request->file('image')->store('curriculums', 'public');
+        // Upload any new images and build the images array
+        $uploaded = [];
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                if ($file && $file->isValid()) {
+                    $uploaded[] = $file->store('curriculums', 'public');
+                }
+            }
         }
 
-        unset($data['remove_image']);
+        // Clean up non-column fields before saving
+        unset($data['removed_images'], $data['images']);
 
-        Curriculum::create($data);
+        // Create the row first, then force-set images with a separate update
+        // so a missing `$fillable` or wrong `$casts` can be spotted easily.
+        $curriculum = Curriculum::create($data);
+
+        $curriculum->images = $uploaded;
+        $curriculum->save();
+
+        Log::info('Curriculum created', [
+            'id'            => $curriculum->id,
+            'images_count'  => count($uploaded),
+            'images_saved'  => $curriculum->fresh()->images,
+        ]);
 
         return redirect()
             ->route('admin.curriculums')
@@ -86,21 +106,43 @@ class CurriculumController extends Controller
     {
         $data = $request->validated();
 
-        if ($request->hasFile('image')) {
-            if ($curriculum->image) {
-                Storage::disk('public')->delete($curriculum->image);
+        // Start with the images already saved on the record
+        $existing = is_array($curriculum->images) ? $curriculum->images : [];
+
+        // Remove any images the user chose to delete (sent as JSON in `removed_images`)
+        $removed = json_decode($request->input('removed_images', '[]'), true) ?: [];
+        if (!empty($removed)) {
+            foreach ($removed as $path) {
+                if (in_array($path, $existing, true)) {
+                    Storage::disk('public')->delete($path);
+                }
             }
-            $data['image'] = $request->file('image')->store('curriculums', 'public');
-        } elseif ($request->boolean('remove_image')) {
-            if ($curriculum->image) {
-                Storage::disk('public')->delete($curriculum->image);
-            }
-            $data['image'] = null;
+            $existing = array_values(array_diff($existing, $removed));
         }
 
-        unset($data['remove_image']);
+        // Append any newly uploaded images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $file) {
+                if ($file && $file->isValid()) {
+                    $existing[] = $file->store('curriculums', 'public');
+                }
+            }
+        }
+
+        // Clean up before saving
+        unset($data['removed_images'], $data['images']);
 
         $curriculum->update($data);
+
+        // Force-set the images column separately so fillable/cast issues become obvious
+        $curriculum->images = $existing;
+        $curriculum->save();
+
+        Log::info('Curriculum updated', [
+            'id'            => $curriculum->id,
+            'images_count'  => count($existing),
+            'images_saved'  => $curriculum->fresh()->images,
+        ]);
 
         return redirect()
             ->route('admin.curriculums')
@@ -109,8 +151,11 @@ class CurriculumController extends Controller
 
     public function destroy(Curriculum $curriculum)
     {
-        if ($curriculum->image) {
-            Storage::disk('public')->delete($curriculum->image);
+        // Delete all images belonging to this record
+        if (is_array($curriculum->images)) {
+            foreach ($curriculum->images as $path) {
+                Storage::disk('public')->delete($path);
+            }
         }
 
         $curriculum->delete();
