@@ -43,7 +43,7 @@
                        value="{{ old('title', $item->title) }}"
                        class="{{ $errors->has('title') ? 'input-error' : '' }}"
                        placeholder="e.g. Learning Beyond the Classroom: Developing Skills for Life"
-                       maxlength="70" required>
+                       maxlength="70">
                 <div class="field-counter">
                     <span><span id="titleCount">0</span> / 70 characters</span>
                     <small class="field-hint">Keep under 60 for best SEO</small>
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        {{-- =============== DESCRIPTION (plain textarea, 160 chars) =============== --}}
+        {{-- =============== DESCRIPTION =============== --}}
         <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-text-paragraph"></i></span> Short Description <span class="req">*</span></h2>
@@ -64,7 +64,7 @@
                 <textarea name="description" id="descriptionInput" rows="4"
                           class="{{ $errors->has('description') ? 'input-error' : '' }}"
                           placeholder="A short summary shown on the blog list and link previews..."
-                          maxlength="160" required>{{ old('description', $item->description) }}</textarea>
+                          maxlength="160">{{ old('description', $item->description) }}</textarea>
                 <div class="field-counter">
                     <span><span id="descCount">0</span> / 160 characters</span>
                     <small class="field-hint">Shown in search results &amp; social previews</small>
@@ -84,7 +84,7 @@
 
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
-                <p><b>Recommended:</b> 1200 &times; 630px &middot; JPG, PNG, WEBP &middot; up to 5MB each.</p>
+                <p><b>Recommended:</b> 1200 &times; 630px &middot; JPG, PNG, WEBP &middot; up to 5MB each. You can click <b>Add images</b> multiple times to add more.</p>
             </div>
 
             @error('images')
@@ -115,8 +115,9 @@
                     @endforeach
                 @endif
 
-                {{-- "Add image" tile — triggers the file picker --}}
-                <div class="image-tile drop" id="addImageTile" onclick="document.getElementById('imageInput').click()">
+                {{-- "Add image" tile — triggers the picker. Reset the picker on each click
+                     so re-selecting the same file still fires a change event. --}}
+                <div class="image-tile drop" id="addImageTile" onclick="openImagePicker()">
                     <div class="drop-empty">
                         <div class="ico-circle"><i class="bi bi-cloud-arrow-up" style="color:#AEB4C4;font-size:18px;"></i></div>
                         <div class="drop-title">Add images</div>
@@ -125,11 +126,7 @@
                 </div>
             </div>
 
-            {{--
-                File input — must stay INSIDE the <form> tag.
-                Note: we use CSS to hide it (not the `hidden` HTML attr) because
-                some browsers skip `hidden` inputs when the form submits.
-            --}}
+            {{-- File input (hidden via CSS, kept inside the form) --}}
             <input type="file" name="images[]" id="imageInput" accept="image/*" multiple
                    style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0;">
 
@@ -179,18 +176,22 @@
 })();
 
 /* ================================================================
-   MULTIPLE IMAGE UPLOAD — rewritten so files reliably reach the server.
-
-   Key design choices:
-   - We DO NOT touch input.files or input.value after a selection.
-     In Chrome/Edge, assigning `this.value = ''` clears .files
-     silently, which was the bug that saved [] in the DB.
-   - Each file-picker call keeps its own files in the input. Instead of
-     merging across multiple picks client-side, we rely on the user
-     picking all files in ONE picker open. (Users can CTRL/CMD-click.)
-   - If the user opens the picker again, the new selection REPLACES the
-     old one — which matches the native <input type="file" multiple>
-     behaviour and avoids every browser-quirk around DataTransfer.
+   MULTIPLE IMAGE UPLOAD WITH ACCUMULATION
+   ---------------------------------------------------------------
+   How it works (and why it works):
+   1. We keep a DataTransfer `bag` as the single source of truth for
+      all newly picked files.
+   2. On each `change`, we APPEND the newly picked files into the bag,
+      then assign bag.files back to input.files. This is the one and
+      only place we touch input.files — never on cancel, never later.
+   3. We NEVER set input.value = '' (that was the Chrome-breaking bug).
+      Instead, to let the user re-pick the same file, we call
+      input.value = null just BEFORE opening the picker, not after.
+      Setting value=null before .click() is safe; setting it after a
+      selection clears .files on Chromium.
+   4. Each tile stores a UUID in a data attribute that maps to a
+      key in a `tileFileMap`, so removing a tile removes exactly the
+      right File from the bag.
    ================================================================ */
 (function () {
     const MAX_IMAGES  = 10;
@@ -198,6 +199,9 @@
     const input       = document.getElementById('imageInput');
     const addTile     = document.getElementById('addImageTile');
     const removedList = document.getElementById('removedImagesInput');
+
+    const bag          = new DataTransfer();  // single source of truth for picked files
+    const tileFileMap  = new Map();            // tileId -> File object
 
     function existingCount() {
         return grid.querySelectorAll('.image-tile.existing').length;
@@ -213,46 +217,87 @@
         addTile.style.display = (totalCount() >= MAX_IMAGES) ? 'none' : '';
     }
 
-    function clearNewTiles() {
-        grid.querySelectorAll('.image-tile.new').forEach(function (t) { t.remove(); });
+    // Expose the picker-opener so the "Add images" tile can call it
+    window.openImagePicker = function () {
+        // Reset the picker's internal value BEFORE opening so the user
+        // can re-select the same file if they just removed it from the
+        // bag. This is safe — we have not yet assigned anything.
+        input.value = null;
+        input.click();
+    };
+
+    // Rebuild the bag from the current tileFileMap, then push to input.files.
+    // This is called after adding or removing a new tile.
+    function syncInputFromMap() {
+        // Clear and rebuild the DataTransfer bag
+        while (bag.items.length) bag.items.remove(0);
+        tileFileMap.forEach(function (file) { bag.items.add(file); });
+        input.files = bag.files;
     }
 
     input.addEventListener('change', function () {
-        const files = Array.from(this.files || []);
+        const picked = Array.from(this.files || []);
+        if (picked.length === 0) return; // user cancelled — no change
 
-        // Picking again replaces the previous NEW selection
-        clearNewTiles();
-
-        // Check the overall limit against existing + newly picked
-        if (existingCount() + files.length > MAX_IMAGES) {
-            const allowed = Math.max(0, MAX_IMAGES - existingCount());
+        // How many can we still accept?
+        const remainingSlots = MAX_IMAGES - totalCount();
+        if (remainingSlots <= 0) {
             Swal.fire({
                 icon: 'warning',
-                title: 'Too many images',
-                text: 'You can upload at most ' + MAX_IMAGES + ' images in total. '
-                    + (allowed === 0
-                        ? 'Remove an existing image first.'
-                        : 'Only the first ' + allowed + ' from your selection will be used.'),
+                title: 'Limit reached',
+                text: 'You already have ' + MAX_IMAGES + ' images. Remove one before adding more.',
+                confirmButtonColor: '#BF0001'
+            });
+            return;
+        }
+
+        const toAdd = picked.slice(0, remainingSlots);
+        const skipped = picked.length - toAdd.length;
+
+        if (skipped > 0) {
+            Swal.fire({
+                icon: 'info',
+                title: 'Some files skipped',
+                text: 'Only ' + toAdd.length + ' of your ' + picked.length +
+                      ' selected files were added. The ' + MAX_IMAGES +
+                      '-image limit was reached.',
                 confirmButtonColor: '#BF0001'
             });
         }
 
-        files.forEach(function (file, idx) {
-            // Preview tile — label-only. We NEVER mutate input.files.
+        toAdd.forEach(function (file) {
+            const tileId = 'tile_' + Date.now() + '_' + Math.random().toString(36).slice(2, 8);
+            tileFileMap.set(tileId, file);
+
+            // Preview tile
             const reader = new FileReader();
             reader.onload = function (e) {
                 const tile = document.createElement('div');
                 tile.className = 'image-tile new';
+                tile.setAttribute('data-tile-id', tileId);
                 tile.innerHTML =
                     '<img src="' + e.target.result + '" alt="New image">' +
+                    '<button type="button" class="remove-img-btn" title="Remove image">' +
+                        '<i class="bi bi-x-lg"></i>' +
+                    '</button>' +
                     '<div class="uploaded-tag selected"><i class="bi bi-check-circle"></i> Selected</div>';
+
+                tile.querySelector('.remove-img-btn').addEventListener('click', function (ev) {
+                    ev.stopPropagation();
+                    tileFileMap.delete(tileId);
+                    tile.remove();
+                    syncInputFromMap();
+                    enforceLimit();
+                });
+
                 grid.insertBefore(tile, addTile);
                 enforceLimit();
             };
             reader.readAsDataURL(file);
         });
 
-        enforceLimit();
+        // After adding to the map, push everything to the real input
+        syncInputFromMap();
     });
 
     enforceLimit();
