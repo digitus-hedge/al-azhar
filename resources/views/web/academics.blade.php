@@ -210,6 +210,17 @@
 
         <div class="acd_modal_body" id="acdModalBody">
         </div>
+        {{-- NEW: modal footer with Apply Now button --}}
+        <div class="acd_modal_foot">
+            <a href="{{ route('admission') }}#admission-form" class="acd_modal_apply">
+                <span>Apply Now</span>
+                <span class="acd_modal_apply_icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+        </div>
     </div>
 </div>
         </div>
@@ -718,6 +729,48 @@ button.acd_level:not([data-has-details="1"]) { cursor: default; }
 /* Lock body scroll when modal is open */
 body.acd_modal_lock { overflow: hidden; }
 
+/* Modal footer with Apply Now */
+.acd_modal_foot {
+    padding: 20px 32px 24px;
+    border-top: 1px solid var(--acd-line, #E6EAF2);
+    background: #FAFBFD;
+    display: flex;
+    justify-content: flex-end;
+    flex: none;
+}
+.acd_modal_apply {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 6px 6px 24px;
+    border-radius: 30px;
+    background: var(--heading-color, #00539B);
+    color: #fff !important;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none !important;
+    transition: background .3s ease, transform .3s ease, box-shadow .3s ease;
+}
+.acd_modal_apply:hover {
+    background: #002F5F;
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 28px -14px rgba(0, 47, 95, .6);
+}
+.acd_modal_apply_icon {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255,255,255,.2);
+    transition: transform .3s ease;
+}
+.acd_modal_apply:hover .acd_modal_apply_icon {
+    transform: translateX(4px);
+}
+
+@media (max-width: 575px) {
+    .acd_modal_foot { padding: 16px 20px 18px; }
+    .acd_modal_apply { width: 100%; justify-content: space-between; }
+}
 /* Mobile */
 @media (max-width: 575px) {
     .acd_modal { padding: 12px; }
@@ -1068,6 +1121,14 @@ body.acd_modal_lock { overflow: hidden; }
                 open(card.getAttribute('data-level-index'));
             });
         });
+
+        // Close the modal when Apply Now is clicked so the admission page can scroll cleanly
+        var applyBtn = modal.querySelector('.acd_modal_apply');
+        if (applyBtn) {
+            applyBtn.addEventListener('click', function () {
+                close();
+            });
+        }
 
         modal.querySelectorAll('[data-close]').forEach(function (el) {
             el.addEventListener('click', close);

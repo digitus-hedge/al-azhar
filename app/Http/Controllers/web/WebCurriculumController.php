@@ -8,14 +8,12 @@ use Illuminate\View\View;
 
 class WebCurriculumController extends Controller
 {
-    /**
-     * GET /curriculum — list all active curriculums.
+     /**
+     * GET /curriculum — list all curriculums.
      */
     public function index(): View
     {
-        $curriculums = Curriculum::active()
-            ->orderByDesc('id')
-            ->get();
+        $curriculums = Curriculum::orderByDesc('id')->get();
 
         return view('web.curriculum', compact('curriculums'));
     }
