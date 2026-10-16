@@ -9,6 +9,11 @@ use App\Models\HostelApplication;
 use App\Models\SchoolClass;
 use Illuminate\Http\RedirectResponse;
 
+use App\Mail\HostelApplicationReceived;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
+
 class WebBoardingController extends Controller
 {
     /** Public Boarding & Fees page. */
@@ -41,20 +46,46 @@ class WebBoardingController extends Controller
     /**
      * Store a new hostel application submission.
      */
-    public function storeApplication(HostelApplicationRequest $request): RedirectResponse
-    {
-        $data = $request->validated();
+    public function storeApplication(
+    HostelApplicationRequest $request
+): RedirectResponse {
+    $data = $request->validated();
 
-        // Snapshot the class name so even if the class row changes later,
-        // the admin still sees what was selected at submission time.
-        $class = SchoolClass::find($data['class_id']);
-        $data['class_name_snapshot'] = $class?->name;
+    // Save the selected class name with the application.
+    $class = SchoolClass::find($data['class_id']);
+    $data['class_name_snapshot'] = $class?->name;
 
-        HostelApplication::create($data);
+    // Save the hostel application first.
+    $application = HostelApplication::create($data);
 
-        return redirect()
-            ->route('boarding')
-            ->with('success', 'Thank you! Your hostel application has been submitted. Our team will contact you shortly.')
-            ->withFragment('hostel-application-form');
+    // Get the school's notification email.
+    $to = config('services.school.email');
+
+    if (blank($to)) {
+        Log::warning(
+            'Hostel application: SCHOOL_MAIL_TO is not configured.',
+            ['application_id' => $application->id]
+        );
+    } else {
+        try {
+            Mail::to($to)->send(
+                new HostelApplicationReceived($application)
+            );
+        } catch (Throwable $e) {
+            // Keep the saved application even if email delivery fails.
+            Log::error('Hostel application email failed.', [
+                'application_id' => $application->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
+
+    return redirect()
+        ->route('boarding')
+        ->with(
+            'success',
+            'Thank you! Your hostel application has been submitted. Our team will contact you shortly.'
+        )
+        ->withFragment('hostel-application-form');
+}
 }

@@ -69,7 +69,12 @@
 
                                         @if ($errors->any())
                                             <div class="alert alert-danger contact_alert" role="alert">
-                                                Please correct the highlighted fields and try again.
+                                                <strong>Please correct the following fields:</strong>
+                                                <ul class="mb-0 mt-2">
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
                                         @endif
 
