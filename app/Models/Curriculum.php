@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -28,6 +29,15 @@ class Curriculum extends Model
         'images'    => 'array',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Scope: only active curriculums.
+     * Enables Curriculum::active()->get() usage.
+     */
+    public function scopeActive(Builder $query): Builder
+    {
+        return $query->where('is_active', true);
+    }
 
     /**
      * Auto-generate a unique slug from the title whenever a record
