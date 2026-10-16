@@ -81,8 +81,14 @@ public function storeResponse(StoreEventResponseRequest $request): RedirectRespo
 
     $event = Event::find($request->input('event_id'));
 
-    if (!$event->is_open_for_response) {
-        return back()->with('response_error', 'Sorry, responses for this event are closed.');
+    $today       = now()->startOfDay();
+    $eventDate   = $event->event_date ? \Illuminate\Support\Carbon::parse($event->event_date)->startOfDay() : null;
+    $responseEnd = $event->response_date ? \Illuminate\Support\Carbon::parse($event->response_date)->startOfDay() : null;
+
+    $withinWindow = $eventDate && $responseEnd && $today->betweenIncluded($eventDate, $responseEnd);
+
+    if (!$event->is_open_for_response || !$withinWindow) {
+        return back()->with('response_error', 'Sorry, responses for this event are not open right now.');
     }
 
     EventResponse::create([

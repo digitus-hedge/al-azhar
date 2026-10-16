@@ -275,10 +275,15 @@ section { overflow-x: clip; }
 
    <!-- Start About Section -->
 @php
-    $aboutShort = \Illuminate\Support\Str::limit(
-        trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) ($about->description ?? ''))))),
-        230
+    // Helper to clean + limit any HTML field (used for description, vision and mission)
+    $clean = fn ($html, $limit = 230) => \Illuminate\Support\Str::limit(
+        trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html)))),
+        $limit
     );
+
+    $aboutShort   = $clean($about->description ?? '');
+    $visionShort  = $clean($about->vision ?? 'To nurture confident, compassionate learners who excel in knowledge, character and service.');
+    $missionShort = $clean($about->mission ?? 'To provide holistic, value-based education that brings out the best in every child.');
 @endphp
 <section id="home-about">
     <div class="td_height_100 td_height_lg_50"></div>
@@ -317,11 +322,11 @@ section { overflow-x: clip; }
                         <ul class="td_list td_style_5 td_mp_0">
                             <li class="wow fadeInRight" data-wow-delay="0.5s">
                                 <h3 class="td_fs_24 td_mb_8">Our Vision</h3>
-                                <div class="td_fs_18 mb-0">{!! strip_tags($about->vision ?? 'To nurture confident, compassionate learners who excel in knowledge, character and service.', '<p><br><strong><b><em><i><u>') !!}</div>
+                                <div class="td_fs_18 mb-0">{{ $visionShort }}</div>
                             </li>
                             <li class="wow fadeInRight" data-wow-delay="0.7s">
                                 <h3 class="td_fs_24 td_mb_8">Our Mission</h3>
-                                <div class="td_fs_18 mb-0">{!! strip_tags($about->mission ?? 'To provide holistic, value-based education that brings out the best in every child.', '<p><br><strong><b><em><i><u>') !!}</div>
+                                <div class="td_fs_18 mb-0">{{ $missionShort }}</div>
                             </li>
                         </ul>
                     </div>
@@ -342,11 +347,11 @@ section { overflow-x: clip; }
 </section>
 
 <style>
-    /* Same image shapes as the theme demo, whatever size your photos are */
+    /* Same image shapes as the theme demo, with a shorter left photo */
     .home_about .td_about_thumb_1 img,
     .home_about .td_about_thumb_2 img { width: 100%; object-fit: cover; display: block; }
-    .home_about .td_about_thumb_1 img { aspect-ratio: 476 / 492; }   /* tall left photo */
-    .home_about .td_about_thumb_2 img { aspect-ratio: 315 / 416; }   /* overlapping right photo */
+    .home_about .td_about_thumb_1 img { aspect-ratio: 476 / 380; }   /* shorter left photo */
+    .home_about .td_about_thumb_2 img { aspect-ratio: 315 / 340; }   /* overlapping right photo, trimmed to match */
 </style>
 <!-- End About Section -->
 

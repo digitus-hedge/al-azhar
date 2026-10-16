@@ -167,6 +167,7 @@
         background: linear-gradient(90deg, var(--heading-color, #00539B), #002F5F);
         transform: scaleX(0); transform-origin: left;
         transition: transform .4s ease;
+        z-index: 2;
     }
     .cur_card:hover {
         transform: translateY(-6px);
@@ -179,6 +180,7 @@
     .cur_card_thumb {
         aspect-ratio: 16 / 11;
         overflow: hidden; background: #eef0f7;
+        flex-shrink: 0;
     }
     .cur_card_thumb img {
         width: 100%; height: 100%; object-fit: cover;
@@ -195,6 +197,7 @@
         margin: 28px 28px 0;
         box-shadow: 0 15px 30px -10px rgba(0, 47, 95, .4);
         transition: transform .35s ease;
+        flex-shrink: 0;
     }
     .cur_card_no_image:hover .cur_card_badge {
         transform: rotate(-6deg) scale(1.08);
@@ -203,8 +206,10 @@
     /* ---------- Body ---------- */
     .cur_card_body {
         padding: 24px 28px 28px;
-        flex: 1; display: flex; flex-direction: column;
+        flex: 1 1 auto;
+        display: flex; flex-direction: column;
         position: relative;
+        min-width: 0;             /* allow long words to wrap */
     }
     .cur_card_number {
         position: absolute; top: 20px; right: 24px;
@@ -213,6 +218,8 @@
         line-height: 1;
         font-family: Georgia, serif;
         transition: color .35s ease;
+        pointer-events: none;      /* so it never blocks text selection */
+        z-index: 0;
     }
     .cur_card:hover .cur_card_number { color: rgba(0, 83, 155, .18); }
 
@@ -221,11 +228,22 @@
         line-height: 1.35;
         color: var(--heading-color, #00539B);
         margin: 0 0 14px;
-        padding-right: 50px;
+        padding-right: 50px;       /* clear space for the number badge */
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
+        position: relative;
+        z-index: 1;
+        /* NO max-height, NO -webkit-line-clamp — title shows in full */
     }
     .cur_card_desc {
         font-size: 14.5px; line-height: 1.7;
         color: #5b6477;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        position: relative;
+        z-index: 1;
+        /* NO max-height, NO -webkit-line-clamp — description shows in full */
     }
     .cur_card_desc > *:first-child { margin-top: 0; }
     .cur_card_desc > *:last-child { margin-bottom: 0; }

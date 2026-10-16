@@ -43,10 +43,10 @@
                        value="{{ old('title', $item->title) }}"
                        class="{{ $errors->has('title') ? 'input-error' : '' }}"
                        placeholder="e.g. Learning Beyond the Classroom: Developing Skills for Life"
-                       maxlength="70">
+                       maxlength="150">
                 <div class="field-counter">
-                    <span><span id="titleCount">0</span> / 70 characters</span>
-                    <small class="field-hint">Keep under 60 for best SEO</small>
+                    <span><span id="titleCount">0</span> / 150 characters</span>
+                    <small class="field-hint">Keep it clear and descriptive</small>
                 </div>
                 @error('title')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
@@ -63,11 +63,11 @@
             <div class="field">
                 <textarea name="description" id="descriptionInput" rows="4"
                           class="{{ $errors->has('description') ? 'input-error' : '' }}"
-                          placeholder="A short summary shown on the blog list and link previews..."
-                          maxlength="160">{{ old('description', $item->description) }}</textarea>
+                          placeholder="A short summary shown on the curriculum list and link previews..."
+                          maxlength="550">{{ old('description', $item->description) }}</textarea>
                 <div class="field-counter">
-                    <span><span id="descCount">0</span> / 160 characters</span>
-                    <small class="field-hint">Shown in search results &amp; social previews</small>
+                    <span><span id="descCount">0</span> / 550 characters</span>
+                    <small class="field-hint">A concise summary of the curriculum</small>
                 </div>
                 @error('description')
                     <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
@@ -152,12 +152,12 @@
 
 <script>
 /* ================================================================
-   CHARACTER COUNTERS for title (70) and description (160)
+   CHARACTER COUNTERS for title (150) and description (550)
    ================================================================ */
 (function () {
     const fields = [
-        { input: 'titleInput',       counter: 'titleCount', max: 70  },
-        { input: 'descriptionInput', counter: 'descCount',  max: 160 },
+        { input: 'titleInput',       counter: 'titleCount', max: 150 },
+        { input: 'descriptionInput', counter: 'descCount',  max: 550 },
     ];
 
     fields.forEach(function (f) {

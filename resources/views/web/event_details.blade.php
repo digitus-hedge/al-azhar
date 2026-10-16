@@ -7,15 +7,21 @@
 
 @section('content')
     @php
-        $eventPlaceholder = 'data:image/svg+xml;utf8,' . rawurlencode(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500"><rect width="800" height="500" fill="#eef0f7"/><g fill="none" stroke="#c3c8dc" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><rect x="300" y="160" width="200" height="180" rx="18"/><path d="M300 210h200M350 140v40M450 140v40"/></g></svg>'
-        );
-        $date         = $event->event_date ? \Illuminate\Support\Carbon::parse($event->event_date) : null;
-        $time         = $event->event_time ? \Illuminate\Support\Carbon::parse($event->event_time)->format('h:i A') : null;
-        $isPast       = $date && $date->isBefore(today());
-        $canRespond   = $event->is_open_for_response;
-        $responseEnd  = $event->response_date ? \Illuminate\Support\Carbon::parse($event->response_date) : null;
-    @endphp
+    $eventPlaceholder = 'data:image/svg+xml;utf8,' . rawurlencode(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500"><rect width="800" height="500" fill="#eef0f7"/><g fill="none" stroke="#c3c8dc" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"><rect x="300" y="160" width="200" height="180" rx="18"/><path d="M300 210h200M350 140v40M450 140v40"/></g></svg>'
+    );
+    $date         = $event->event_date ? \Illuminate\Support\Carbon::parse($event->event_date) : null;
+    $time         = $event->event_time ? \Illuminate\Support\Carbon::parse($event->event_time)->format('h:i A') : null;
+    $isPast       = $date && $date->isBefore(today());
+    $responseEnd  = $event->response_date ? \Illuminate\Support\Carbon::parse($event->response_date) : null;
+
+    // Only show the Respond button from the event date up to (and including) the response date.
+    // Hidden before the event starts and after the response window closes.
+    $canRespond   = $event->is_open_for_response
+                    && $date
+                    && $responseEnd
+                    && today()->betweenIncluded($date->copy()->startOfDay(), $responseEnd->copy()->startOfDay());
+@endphp
 
     {{-- Shared page header --}}
 @include('web.layouts.page-header', [

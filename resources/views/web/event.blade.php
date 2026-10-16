@@ -76,8 +76,14 @@
                         $time         = $event->event_time ? \Illuminate\Support\Carbon::parse($event->event_time)->format('h:i A') : null;
                         $isPast       = $date && $date->isBefore(today());
                         $link         = route('events.show', $event);
-                        $canRespond   = $event->is_open_for_response;
                         $responseEnd  = $event->response_date ? \Illuminate\Support\Carbon::parse($event->response_date) : null;
+
+                        // Only show the Respond button from the event date up to (and including) the response date.
+                        // Hidden before the event starts and after the response window closes.
+                        $canRespond   = $event->is_open_for_response
+                                        && $date
+                                        && $responseEnd
+                                        && today()->betweenIncluded($date->copy()->startOfDay(), $responseEnd->copy()->startOfDay());
                     @endphp
                     <div id="event-{{ $event->id }}"
                         class="col-lg-4 col-md-6 wow {{ ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$loop->index % 3] }}"

@@ -21,10 +21,10 @@ class CurriculumRequest extends FormRequest
 
         return [
             'title' => [
-                'required', 'string', 'max:70',
+                'required', 'string', 'max:150',
                 Rule::unique('curriculums', 'title')->ignore($curriculumId),
             ],
-            'description' => ['required', 'string', 'max:160'],
+            'description' => ['required', 'string', 'max:550'],
 
             // Multiple images — each one validated individually
             'images'   => ['nullable', 'array', 'max:10'],
@@ -51,11 +51,11 @@ class CurriculumRequest extends FormRequest
     {
         return [
             'title.required'       => 'Please enter the curriculum title.',
-            'title.max'            => 'Title should be 70 characters or less for SEO.',
+            'title.max'            => 'Title should be 150 characters or less.',
             'title.unique'         => 'A curriculum with this title already exists.',
 
             'description.required' => 'Please write a short description.',
-            'description.max'      => 'Short description should be 160 characters or less so it displays fully in search results.',
+            'description.max'      => 'Short description should be 550 characters or less.',
 
             'images.max'           => 'You can upload at most 10 images.',
             'images.*.image'       => 'Each file must be an image.',
