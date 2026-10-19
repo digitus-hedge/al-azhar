@@ -480,7 +480,7 @@ section { overflow-x: clip; }
                             </svg>
                         </span>
                     </a>
-                    <a href="{{ asset('uploads/prospectus/demo_school_prospectus.pdf') }}"
+                    <a href="{{ asset('uploads/prospectus/demo_school_prospectus_new.pdf') }}"
                         target="_blank"
                         rel="noopener"
                         download="Al-Azhar-Central-School-Prospectus.pdf"
