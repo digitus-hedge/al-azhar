@@ -306,6 +306,10 @@
     }
     /* Let hover effects work again after the entrance animation */
     
+    .td_height_100
+    {
+                height: 40px;
+    }
 </style>
 @endpush
 
