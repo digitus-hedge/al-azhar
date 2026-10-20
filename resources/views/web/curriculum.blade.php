@@ -13,7 +13,7 @@
 
 {{-- Shared page header --}}
 @include('web.layouts.page-header', [
-    'title'    => 'Co-Curricular Activitie',
+    'title'    => 'Co-Curricular Activities',
     'subtitle' => 'A holistic learning framework blending academic rigor, moral values and life skills for every learner.',
 ])
 
