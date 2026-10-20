@@ -63,7 +63,7 @@
         .js-anim .wow { visibility: hidden; }
 
         /* Wider container on large screens */
-        @media (min-width: 1400px) { .container { max-width: 1440px; padding-left: 30px; padding-right: 30px; padding-bottom: 30px;} }
+        @media (min-width: 1400px) { .container { max-width: 1440px; padding-left: 30px; padding-right: 30px; padding-bottom: 40px;} }
         @media (min-width: 1600px) { .container { max-width: 1560px; } }
         @media (min-width: 1800px) { .container { max-width: 1680px; } }
 
