@@ -414,7 +414,7 @@
         .ah_contact li:nth-child(2) { display: none; }          /* email lives in the drawer */
         .ah_contact li + li::before { display: none; }
         .ah_main_in { min-height: 68px; }
-        .ah_logo img { max-height: 44px; }
+        .ah_logo img { max-height: 44px !important; }
         .ah_burger { width: 44px; height: 44px; }
     }
     @media (max-width: 360px) {
@@ -468,12 +468,12 @@
 
 
 @media (max-width: 991px) {
-    .ah_logo_text strong { font-size: 16px; }
-    .ah_logo_text small { font-size: 9px; }
+    .ah_logo_text strong { font-size: 11px; }
+    .ah_logo_text small { font-size: 6px; }
 }
 
 @media (max-width: 575px) {
-    .ah_logo_text { display: none; }
+    .ah_logo_text { display: flex; }
 }
 
 </style>
