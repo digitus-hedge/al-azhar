@@ -23,16 +23,16 @@
     <div class="crumbs">
         <span onclick="window.location='{{ route('admin.dashboard') }}'">Home</span>
         <span>&rsaquo;</span>
-        <b>Curriculum</b>
+        <b>Co-Curriculum</b>
     </div>
 
     <div class="header">
         <div>
-            <h1>Curriculum</h1>
-            <p>Manage curriculum entries shown on the website.</p>
+            <h1>Co-Curriculum</h1>
+            <p>Manage Co-Curriculum entries shown on the website.</p>
         </div>
         <a href="{{ route('admin.curriculums.create') }}" class="btn-save" style="text-decoration:none;">
-            <i class="bi bi-plus-lg"></i> Add Curriculum
+            <i class="bi bi-plus-lg"></i> Add Co-Curriculum
         </a>
     </div>
 

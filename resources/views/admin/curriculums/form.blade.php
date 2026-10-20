@@ -15,15 +15,15 @@
     <div class="crumbs">
         <span onclick="window.location='{{ route('admin.dashboard') }}'">Home</span>
         <span>&rsaquo;</span>
-        <span onclick="window.location='{{ route('admin.curriculums') }}'">Curriculum</span>
+        <span onclick="window.location='{{ route('admin.curriculums') }}'">Co-Curriculum</span>
         <span>&rsaquo;</span>
         <b>{{ $item->exists ? 'Edit' : 'Add' }}</b>
     </div>
 
     <div class="header">
         <div>
-            <h1>{{ $item->exists ? 'Edit Curriculum' : 'Add Curriculum' }}</h1>
-            <p>Enter the curriculum title, short description and up to 10 cover images.</p>
+            <h1>{{ $item->exists ? 'Edit Co-Curriculum' : 'Add Co-Curriculum' }}</h1>
+            <p>Enter the Co-Curriculum title, short description and up to 10 cover images.</p>
         </div>
     </div>
 

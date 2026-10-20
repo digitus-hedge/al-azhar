@@ -980,7 +980,7 @@
     <li>
         <a class="nav-item {{ request()->routeIs('admin.curriculums*') ? 'active' : '' }}"
            href="{{ route('admin.curriculums') }}">
-            <i class="bi bi-journal-bookmark nav-ico"></i> Curriculum
+            <i class="bi bi-journal-bookmark nav-ico"></i> Co-Curriculum
         </a>
     </li>
 @endif

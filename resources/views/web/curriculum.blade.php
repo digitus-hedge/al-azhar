@@ -13,7 +13,7 @@
 
 {{-- Shared page header --}}
 @include('web.layouts.page-header', [
-    'title'    => 'Curriculum',
+    'title'    => 'Co-Curriculum Activities',
     'subtitle' => 'A holistic learning framework blending academic rigor, moral values and life skills for every learner.',
 ])
 
@@ -24,12 +24,12 @@
             {{-- Section intro --}}
             <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
                 <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
-                    <i></i> Our Curriculum <i></i>
+                    <i></i>Co-Curriculum Activities <i></i>
                 </p>
                 <h2 class="td_section_title td_fs_48 mb-0">A Framework for Holistic Learning</h2>
                 <div class="d-flex justify-content-center">
                     <p class="td_section_subtitle td_fs_18 mb-0 cur_intro">
-                        Discover the structured yet flexible curriculum designed to nurture every student's intellectual, moral and personal growth.
+                        Discover the structured yet flexible co-curriculum designed to nurture every student's intellectual, moral and personal growth.
                     </p>
                 </div>
             </div>
@@ -43,8 +43,8 @@
                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                         </svg>
                     </span>
-                    <h3>No Curriculum Items Yet</h3>
-                    <p>Curriculum details will appear here once they are added.</p>
+                    <h3>No Co-Curriculum Items Yet</h3>
+                    <p>Co-Curriculum details will appear here once they are added.</p>
                 </div>
             @else
                 <div class="row td_gap_y_30 td_row_gap_30">
