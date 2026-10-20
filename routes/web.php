@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\CareerEnquiryController;
 use App\Http\Controllers\Admin\CareerController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\HostelEnquiryController;
+use App\Http\Controllers\Admin\HoldReasonController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\DepartmentController as WebDepartmentController;
@@ -231,12 +232,12 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 
 
-                Route::get('event-responses', [EventResponseController::class, 'index'])
-    ->name('event-responses.index');
-Route::get('event-responses/{id}', [EventResponseController::class, 'show'])
-    ->name('event-responses.show');
-Route::delete('event-responses/{id}', [EventResponseController::class, 'destroy'])
-    ->name('event-responses.destroy');
+            Route::get('event-responses', [EventResponseController::class, 'index'])
+            ->name('event-responses.index');
+            Route::get('event-responses/{id}', [EventResponseController::class, 'show'])
+            ->name('event-responses.show');
+            Route::delete('event-responses/{id}', [EventResponseController::class, 'destroy'])
+            ->name('event-responses.destroy');
 
 
 

@@ -342,6 +342,11 @@
         .home_adm_btns .td_btn, .home_adm_outline { width: 100%; justify-content: center; }
         .home_adm_card { padding: 26px 20px; }
     }
+
+        .td_height_100 {
+        height: 15px;
+    }
+    
 </style>
 <!-- End Admission CTA -->
 
