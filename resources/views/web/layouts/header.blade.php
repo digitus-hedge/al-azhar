@@ -44,7 +44,7 @@
         ['Contact Us', $hdLink('contact.index'), request()->routeIs('contact.*'), []],
     ];
     $hdAdmission = $hdLink('admission');
-    $hdLogo = asset('images/full_logo.png');
+    $hdLogo = asset('images/Al_hazar_logo.png');
 @endphp
 
 <!-- Start Header Section -->
@@ -76,9 +76,17 @@
     {{-- ===== Row 2: logo + menu ===== --}}
     <div class="ah_main">
         <div class="container ah_main_in">
-            <a class="ah_logo" href="{{ url('/') }}" aria-label="Al Azhar Central School - Home">
+            <!-- <a class="ah_logo" href="{{ url('/') }}" aria-label="Al Azhar Central School - Home">
                 <img src="{{ $hdLogo }}" alt="Al Azhar Central School">
-            </a>
+            </a> -->
+
+            <a class="ah_logo" href="{{ url('/') }}" aria-label="Al Azhar Central School - Home">
+    <img src="{{ $hdLogo }}" alt="Al Azhar Central School logo">
+    <span class="ah_logo_text">
+        <strong>AL AZHAR CENTRAL SCHOOL, MALA</strong>
+        <small>SENIOR SECONDARY AFFILIATED TO CBSE, NEW DELHI No: 930609</small>
+    </span>
+</a>
 
             <nav class="ah_nav" aria-label="Main">
                 <ul class="ah_menu">
@@ -171,7 +179,11 @@
 <style>
 
     /* ========= Fonts for the header ========= */
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@400;500;600;700&display=swap'); */
+
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@500;600;700&family=Poppins:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap');
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap');
 
 /* Apply Poppins to all header text */
 .ah, .ah *,
@@ -238,7 +250,7 @@
 
     /* ---------- Row 2 ---------- */
     .ah_main { background: var(--ah); transition: box-shadow .3s ease; }
-    .ah_main_in { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 70px; padding:0px;}
+    .ah_main_in { display: flex; align-items: center; justify-content: space-between; gap: 5px; min-height: 70px; padding:4px;}
     /* .ah_logo { flex: none; display: inline-flex; align-items: center; } */
 
     .ah_top {
@@ -285,7 +297,8 @@
 }
 
     /* .ah_nav { display: flex; align-items: center; gap: 22px; margin-left: auto; } */
-     .ah_nav { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+     .ah_nav { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+    /* .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; } */
     .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
     .ah_menu > li { position: relative; }
     .ah_menu > li > a {
@@ -407,6 +420,62 @@
     @media (max-width: 360px) {
         .ah_social a:nth-child(n+4) { display: none; }
     }
+
+
+
+
+    
+
+
+    .ah_logo {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+}
+
+.ah_logo img {
+    height: 75px;
+    width: auto;
+    flex: none;
+}
+
+.ah_logo_text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    color: #fff;
+}
+
+.ah_logo_text strong {
+    font-family: 'Oswald', 'Arial Narrow', sans-serif !important;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 1.9px;
+    color: #fff;
+}
+
+.ah_logo_text small {
+    font-size: 8px;
+    font-weight: 500;
+    letter-spacing: 0.4px;
+    color: rgba(255,255,255,.85);
+    margin-top: 4px;
+    border-top: 1px solid rgba(255,255,255,.3);
+    padding-top: 4px;
+}
+
+
+@media (max-width: 991px) {
+    .ah_logo_text strong { font-size: 16px; }
+    .ah_logo_text small { font-size: 9px; }
+}
+
+@media (max-width: 575px) {
+    .ah_logo_text { display: none; }
+}
+
 </style>
 
 <script>
