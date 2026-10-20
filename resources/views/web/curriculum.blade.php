@@ -13,7 +13,7 @@
 
 {{-- Shared page header --}}
 @include('web.layouts.page-header', [
-    'title'    => 'Co-Curriculum Activities',
+    'title'    => 'Co-Curricular Activities',
     'subtitle' => 'A holistic learning framework blending academic rigor, moral values and life skills for every learner.',
 ])
 
@@ -24,7 +24,7 @@
             {{-- Section intro --}}
             <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
                 <p class="td_section_subtitle_up td_fs_18 td_semibold td_spacing_1 td_mb_10 text-uppercase td_accent_color">
-                    <i></i>Co-Curriculum Activities <i></i>
+                    <i>Co-Curricular Activities </i>
                 </p>
                 <h2 class="td_section_title td_fs_48 mb-0">A Framework for Holistic Learning</h2>
                 <div class="d-flex justify-content-center">

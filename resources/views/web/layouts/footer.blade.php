@@ -189,11 +189,12 @@
         .af_grid { grid-template-columns: 1fr 1fr; gap: 44px 40px; padding: 70px 0 50px; }
     }
     @media (max-width: 575px) {
-        .af_grid { grid-template-columns: 1fr; gap: 36px; padding: 56px 0 40px; }
+        .af_grid { grid-template-columns: 1fr; gap: 36px; padding: 56px 0 40px;margin-top: 30px; }
         .af_about { max-width: none; }
         .af_bottom_in { flex-direction: column; text-align: center; }
         .af_cta { width: 100%; justify-content: center; }
         .af_top { right: 16px; bottom: 16px; width: 42px; height: 42px; }
+       
     }
 </style>
 
