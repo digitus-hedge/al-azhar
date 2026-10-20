@@ -15,6 +15,7 @@
         'Admission'            => $ftLink('admission'),
         'Mandatory Disclosure' => $ftLink('mandatory-disclosure'),
         'Contact Us'           => $ftLink('contact.index'),
+        'Careers'              => $ftLink('careers'),
     ];
     $ftCampus = [
         'Departments'     => $ftLink('departments.index'),
