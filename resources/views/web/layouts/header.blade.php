@@ -220,7 +220,7 @@
 
     /* ---------- Row 1 ---------- */
     .ah_top { background: var(--ah-dark); color: rgba(255,255,255,.9); font-size: 14px; }
-    .ah_top_in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; }
+    .ah_top_in { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 30px; }
     .ah_contact { display: flex; align-items: center; gap: 26px; margin: 0; padding: 0; list-style: none; min-width: 0; }
     .ah_contact li { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
     .ah_contact li + li { position: relative; }
@@ -238,11 +238,54 @@
 
     /* ---------- Row 2 ---------- */
     .ah_main { background: var(--ah); transition: box-shadow .3s ease; }
-    .ah_main_in { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 90px; }
-    .ah_logo { flex: none; display: inline-flex; align-items: center; }
-    .ah_logo img { max-height: 90px; width: auto; }
+    .ah_main_in { display: flex; align-items: center; justify-content: space-between; gap: 24px; min-height: 70px; padding:0px;}
+    /* .ah_logo { flex: none; display: inline-flex; align-items: center; } */
 
-    .ah_nav { display: flex; align-items: center; gap: 22px; margin-left: auto; }
+    .ah_top {
+    padding: 0;              /* remove any inherited vertical padding */
+    font-size: 13px;         /* was 14px — slightly tighter */
+    line-height: 1.3;
+}
+
+.ah_top_in {
+    min-height: 46px;        /* was 44px */
+    padding: 4px 0;          /* tight vertical breathing room */
+}
+
+.ah_social a {
+    width: 26px;             /* was 30px — smaller social circles */
+    height: 26px;
+}
+
+.ah_social svg {
+    width: 13px;
+    height: 13px;
+}
+
+.ah_contact svg {
+    width: 14px;
+    height: 14px;
+}
+    /* .ah_logo img { max-height: 90px; width: auto; } */
+
+   .ah_logo {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.ah_logo img {
+    /* height: 110px; */
+    width: auto;
+    /* max-width: 350px; */
+      height: 110px;        /* was 110px */
+    max-width: 350;
+    max-height: none;
+    object-fit: contain;
+}
+
+    /* .ah_nav { display: flex; align-items: center; gap: 22px; margin-left: auto; } */
+     .ah_nav { display: flex; align-items: center; gap: 10px; margin-left: auto; }
     .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
     .ah_menu > li { position: relative; }
     .ah_menu > li > a {
@@ -281,10 +324,10 @@
 }
 @keyframes ahDown { from { transform: translateY(-100%); } to { transform: none; } }
 .ah.is-sticky .ah_main_in { min-height: 74px; }
-.ah.is-sticky .ah_logo img { max-height: 52px; }
+.ah.is-sticky .ah_logo img { max-height: 90px; }
     @keyframes ahDown { from { transform: translateY(-100%); } to { transform: none; } }
     .ah.is-sticky .ah_main_in { min-height: 74px; }
-    .ah.is-sticky .ah_logo img { max-height: 52px; }
+    .ah.is-sticky .ah_logo img { max-height: 90px; }
     
 
     /* ---------- Hamburger ---------- */
