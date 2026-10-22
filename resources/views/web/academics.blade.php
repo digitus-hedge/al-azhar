@@ -560,7 +560,7 @@
 
     /* ---------- Levels ---------- */
     .acd_levels { background: #F6F8FB; }
-    .acd_level_grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; }
+    .acd_level_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
     .acd_level {
         position: relative; overflow: hidden; text-align: center;
         padding: 34px 20px 28px; border-radius: 18px; background: #fff;
