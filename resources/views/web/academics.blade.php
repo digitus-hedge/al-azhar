@@ -9,16 +9,44 @@
     // Put the campus photo at public/images/academics.jpg
     $acdImage = asset('images/academic.jpeg');
 
-   $levels = [
-        ['title' => 'Preschool',              'sub' => 'First steps into learning', 'icon' => '<path d="M12 3a4 4 0 0 1 4 4v1H8V7a4 4 0 0 1 4-4z"/><path d="M5 21v-6a7 7 0 0 1 14 0v6"/><path d="M9 21v-3h6v3"/>'],
-        ['title' => 'LKG and UKG',            'sub' => 'Montessori stream',          'icon' => '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="17.5" r="3.5"/>'],
-        ['title' => 'Primary Level',          'sub' => 'Classes I – V',              'icon' => '<path d="M2 5a2 2 0 0 1 2-2h6v17H4a2 2 0 0 0-2 2V5zM22 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2V5z"/>'],
-        ['title' => 'Secondary Level',        'sub' => 'Classes VI – X',             'icon' => '<path d="M9 3h6v4l4 9a3 3 0 0 1-2.7 4.3H7.7A3 3 0 0 1 5 16l4-9V3z"/><path d="M8 3h8M7 14h10"/>'],
-        ['title' => 'Senior Secondary Level', 'sub' => 'Classes XI – XII',           'icon' => '<path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/>'],
+    $schoolClasses = \App\Models\SchoolClass::where('is_active', true)
+        ->orderBy('sort_order')
+        ->orderBy('name')
+        ->get();
+
+    // Load descriptions DIRECTLY from academics table — bypasses controller
+    $academicDetails = \DB::table('academics')
+        ->get()
+        ->keyBy(fn($d) => strtolower(trim($d->name)));
+
+    $iconList = [
+        '<path d="M12 3a4 4 0 0 1 4 4v1H8V7a4 4 0 0 1 4-4z"/><path d="M5 21v-6a7 7 0 0 1 14 0v6"/><path d="M9 21v-3h6v3"/>',
+        '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><circle cx="17.5" cy="17.5" r="3.5"/>',
+        '<path d="M2 5a2 2 0 0 1 2-2h6v17H4a2 2 0 0 0-2 2V5zM22 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2V5z"/>',
+        '<path d="M9 3h6v4l4 9a3 3 0 0 1-2.7 4.3H7.7A3 3 0 0 1 5 16l4-9V3z"/><path d="M8 3h8M7 14h10"/>',
+        '<path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11v5c0 1.7 2.7 3 6 3s6-1.3 6-3v-5"/><path d="M22 9v6"/>',
     ];
 
+    $levels = $schoolClasses->values()->map(function ($c, $i) use ($iconList) {
+        return [
+            'title' => $c->name,
+            'sub'   => $c->code ?? '',
+            'icon'  => $iconList[$i % count($iconList)],
+        ];
+    })->all();
+
+    if (empty($levels)) {
+        $levels = [
+            ['title' => 'Preschool', 'sub' => 'First steps into learning', 'icon' => $iconList[0]],
+            ['title' => 'LKG and UKG', 'sub' => 'Montessori stream', 'icon' => $iconList[1]],
+            ['title' => 'Primary Level', 'sub' => 'Classes I – V', 'icon' => $iconList[2]],
+            ['title' => 'Secondary Level', 'sub' => 'Classes VI – X', 'icon' => $iconList[3]],
+            ['title' => 'Senior Secondary Level', 'sub' => 'Classes XI – XII', 'icon' => $iconList[4]],
+        ];
+    }
+
     // Admin-managed details, keyed by lowercase name
-    $academicDetails = $academicDetails ?? collect();
+
 
     $values = ['Ethics & morality', 'Civility', 'Kindness', 'Discipline', 'Honesty'];
 
