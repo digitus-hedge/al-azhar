@@ -199,24 +199,44 @@
     .sm_quote { position: absolute; top: -44px; right: 0; color: var(--sm); opacity: .08; }
 
     /* ===== NEW: Two leaders side-by-side ===== */
-    .sm_leaders_row {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
-    }
-    .sm_leaders_row .sm_leader {
-        grid-template-columns: 1fr;   /* stack photo above body inside each card */
-        gap: 24px;
-        padding: 24px;
-    }
-    .sm_leaders_row .sm_leader_photo {
-        aspect-ratio: 4 / 3;
-        max-width: 100%;
-        margin: 0 auto;
-    }
-    .sm_leaders_row .sm_leader_name { font-size: 32px; margin: 12px 0 16px; }
-    .sm_leaders_row .sm_leader_bio  { font-size: 16px; line-height: 1.75; }
-    .sm_leaders_row .sm_leader::after { width: 220px; height: 220px; right: -90px; top: -90px; }
+/* ===== Two leaders side-by-side ===== */
+.sm_leaders_row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+    align-items: stretch;
+}
+.sm_leaders_row .sm_leader {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+.sm_leaders_row .sm_leader_photo {
+    width: 100%;
+    height: 420px;               /* SAME height for both */
+    aspect-ratio: auto;          /* override 4/3 */
+    max-width: 100%;
+    margin: 0 auto;
+    background: #f4f6fa;         /* soft bg behind the photo */
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.sm_leaders_row .sm_leader_photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;         /* ← FULL photo, no cropping */
+    object-position: center;
+    background: #fff;
+}
+.sm_leaders_row .sm_leader_body { flex: 1; }
+.sm_leaders_row .sm_leader_name { font-size: 32px; margin: 12px 0 16px; }
+.sm_leaders_row .sm_leader_bio  { font-size: 16px; line-height: 1.75; }
+.sm_leaders_row .sm_leader::after { width: 220px; height: 220px; right: -90px; top: -90px; }
 
     /* ---------- Member cards ---------- */
     .sm_card {
@@ -274,13 +294,12 @@
         .sm_leader_name { font-size: 36px; }
     }
     @media (max-width: 991px) {
-        .sm_leader { grid-template-columns: 1fr; padding: 24px; }
-        .sm_leader_photo { max-width: 420px; }
-        .sm_leader_body { padding-right: 0; }
+           .sm_leader { grid-template-columns: 1fr; padding: 24px; }
+    .sm_leader_photo { max-width: 420px; }
+    .sm_leader_body { padding-right: 0; }
 
-        /* NEW: collapse two leaders to one column */
-        .sm_leaders_row { grid-template-columns: 1fr; gap: 24px; }
-        .sm_leaders_row .sm_leader_photo { aspect-ratio: 4 / 5; max-width: 420px; }
+    .sm_leaders_row { grid-template-columns: 1fr; gap: 24px; }
+    .sm_leaders_row .sm_leader_photo { height: 360px; max-width: 100%; }
     }
     @media (max-width: 767px) {
         .sm_card:hover { transform: none; }

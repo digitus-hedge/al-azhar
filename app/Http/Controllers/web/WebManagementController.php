@@ -17,7 +17,7 @@ class WebManagementController extends Controller
     {
         $members = ManagementMember::query()
             ->with('designation')
-            ->where('is_active', true)
+            // ->where('is_active', true)
             ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
