@@ -54,12 +54,12 @@
     $fees       = $fees ?? collect();
     $classIndex = array_flip(\App\Models\Fee::CLASSES);
 
-    $feeGroupMeta = [
-        'Kindergarten'           => ['sub' => 'Pre-KG, LKG & UKG', 'icon' => $levels[1]['icon']],
-        'Primary Level'          => ['sub' => 'Classes I – V',     'icon' => $levels[2]['icon']],
-        'Secondary Level'        => ['sub' => 'Classes VI – X',    'icon' => $levels[3]['icon']],
-        'Senior Secondary Level' => ['sub' => 'Classes XI – XII',  'icon' => $levels[4]['icon']],
-        'Other Classes'          => ['sub' => '',                  'icon' => $levels[0]['icon']],
+     $feeGroupMeta = [
+        'Kindergarten'           => ['sub' => 'Pre-KG, LKG & UKG', 'icon' => $iconList[1]],
+        'Primary Level'          => ['sub' => 'Classes I – V',     'icon' => $iconList[2]],
+        'Secondary Level'        => ['sub' => 'Classes VI – X',    'icon' => $iconList[3]],
+        'Senior Secondary Level' => ['sub' => 'Classes XI – XII',  'icon' => $iconList[4]],
+        'Other Classes'          => ['sub' => '',                  'icon' => $iconList[0]],
     ];
     $groupOrder = array_flip(array_keys($feeGroupMeta));
 
