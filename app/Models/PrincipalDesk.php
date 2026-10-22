@@ -19,6 +19,7 @@ class PrincipalDesk extends Model
         'excerpt',
         // 'message',
         'is_active',
+            'signature',
         'sort_order',
             'meta_title',
     'meta_description',
@@ -43,6 +44,11 @@ class PrincipalDesk extends Model
     public function getPhotoUrlAttribute(): ?string
     {
         return $this->photo ? asset('storage/' . $this->photo) : null;
+    }
+
+      public function getSignatureUrlAttribute(): ?string
+    {
+        return $this->signature ? asset('storage/' . $this->signature) : null;
     }
 
     /**

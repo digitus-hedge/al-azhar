@@ -96,19 +96,6 @@
         <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
     @enderror
 </div>
-
-            <!-- <div class="field">
-                <div class="field-top">
-                    <label class="field-label">Full Message</label>
-                    <span class="field-hint">Shown on "Read More"</span>
-                </div>
-                <textarea name="message" id="message-input" rows="8"
-                          class="{{ $errors->has('message') ? 'input-error' : '' }}"
-                          placeholder="The complete Principal's message...">{{ old('message', $item->message) }}</textarea>
-                @error('message')
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                @enderror
-            </div> -->
         </div>
 
         {{-- Photo --}}
@@ -120,7 +107,6 @@
             <div class="notice caution">
                 <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
                 <p><b>Required</b> &middot; recommended 730&times;720px &middot; JPG, PNG, WEBP &middot; up to 5MB.</p>
-
             </div>
 
             @error('photo')
@@ -155,51 +141,56 @@
                     <input type="hidden" name="remove_photo" id="removeImageInput" value="0">
                     <input type="hidden" id="hasSavedPhoto" value="{{ $item->photo ? 1 : 0 }}">
                 </div>
-<!-- 
-                <div class="field" style="flex:1;min-width:160px;margin-bottom:0;">
-                    <div class="field-top">
-                        <label class="field-label">Fallback Initial</label>
-                        <span class="field-hint">Shown in the circle if no photo</span>
-                    </div>
-                    <input type="text" name="avatar_initial" maxlength="2" style="max-width:120px;"
-                           value="{{ old('avatar_initial', $item->avatar_initial) }}"
-                           class="{{ $errors->has('avatar_initial') ? 'input-error' : '' }}"
-                           placeholder="P">
-                    @error('avatar_initial')
-                        <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                    @enderror
-                </div> -->
             </div>
         </div>
 
-        {{-- Display Settings --}}
-        <!-- <div class="card">
+        {{-- Signature --}}
+        <div class="card" id="signatureSection">
             <div class="section-title">
-                <h2><span class="icon"><i class="bi bi-sliders"></i></span> Display Settings</h2>
+                <h2><span class="icon"><i class="bi bi-pen"></i></span> Signature <span class="req">*</span></h2>
             </div>
 
-            <div class="field">
-                <div class="field-top"><label class="field-label">Sort Order</label></div>
-                <input type="number" name="sort_order" min="0" style="max-width:160px;"
-                       value="{{ old('sort_order', $item->sort_order ?? 0) }}"
-                       class="{{ $errors->has('sort_order') ? 'input-error' : '' }}">
-                @error('sort_order')
-                    <span class="field-error"><i class="bi bi-exclamation-circle"></i> {{ $message }}</span>
-                @enderror
+            <div class="notice caution">
+                <i class="bi bi-exclamation-triangle" style="margin-top:1px;"></i>
+                <p><b>Required</b> &middot; transparent PNG recommended &middot; around 400&times;150px &middot; JPG, PNG, WEBP &middot; up to 2MB.</p>
             </div>
 
-            <label class="toggle-row" for="is_active">
-                <span>
-                    <span class="field-label">Active</span>
-                    <span class="field-hint d-block">Visible in the preview card on the website</span>
-                </span>
-                <input type="checkbox" name="is_active" id="is_active" value="1"
-                       {{ old('is_active', $item->is_active ?? true) ? 'checked' : '' }}>
-            </label>
-        </div> -->
+            @error('signature')
+                <div class="notice caution" style="margin-bottom:16px;">
+                    <i class="bi bi-exclamation-circle" style="margin-top:1px;"></i>
+                    <p>{{ $message }}</p>
+                </div>
+            @enderror
 
+            <div class="images-row">
+                <div class="image-slot" style="max-width:280px;">
+                    <div class="drop sig-slot {{ $item->signature ? 'filled' : '' }}" id="signatureDrop" onclick="triggerSignatureInput()">
+                        <img id="signaturePreview" src="{{ $item->signature ? $item->signature_url : '' }}"
+                             alt="Signature preview" style="{{ $item->signature ? '' : 'display:none;' }}">
 
+                        <div class="drop-empty" id="signatureDropEmpty" style="{{ $item->signature ? 'display:none;' : '' }}">
+                            <div class="ico-circle"><i class="bi bi-pen" style="color:#AEB4C4;font-size:18px;"></i></div>
+                            <div class="drop-title">Add signature</div>
+                            <div class="drop-sub">click to upload</div>
+                        </div>
 
+                        <button type="button" class="remove-img-btn" id="removeSignatureBtn"
+                                onclick="removeSignatureImage(event)" style="{{ $item->signature ? '' : 'display:none;' }}" title="Remove signature">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+
+                        <div class="uploaded-tag" id="signatureUploadedTag" style="{{ $item->signature ? '' : 'display:none;' }}">
+                            <i class="bi bi-check-circle"></i> Uploaded
+                        </div>
+                    </div>
+                    <input type="file" name="signature" id="signatureInput" accept="image/jpeg,image/png,image/webp" hidden>
+                    <input type="hidden" name="remove_signature" id="removeSignatureInput" value="0">
+                    <input type="hidden" id="hasSavedSignature" value="{{ $item->signature ? 1 : 0 }}">
+                </div>
+            </div>
+        </div>
+
+        {{-- SEO Meta --}}
          <div class="card">
             <div class="section-title">
                 <h2><span class="icon"><i class="bi bi-search"></i></span> SEO Meta</h2>
@@ -354,8 +345,23 @@ function validatePrincipalForm(form) {
     } else if (file) {
         if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
             errors.photo = ['The photo must be a JPG, PNG or WEBP file.'];
-        } else if (file.size > 2 * 1024 * 1024) {
-            errors.photo = [`The photo must not be larger than 2MB (it is ${(file.size / 1048576).toFixed(2)} MB).`];
+        } else if (file.size > 5 * 1024 * 1024) {
+            errors.photo = [`The photo must not be larger than 5MB (it is ${(file.size / 1048576).toFixed(2)} MB).`];
+        }
+    }
+
+    // Signature (required): a new file, or the saved one that was not removed
+    const sigFile     = document.getElementById('signatureInput').files[0];
+    const hasSavedSig = document.getElementById('hasSavedSignature').value === '1';
+    const sigRemoved  = document.getElementById('removeSignatureInput').value === '1';
+
+    if (!sigFile && (!hasSavedSig || sigRemoved)) {
+        errors.signature = ["Please upload the principal's signature."];
+    } else if (sigFile) {
+        if (!['image/jpeg', 'image/png', 'image/webp'].includes(sigFile.type)) {
+            errors.signature = ['The signature must be a JPG, PNG or WEBP file.'];
+        } else if (sigFile.size > 2 * 1024 * 1024) {
+            errors.signature = [`The signature must not be larger than 2MB (it is ${(sigFile.size / 1048576).toFixed(2)} MB).`];
         }
     }
 
@@ -387,6 +393,17 @@ function showValidationErrors(errors) {
             return;
         }
 
+        if (field === 'signature') {
+            const sigSection = document.getElementById('signatureSection');
+            const notice = document.createElement('div');
+            notice.className = 'notice caution dynamic-error';
+            notice.style.marginBottom = '16px';
+            notice.innerHTML = `<i class="bi bi-exclamation-circle" style="margin-top:1px;"></i><p>${message}</p>`;
+            sigSection.querySelector('.section-title').insertAdjacentElement('afterend', notice);
+            document.getElementById('signatureDrop').classList.add('input-error');
+            return;
+        }
+
         let target = fieldMap[field] ? fieldMap[field](form) : null;
         if (!target) return;
 
@@ -410,6 +427,7 @@ function showValidationErrors(errors) {
 </script>
 
 <script>
+    // ---- Photo ----
     function triggerImageInput() {
         document.getElementById('imageInput').click();
     }
@@ -455,6 +473,52 @@ function showValidationErrors(errors) {
         document.getElementById('removeImageInput').value = '1';
     }
 
+    // ---- Signature ----
+    function triggerSignatureInput() {
+        document.getElementById('signatureInput').click();
+    }
+
+    document.getElementById('signatureInput').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const preview = document.getElementById('signaturePreview');
+            preview.src = e.target.result;
+            preview.style.display = '';
+
+            document.getElementById('signatureDropEmpty').style.display = 'none';
+            document.getElementById('removeSignatureBtn').style.display = '';
+            document.getElementById('signatureUploadedTag').innerHTML = '<i class="bi bi-check-circle"></i> Selected';
+            document.getElementById('signatureUploadedTag').style.display = '';
+            document.getElementById('signatureDrop').classList.add('filled');
+            document.getElementById('removeSignatureInput').value = '0';
+
+            // Clear any signature error once a file is chosen
+            document.getElementById('signatureDrop').classList.remove('input-error');
+            document.querySelectorAll('#signatureSection .notice.dynamic-error').forEach(el => el.remove());
+        };
+        reader.readAsDataURL(file);
+    });
+
+    function removeSignatureImage(e) {
+        e.stopPropagation();
+
+        const input = document.getElementById('signatureInput');
+        input.value = '';
+
+        const preview = document.getElementById('signaturePreview');
+        preview.src = '';
+        preview.style.display = 'none';
+
+        document.getElementById('signatureDropEmpty').style.display = '';
+        document.getElementById('removeSignatureBtn').style.display = 'none';
+        document.getElementById('signatureUploadedTag').style.display = 'none';
+        document.getElementById('signatureDrop').classList.remove('filled');
+        document.getElementById('removeSignatureInput').value = '1';
+    }
+
     // Clear a field's error as soon as the admin types in it
     ['heading', 'name'].forEach(function (n) {
         const input = document.querySelector('[name="' + n + '"]');
@@ -482,28 +546,6 @@ function showValidationErrors(errors) {
 
 <script src="https://cdn.jsdelivr.net/npm/tinymce@6/tinymce.min.js" referrerpolicy="origin"></script>
 <script>
-    // tinymce.init({
-    //     selector: '#excerpt-input, #message-input',
-    //     height: 260,
-    //     menubar: false,
-    //     plugins: 'advlist autolink lists link charmap preview anchor searchreplace visualblocks code fullscreen wordcount',
-    //     toolbar: 'undo redo | blocks | bold italic forecolor | ' +
-    //         'alignleft aligncenter alignright alignjustify | ' +
-    //         'bullist numlist outdent indent | link | code preview fullscreen | removeformat help',
-    //     content_style: 'body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-size:14px }',
-    //     branding: false,
-    //     promotion: false,
-    //     setup: function (editor) {
-    //         editor.on('change keyup blur', function () {
-    //             editor.save();
-    //         });
-    //     }
-    // });
-
-
-
-
- 
     // Same counting as PrincipalDeskRequest::countWords()
     function countEditorWords(editor) {
         const text = editor.getContent({ format: 'text' }).replace(/\u00A0/g, ' ').trim();
@@ -629,6 +671,12 @@ function showValidationErrors(errors) {
     .drop:hover{ border-color: var(--orange,#BF0001); background: var(--orange-tint,#FFF8F3); }
     .drop.filled{ border:2px solid transparent; background:#0F1220; }
     .drop img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    /* Signature drop zone — wider rectangle, white background, contain the image */
+    .drop.sig-slot{ width:240px; height:100px; border-radius:10px; }
+    .drop.sig-slot.filled{ background:#fff; border:2px solid var(--input-border,#DBDFEA); }
+    .drop.sig-slot img{ object-fit:contain; padding:6px; background:#fff; }
+
     .ico-circle{ width:40px; height:40px; border-radius:999px; background:#EEF0F6; display:flex; align-items:center; justify-content:center; margin-bottom:8px; }
     .drop-title{ font-size:12px; font-weight:500; color: var(--muted,#667085); }
     .drop-sub{ font-size:11px; color:#B0B5C4; margin-top:2px; }

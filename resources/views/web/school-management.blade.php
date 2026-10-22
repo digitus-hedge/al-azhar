@@ -5,7 +5,8 @@
 @section('footer_class', 'td_color_1')
 
 @php
-    $leader  = $leader ?? null;
+    // CHANGED: $leader -> $leaders (collection, from controller)
+    $leaders = $leaders ?? collect();
     $members = $members ?? collect();
 
     $smPhoto = fn ($m) => $m->photo ? asset('storage/' . $m->photo) : null;
@@ -45,33 +46,39 @@
             </div>
             <div class="td_height_60 td_height_lg_40"></div>
 
-            @if (! $leader)
+            {{-- CHANGED: check $leaders->isEmpty() instead of !$leader --}}
+            @if ($leaders->isEmpty())
                 <div class="sm_empty">Management profiles will be published here soon.</div>
             @else
 
-                {{-- ================= Leader (first by designation order) ================= --}}
-                <div class="sm_leader wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
-                    <div class="sm_leader_photo">
-                        @if ($smPhoto($leader))
-                            <img src="{{ $smPhoto($leader) }}" alt="{{ $leader->name }}">
-                        @else
-                            <span class="sm_initials sm_initials_lg">{{ $smInit($leader) }}</span>
-                        @endif
-                    </div>
-                    <div class="sm_leader_body">
-                        @if ($smRole($leader))
-                            <span class="sm_role_badge">{{ $smRole($leader) }}</span>
-                        @endif
-                        <h3 class="sm_leader_name">{{ $leader->name }}</h3>
-                        @if ($smBio($leader) !== '')
-                            <div class="sm_leader_bio">
-                                <svg class="sm_quote" width="46" height="32" viewBox="0 0 65 46" fill="currentColor" aria-hidden="true">
-                                    <path d="M13.9286 26.6H1V1H26.8571V27.362L17.956 45H6.26764L14.8213 28.0505L15.5534 26.6H13.9286ZM51.0714 26.6H38.1429V1H64V27.362L55.0988 45H43.4105L51.9642 28.0505L52.6962 26.6H51.0714Z"/>
-                                </svg>
-                                {!! $smBio($leader) !!}
+                {{-- ================= Top leaders (Chairman + Manager, side-by-side) ================= --}}
+                {{-- CHANGED: wrapped in .sm_leaders_row and looped over $leaders --}}
+                <div class="sm_leaders_row">
+                    @foreach ($leaders as $leader)
+                        <div class="sm_leader wow fadeInUp" data-wow-duration="1s" data-wow-delay="{{ 0.2 + $loop->index * 0.15 }}s">
+                            <div class="sm_leader_photo">
+                                @if ($smPhoto($leader))
+                                    <img src="{{ $smPhoto($leader) }}" alt="{{ $leader->name }}">
+                                @else
+                                    <span class="sm_initials sm_initials_lg">{{ $smInit($leader) }}</span>
+                                @endif
                             </div>
-                        @endif
-                    </div>
+                            <div class="sm_leader_body">
+                                @if ($smRole($leader))
+                                    <span class="sm_role_badge">{{ $smRole($leader) }}</span>
+                                @endif
+                                <h3 class="sm_leader_name">{{ $leader->name }}</h3>
+                                @if ($smBio($leader) !== '')
+                                    <div class="sm_leader_bio">
+                                        <svg class="sm_quote" width="46" height="32" viewBox="0 0 65 46" fill="currentColor" aria-hidden="true">
+                                            <path d="M13.9286 26.6H1V1H26.8571V27.362L17.956 45H6.26764L14.8213 28.0505L15.5534 26.6H13.9286ZM51.0714 26.6H38.1429V1H64V27.362L55.0988 45H43.4105L51.9642 28.0505L52.6962 26.6H51.0714Z"/>
+                                        </svg>
+                                        {!! $smBio($leader) !!}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
 
                 {{-- ================= Other members ================= --}}
@@ -191,6 +198,26 @@
     .sm_leader_bio > *:last-child { margin-bottom: 0; }
     .sm_quote { position: absolute; top: -44px; right: 0; color: var(--sm); opacity: .08; }
 
+    /* ===== NEW: Two leaders side-by-side ===== */
+    .sm_leaders_row {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+    .sm_leaders_row .sm_leader {
+        grid-template-columns: 1fr;   /* stack photo above body inside each card */
+        gap: 24px;
+        padding: 24px;
+    }
+    .sm_leaders_row .sm_leader_photo {
+        aspect-ratio: 4 / 3;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    .sm_leaders_row .sm_leader_name { font-size: 32px; margin: 12px 0 16px; }
+    .sm_leaders_row .sm_leader_bio  { font-size: 16px; line-height: 1.75; }
+    .sm_leaders_row .sm_leader::after { width: 220px; height: 220px; right: -90px; top: -90px; }
+
     /* ---------- Member cards ---------- */
     .sm_card {
         width: 100%; height: 100%; padding: 0; border: 1px solid var(--sm-line); border-radius: 18px; overflow: hidden;
@@ -250,6 +277,10 @@
         .sm_leader { grid-template-columns: 1fr; padding: 24px; }
         .sm_leader_photo { max-width: 420px; }
         .sm_leader_body { padding-right: 0; }
+
+        /* NEW: collapse two leaders to one column */
+        .sm_leaders_row { grid-template-columns: 1fr; gap: 24px; }
+        .sm_leaders_row .sm_leader_photo { aspect-ratio: 4 / 5; max-width: 420px; }
     }
     @media (max-width: 767px) {
         .sm_card:hover { transform: none; }

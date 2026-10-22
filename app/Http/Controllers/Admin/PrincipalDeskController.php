@@ -42,6 +42,14 @@ class PrincipalDeskController extends Controller
             $data['photo'] = $request->file('photo')->store('principal-desk', 'public');
         }
 
+          if ($request->hasFile('signature')) {
+            $data['signature'] = $request->file('signature')->store('principal-desk/signatures', 'public');
+        }
+
+        // remove_signature on create means: do not save a signature.
+        unset($data['remove_signature']);
+
+
         $item = PrincipalDesk::create($data);
 
         $message = "Principal's Desk entry saved successfully.";
@@ -80,6 +88,23 @@ class PrincipalDeskController extends Controller
             Storage::disk('public')->delete($principalDesk->photo);
             $data['photo'] = null;
         }
+
+
+           // ---- Signature ----
+        if ($request->hasFile('signature')) {
+            if ($principalDesk->signature) {
+                Storage::disk('public')->delete($principalDesk->signature);
+            }
+            $data['signature'] = $request->file('signature')->store('principal-desk/signatures', 'public');
+        } elseif ($request->boolean('remove_signature') && $principalDesk->signature) {
+            Storage::disk('public')->delete($principalDesk->signature);
+            $data['signature'] = null;
+        }
+
+        unset($data['remove_signature']);
+
+        $principalDesk->update($data);
+        
 
         $principalDesk->update($data);
 

@@ -156,7 +156,7 @@
                                             </span>
                                             <h3>Email</h3>
                                         </div>
-                                        <a href="mailto:alazharmala@gmail.com">alazharmala@gmail.com</a>
+                                        <a href="mailto:alazharschoolmala@gmail.com">alazharschoolmala@gmail.com</a>
                                         <a href="mailto:alazharschool@yahoo.com">alazharschool@yahoo.com</a>
                                     </div>
 
