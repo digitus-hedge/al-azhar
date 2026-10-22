@@ -156,8 +156,8 @@
                                             </span>
                                             <h3>Email</h3>
                                         </div>
-                                        <a href="mailto:alazharschoolmala@gmail.com">alazharschoolmala@gmail.com</a>
-                                        <a href="mailto:alazharschool@yahoo.com">alazharschool@yahoo.com</a>
+                                        <a href="mailto:alazharschoolmala@gmail.com" style="word-break: unset;">alazharschoolmala@gmail.com</a>
+                                        <a href="mailto:alazharschool@yahoo.com" style="word-break: unset;">alazharschool@yahoo.com</a>
                                     </div>
 
                                     {{-- Phone --}}
