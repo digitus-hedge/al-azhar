@@ -295,14 +295,15 @@ section { overflow-x: clip; }
                 <div class="col-lg-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.25s">
                     <div class="td_about_thumb_wrap">
                         <div class="td_about_thumb_1 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
-                            <img src="{{ asset('images/ab2.jpg') }}" alt="Al Azhar Central School campus">
+                            <img src="{{ asset('images/ab2.jpeg') }}" alt="Al Azhar Central School campus">
                         </div>
                         <div class="td_about_thumb_2 wow zoomIn" data-wow-duration="1s" data-wow-delay="0.6s">
-                            <img src="{{ asset('images/ab1.jpg') }}" alt="Students at Al Azhar Central School">
+                            <img src="{{ asset('images/ab1.jpeg') }}" alt="Students at Al Azhar Central School">
                         </div>
                     </div>
                 </div>
 
+                <!-- djsdj -->
                 {{-- Right: heading, short description, vision & mission --}}
                 <div class="col-lg-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
                     <div class="td_section_heading td_style_1 td_mb_30">
