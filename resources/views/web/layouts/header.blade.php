@@ -297,9 +297,14 @@
 }
 
     /* .ah_nav { display: flex; align-items: center; gap: 22px; margin-left: auto; } */
-     .ah_nav { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+     .ah_nav { display: flex; align-items: center; gap: 0px; margin-left: auto; }
     /* .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; } */
-    .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
+
+/* last chnages */
+    /* .ah_menu { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; } */
+.ah_menu { display: flex; align-items: center; gap: 1px; margin: 5px; padding: 5px; list-style: none; }
+
+
     .ah_menu > li { position: relative; }
     .ah_menu > li > a {
         display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border-radius: 30px;
