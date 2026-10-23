@@ -28,7 +28,7 @@
             ['Mandatory Disclosure', $hdLink('mandatory-disclosure')],
         ]],
         ['Academics', $hdLink('academics'), request()->routeIs('academics.*', 'departments'), [
-            ['Academics',       $hdLink('academics')],
+            ['Academics and Fees',       $hdLink('academics')],
             ['Departments', $hdLink('departments.index')],
             ['Careers', $hdLink('careers')],
         ]],

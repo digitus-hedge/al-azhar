@@ -1,6 +1,6 @@
 @extends('web.layouts.app')
 
-@section('title', 'Academics || AL-Azhar')
+@section('title', 'Academics and Fees || AL-Azhar')
 @section('meta_description', 'Academics at Al Azhar Central School, Mala: CBSE syllabus from Preschool to Senior Secondary, Montessori kindergarten, fee structure, board examinations and subject streams.')
 @section('body_class', 'td_theme_2')
 @section('footer_class', 'td_color_1')
@@ -94,7 +94,7 @@
 
 {{-- Shared page header --}}
 @include('web.layouts.page-header', [
-    'title'    => 'Academics',
+    'title'    => 'Academics and Fees Structure',
     'subtitle' => 'Explore the CBSE curriculum, Montessori kindergarten and senior secondary streams.',
 ])
 
