@@ -396,7 +396,18 @@ section { overflow-x: clip; }
 
                     <div class="home_pm_foot wow fadeInUp" data-wow-delay="0.6s">
                         <div>
-                            <span class="home_pm_sign">{{ $principal->name }}</span>
+                            <!-- <span class="home_pm_sign">{{ $principal->name }}</span> -->
+
+                                @if($principal->signature_url)
+    <img src="{{ $principal->signature_url }}"
+         alt="{{ $principal->name }} signature"
+         class="pm_signature wow fadeInLeft"
+         data-wow-duration="1.2s" data-wow-delay="0.5s"
+         style="max-height:60px;width:auto;display:inline-block;">
+@else
+    <span class="home_pm_sign" data-wow-duration="1.2s" data-wow-delay="0.5s">{{ $principal->name }}</span>
+@endif
+
                             <h3 class="td_fs_20 td_semibold mb-0">{{ $principal->name }}</h3>
                             <p class="td_fs_14 mb-0 td_heading_color td_opacity_7">Principal, Al Azhar Central School</p>
                         </div>
