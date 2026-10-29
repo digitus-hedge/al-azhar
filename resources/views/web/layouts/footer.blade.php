@@ -232,16 +232,27 @@
     padding-top: 5px;
 }
 
-.af_phone_second_row {
+/* .af_phone_second_row {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     gap: 12px;
     white-space: nowrap;
-}
+} */
 
 .af_phone_list a {
     display: inline-block;
+}
+
+.af_phone_second_row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.af_phone_second_row a {
+    display: inline;
 }
 </style>
 
