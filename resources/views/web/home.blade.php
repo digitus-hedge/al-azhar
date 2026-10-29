@@ -276,10 +276,18 @@ section { overflow-x: clip; }
    <!-- Start About Section -->
 @php
     // Helper to clean + limit any HTML field (used for description, vision and mission)
-    $clean = fn ($html, $limit = 230) => \Illuminate\Support\Str::limit(
-        trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html)))),
-        $limit
-    );
+    // $clean = fn ($html, $limit = 230) => \Illuminate\Support\Str::limit(
+    //     trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html)))),
+    //     $limit
+    // );
+
+    $clean = fn ($html) => trim(
+    preg_replace(
+        '/\s+/',
+        ' ',
+        strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html))
+    )
+);
 
     $aboutShort   = $clean($about->description ?? '');
     $visionShort  = $clean($about->vision ?? 'To nurture confident, compassionate learners who excel in knowledge, character and service.');

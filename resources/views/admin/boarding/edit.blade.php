@@ -1,5 +1,5 @@
 @extends('admin.layout')
-@section('title', 'Boarding & Fees')
+@section('title', 'Hostel & Fees')
 @section('content')
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

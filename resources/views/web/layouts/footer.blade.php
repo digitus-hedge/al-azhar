@@ -1,6 +1,13 @@
 @php
     // TODO: keep these the same as the header
-    $ftPhone   = '894 333 7011';
+    // $ftPhone   = '894 333 7011';
+
+    $ftPhones = [
+    '894 333 7011',  // Existing number
+    '0480 2897 605',  // New number
+    '0480 2897 505', // New number
+];
+    
     $ftEmail   = 'alazharschoolmala@gmail.com';
     $ftAddress = 'Al Azhar Central School, Mala, Thrissur, Kerala, India';
     $ftHours   = 'Mon – Sat, 9:00 AM – 4:00 PM';
@@ -22,16 +29,16 @@
         'Departments'     => $ftLink('departments.index'),
         'Academics'       => $ftLink('academics'),
         'Facilities'      => $ftLink('facilities.index'),
-        'Boarding & Fees' => $ftLink('boarding'),
+        'Hostel & Fees'   => $ftLink('boarding'),
         'Gallery'         => $ftLink('gallery.index'),
         'Events'          => $ftLink('events.index'),
         'News & Notices'  => $ftLink('news-notices.index'),
         'Blogs'           => $ftLink('blogs'),
     ];
     $ftSocials = [
-        'Facebook'  => ['https://www.facebook.com/',  '<path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"/>'],
+        'Facebook'  => ['https://www.facebook.com/share/1MAZ4ZPR17/',  '<path d="M22 12.06C22 6.51 17.52 2 12 2S2 6.51 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.51 1.49-3.9 3.77-3.9 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.89h2.78l-.44 2.91h-2.34V22c4.78-.76 8.44-4.92 8.44-9.94z"/>'],
         'X'         => ['https://www.twitter.com/',   '<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>'],
-        'Instagram' => ['https://www.instagram.com/', '<path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.256 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.25a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5zm5.25-8.6a1.13 1.13 0 1 0 0-2.26 1.13 1.13 0 0 0 0 2.26z"/>'],
+        'Instagram' => ['https://www.instagram.com/al_azhar_mala?srtk=MWs0bm9zbnlkMmFvdA==', '<path d="M12 2c2.717 0 3.056.01 4.122.06 1.065.05 1.79.217 2.428.465.66.256 1.216.598 1.772 1.153a4.908 4.908 0 0 1 1.153 1.772c.247.637.415 1.363.465 2.428.047 1.066.06 1.405.06 4.122 0 2.717-.01 3.056-.06 4.122-.05 1.065-.218 1.79-.465 2.428a4.883 4.883 0 0 1-1.153 1.772 4.915 4.915 0 0 1-1.772 1.153c-.637.247-1.363.415-2.428.465-1.066.047-1.405.06-4.122.06-2.717 0-3.056-.01-4.122-.06-1.065-.05-1.79-.218-2.428-.465a4.89 4.89 0 0 1-1.772-1.153 4.904 4.904 0 0 1-1.153-1.772c-.248-.637-.415-1.363-.465-2.428C2.013 15.056 2 14.717 2 12c0-2.717.01-3.056.06-4.122.05-1.066.217-1.79.465-2.428a4.88 4.88 0 0 1 1.153-1.772A4.897 4.897 0 0 1 5.45 2.525c.638-.248 1.362-.415 2.428-.465C8.944 2.013 9.283 2 12 2zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0 8.25a3.25 3.25 0 1 1 0-6.5 3.25 3.25 0 0 1 0 6.5zm5.25-8.6a1.13 1.13 0 1 0 0-2.26 1.13 1.13 0 0 0 0 2.26z"/>'],
         'LinkedIn'  => ['https://www.linkedin.com/',  '<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.446-2.136 2.94v5.666H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.114 20.452H3.56V9h3.554v11.452z"/>'],
     ];
 @endphp
@@ -87,10 +94,28 @@
                         <span class="af_icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
                         <a href="https://maps.google.com/?q={{ urlencode($ftAddress) }}" target="_blank" rel="noopener">{{ $ftAddress }}</a>
                     </li>
-                    <li>
-                        <span class="af_icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg></span>
-                        <a href="tel:{{ preg_replace('/[^0-9+]/', '', $ftPhone) }}">{{ $ftPhone }}</a>
-                    </li>
+              
+
+
+                  <li>
+    <span class="af_icon">
+        <!-- Existing phone SVG icon -->
+        <svg width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" stroke-width="2"
+             stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/>
+        </svg>
+    </span>
+
+    <div class="af_phone_list">
+        <a href="tel:8943337011">894 333 7011</a>
+
+        <div class="af_phone_second_row">
+             <a href="tel:04802897605">0480 2897 605</a>,
+            <a href="tel:04802897505">0480 2897 505</a>
+        </div>
+    </div>
+</li>
                     <li>
                         <span class="af_icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
                         <a href="mailto:{{ $ftEmail }}">{{ $ftEmail }}</a>
@@ -110,9 +135,9 @@
 
     <div class="af_bottom">
         <div class="container af_bottom_in">
-            <p class="mb-0">&copy; {{ date('Y') }} Al Azhar Central School Mala, All Right Reserved. All rights reserved.</p>
+            <p class="mb-0">&copy; {{ date('Y') }} Al Azhar Central School Mala, All Right Reserved.</p>
             <ul class="af_bottom_links">
-                <li><a href="{{ $ftLink('boarding') }}">Pay Fees</a></li>
+                <li><a href="{{ $ftLink('boarding') }}#fees-payment">Pay Fees</a></li>
                 <li><a href="{{ $ftLink('mandatory-disclosure') }}">Mandatory Disclosure</a></li>
                 <li><a href="{{ $ftLink('contact.index') }}">Contact</a></li>
             </ul>
@@ -199,6 +224,26 @@
         .af_top { right: 16px; bottom: 16px; width: 42px; height: 42px; }
        
     }
+
+
+ .af_phone_list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-top: 5px;
+}
+
+.af_phone_second_row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.af_phone_list a {
+    display: inline-block;
+}
 </style>
 
 <script>
