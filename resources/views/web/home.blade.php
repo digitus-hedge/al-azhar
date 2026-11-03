@@ -1520,13 +1520,13 @@ section { overflow-x: clip; }
 
 .home_adm_call span small {
     display: block;
-    margin-bottom: 6px;
+    margin-bottom: 6px !important;
 }
 
 .home_adm_call span br {
     display: block;
     content: "";
-    margin-top: 4px;
+    margin-top: 4px !important;
 }
 </style>
 @endif
