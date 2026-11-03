@@ -4,7 +4,7 @@
     $images = $images ?? [];
     $videos = $videos ?? [];
 
-    $title       = $boarding?->title ?: 'Boarding & Hostel';
+    $title       = $boarding?->title ?: 'Hostel';
     $description = trim((string) ($boarding?->description ?? ''));
     $paragraphs  = $description !== '' ? preg_split('/\R{2,}/', $description) : [];
 
@@ -36,7 +36,7 @@
 @section('title', 'Hostel || Al Azhar Central School, Mala')
 @section('meta_description', \Illuminate\Support\Str::limit(
     trim(preg_replace('/\s+/', ' ', strip_tags((string) ($description ?? ''))))
-        ?: 'Hostel facilities, boarding life and fee details at Al Azhar Central School, Mala. Safe, supervised residential care for students.',
+        ?: 'Hostel facilities, hostel life and fee details at Al Azhar Central School, Mala. Safe, supervised residential care for students.',
     155
 ))
 @section('body_class', 'td_theme_2')
@@ -46,7 +46,7 @@
 {{-- Shared page header --}}
 @include('web.layouts.page-header', [
     'title'    => 'Hostel',
-    'subtitle' => 'Safe, well-supervised boarding with caring routines, nourishing meals and a true home away from home.',
+    'subtitle' => 'Safe, well-supervised hostel with caring routines, nourishing meals and a true home away from home.',
 ])
 
     <!-- Start Intro -->
@@ -333,7 +333,7 @@
                                 <a href="{{ $src }}" class="brd_tile wow zoomIn" data-kind="image" data-src="{{ $src }}"
                                     data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($i % 4) * 0.1 }}s"
                                     aria-label="Open photo {{ $i + 1 }}">
-                                    <img src="{{ $src }}" alt="Boarding at Al Azhar, photo {{ $i + 1 }}" loading="lazy" decoding="async">
+                                    <img src="{{ $src }}" alt="Hostel at Al Azhar, photo {{ $i + 1 }}" loading="lazy" decoding="async">
                                     <span class="brd_zoom">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
                                     </span>
@@ -360,7 +360,7 @@
                                     data-wow-duration="0.9s" data-wow-delay="{{ 0.1 + ($i % 3) * 0.12 }}s"
                                     aria-label="Play video {{ $i + 1 }}">
                                     @if ($thumb)
-                                        <img src="{{ $thumb }}" alt="Boarding video {{ $i + 1 }}" loading="lazy" decoding="async">
+                                        <img src="{{ $thumb }}" alt="Hostel video {{ $i + 1 }}" loading="lazy" decoding="async">
                                     @elseif ($v['type'] === 'file')
                                         <video muted playsinline preload="none" data-lazy-src="{{ $v['url'] }}#t=0.5"></video>
                                     @else
@@ -397,7 +397,7 @@
     <!-- End Photos & Videos -->
 
     <!-- Start Fees & Payment -->
-    <section class="brd_fees">
+    <section class="brd_fees"   id="fees-payment">
         <div class="td_height_100 td_height_lg_75"></div>
         <div class="container">
             <div class="td_section_heading td_style_1 text-center wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.2s">
@@ -975,7 +975,7 @@
             } else {
                 node = document.createElement('div'); node.className = 'brd_lb_frame';
                 var f = document.createElement('iframe');
-                f.src = d.src; f.title = 'Boarding video';
+                f.src = d.src; f.title = 'Hostel video';
                 f.allow = 'autoplay; fullscreen; picture-in-picture'; f.allowFullscreen = true;
                 node.appendChild(f);
             }

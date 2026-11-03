@@ -68,7 +68,15 @@
                 </div>
 
                 <div class="pm_sign_block wow fadeInUp" data-wow-delay="0.3s">
-                    <span class="pm_signature td_heading_color wow fadeInLeft" data-wow-duration="1.2s" data-wow-delay="0.5s">{{ $principal->name }}</span>
+                  @if($principal->signature_url)
+    <img src="{{ $principal->signature_url }}"
+         alt="{{ $principal->name }} signature"
+         class="pm_signature wow fadeInLeft"
+         data-wow-duration="1.2s" data-wow-delay="0.5s"
+         style="max-height:60px;width:auto;display:inline-block;">
+@else
+    <span class="pm_signature td_heading_color wow fadeInLeft" data-wow-duration="1.2s" data-wow-delay="0.5s">{{ $principal->name }}</span>
+@endif
                     <h3 class="td_fs_24 td_semibold mb-0">{{ $principal->name }}</h3>
                     <p class="td_fs_16 mb-0 td_heading_color td_opacity_7">Principal, Al Azhar Central School</p>
                 </div>

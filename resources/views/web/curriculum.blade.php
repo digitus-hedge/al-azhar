@@ -47,7 +47,8 @@
                     <p>Co-Curriculum details will appear here once they are added.</p>
                 </div>
             @else
-                <div class="row td_gap_y_30 td_row_gap_30">
+
+                <!-- <div class="row td_gap_y_30 td_row_gap_30">
                     @foreach ($curriculums as $i => $curriculum)
                        @php
     // Pull image list from the `images` JSON column, fall back to the single `image` for old records
@@ -119,7 +120,117 @@
     </div>
 </div>
                     @endforeach
+                </div> -->
+
+
+
+                
+<div class="row td_gap_y_30 td_row_gap_30
+    {{ $curriculums->count() <= 2 ? 'justify-content-center' : '' }}">
+
+    @foreach ($curriculums as $i => $curriculum)
+        @php
+            $images = [];
+
+            if (is_array($curriculum->images) && count($curriculum->images)) {
+                $images = $curriculum->images;
+            } elseif (!empty($curriculum->image)) {
+                $images = [$curriculum->image];
+            }
+
+            $hasImage = count($images) > 0;
+            $anim = ['fadeInLeft', 'fadeInUp', 'fadeInRight'][$i % 3];
+            $delay = 0.1 + ($i % 3) * 0.12;
+
+            // 1 item: centered, narrower card
+            // 2 items: two centered cards
+            // 3+ items: existing three-column layout
+            $columnClass = $curriculums->count() === 1
+                ? 'col-lg-6 col-md-8'
+                : 'col-lg-4 col-md-6';
+        @endphp
+
+        <div class="{{ $columnClass }} cur_item">
+            <div class="cur_card {{ $hasImage ? 'cur_card_has_image' : 'cur_card_no_image' }} td_radius_10 wow {{ $anim }}"
+                data-wow-duration="0.9s"
+                data-wow-delay="{{ $delay }}s">
+
+                @if ($hasImage)
+                    <div class="cur_card_thumb" data-cur-carousel>
+                        <div class="cur_slides">
+                            @foreach ($images as $imgIndex => $img)
+                                @php $imgUrl = asset('storage/' . $img); @endphp
+
+                                <a href="{{ $imgUrl }}"
+                                   class="cur_slide {{ $imgIndex === 0 ? 'is-active' : '' }}"
+                                   data-cur-lightbox
+                                   data-card-index="{{ $i }}"
+                                   data-img-index="{{ $imgIndex }}"
+                                   data-title="{{ $curriculum->title }}"
+                                   aria-label="Open image {{ $imgIndex + 1 }} of {{ $curriculum->title }}">
+                                    <img src="{{ $imgUrl }}"
+                                         alt="{{ $curriculum->title }}"
+                                         loading="lazy">
+                                </a>
+                            @endforeach
+                        </div>
+
+                        @if (count($images) > 1)
+                            <button type="button" class="cur_nav cur_prev" aria-label="Previous image">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.4"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m15 18-6-6 6-6"/>
+                                </svg>
+                            </button>
+
+                            <button type="button" class="cur_nav cur_next" aria-label="Next image">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.4"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m9 18 6-6-6-6"/>
+                                </svg>
+                            </button>
+
+                            <div class="cur_dots">
+                                @foreach ($images as $imgIndex => $img)
+                                    <button type="button"
+                                            class="cur_dot {{ $imgIndex === 0 ? 'is-active' : '' }}"
+                                            data-dot-index="{{ $imgIndex }}"
+                                            aria-label="Go to image {{ $imgIndex + 1 }}">
+                                    </button>
+                                @endforeach
+                            </div>
+                        @endif
+                    </div>
+                @else
+                    <div class="cur_card_badge">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
+                             stroke="currentColor" stroke-width="1.8"
+                             stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                            <path d="M9 7h7M9 11h5"/>
+                        </svg>
+                    </div>
+                @endif
+
+                <div class="cur_card_body">
+                    <span class="cur_card_number">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
+
+                    <h3 class="cur_card_title">{{ $curriculum->title }}</h3>
+
+                    @if ($curriculum->description)
+                        <div class="cur_card_desc">
+                            {!! $curriculum->description !!}
+                        </div>
+                    @endif
                 </div>
+            </div>
+        </div>
+    @endforeach
+</div>
+
             @endif
 
         </div>

@@ -35,12 +35,21 @@ class PrincipalDeskRequest extends FormRequest
         $hasSaved    = (bool) $current?->photo;
         $photoNeeded = ! $hasSaved || $this->boolean('remove_photo');
 
+           // Signature required with the same logic.
+        $hasSavedSig = (bool) $current?->signature;
+        $sigNeeded   = ! $hasSavedSig || $this->boolean('remove_signature');
+
         return [
             'heading'        => ['required', 'string', 'max:255'],
             'name'           => ['required', 'string', 'max:255'],
             'photo'          => [Rule::requiredIf($photoNeeded), 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:5120'],
             'remove_photo'   => ['nullable', 'boolean'],
             'avatar_initial' => ['nullable', 'string', 'max:2'],
+
+
+              // Signature is optional. If uploaded, must be a valid image up to 2MB.
+           'signature'        => [Rule::requiredIf($sigNeeded), 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'remove_signature' => ['nullable', 'boolean'],
 
             // Excerpt is HTML from TinyMCE, so count WORDS of the visible text, not characters.
             'excerpt' => [
@@ -81,6 +90,11 @@ class PrincipalDeskRequest extends FormRequest
             'photo.mimes'       => 'The photo must be a JPG, PNG or WEBP file.',
             'photo.max'         => 'The photo must not be larger than 5MB.',
 
+               'signature.required' => "Please upload the principal's signature.",
+            'signature.image'    => 'The signature must be an image.',
+            'signature.mimes'    => 'The signature must be a JPG, PNG or WEBP file.',
+            'signature.max'      => 'The signature must not be larger than 2MB.',
+
             'meta_title.max'       => 'Meta title should be 70 characters or fewer.',
             'meta_description.max' => 'Meta description should be 160 characters or fewer.',
         ];
@@ -93,6 +107,7 @@ class PrincipalDeskRequest extends FormRequest
             'name'    => "principal's name",
             'excerpt' => 'short excerpt',
             'message' => 'full message',
+                  'signature' => 'signature',
         ];
     }
 

@@ -276,10 +276,18 @@ section { overflow-x: clip; }
    <!-- Start About Section -->
 @php
     // Helper to clean + limit any HTML field (used for description, vision and mission)
-    $clean = fn ($html, $limit = 230) => \Illuminate\Support\Str::limit(
-        trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html)))),
-        $limit
-    );
+    // $clean = fn ($html, $limit = 230) => \Illuminate\Support\Str::limit(
+    //     trim(preg_replace('/\s+/', ' ', strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html)))),
+    //     $limit
+    // );
+
+    $clean = fn ($html) => trim(
+    preg_replace(
+        '/\s+/',
+        ' ',
+        strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>'], ' ', (string) $html))
+    )
+);
 
     $aboutShort   = $clean($about->description ?? '');
     $visionShort  = $clean($about->vision ?? 'To nurture confident, compassionate learners who excel in knowledge, character and service.');
@@ -295,14 +303,15 @@ section { overflow-x: clip; }
                 <div class="col-lg-6 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.25s">
                     <div class="td_about_thumb_wrap">
                         <div class="td_about_thumb_1 wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.2s">
-                            <img src="{{ asset('images/ab2.jpg') }}" alt="Al Azhar Central School campus">
+                            <img src="{{ asset('images/ab2.jpeg') }}" alt="Al Azhar Central School campus">
                         </div>
                         <div class="td_about_thumb_2 wow zoomIn" data-wow-duration="1s" data-wow-delay="0.6s">
-                            <img src="{{ asset('images/ab1.jpg') }}" alt="Students at Al Azhar Central School">
+                            <img src="{{ asset('images/ab1.jpeg') }}" alt="Students at Al Azhar Central School">
                         </div>
                     </div>
                 </div>
 
+                <!-- djsdj -->
                 {{-- Right: heading, short description, vision & mission --}}
                 <div class="col-lg-6 wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.3s">
                     <div class="td_section_heading td_style_1 td_mb_30">
@@ -396,7 +405,18 @@ section { overflow-x: clip; }
 
                     <div class="home_pm_foot wow fadeInUp" data-wow-delay="0.6s">
                         <div>
-                            <span class="home_pm_sign">{{ $principal->name }}</span>
+                            <!-- <span class="home_pm_sign">{{ $principal->name }}</span> -->
+
+                                @if($principal->signature_url)
+    <img src="{{ $principal->signature_url }}"
+         alt="{{ $principal->name }} signature"
+         class="pm_signature wow fadeInLeft"
+         data-wow-duration="1.2s" data-wow-delay="0.5s"
+         style="max-height:60px;width:auto;display:inline-block;">
+@else
+    <span class="home_pm_sign" data-wow-duration="1.2s" data-wow-delay="0.5s">{{ $principal->name }}</span>
+@endif
+
                             <h3 class="td_fs_20 td_semibold mb-0">{{ $principal->name }}</h3>
                             <p class="td_fs_14 mb-0 td_heading_color td_opacity_7">Principal, Al Azhar Central School</p>
                         </div>

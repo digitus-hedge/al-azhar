@@ -14,11 +14,11 @@
 @php
     // Preset academic levels (matches the image you shared)
     $levelOptions = [
-        'Preschool'              => 'Preschool',
-        'LKG and UKG'            => 'LKG and UKG',
-        'Primary Level'          => 'Primary Level',
-        'Secondary Level'        => 'Secondary Level',
-        'Senior Secondary Level' => 'Senior Secondary Level',
+        'Foundational Stage'              => 'Foundational Stage',
+        'Middle Stage'            => 'Middle Stage',
+        'Preparatory Stage'          => 'Preparatory Stage',
+        'Secondary Stage'        => 'Secondary Stage',
+        // 'Senior Secondary Level' => 'Senior Secondary Level',
     ];
 
     // Icon options from Bootstrap Icons

@@ -156,8 +156,8 @@
                                             </span>
                                             <h3>Email</h3>
                                         </div>
-                                        <a href="mailto:alazharmala@gmail.com">alazharmala@gmail.com</a>
-                                        <a href="mailto:alazharschool@yahoo.com">alazharschool@yahoo.com</a>
+                                        <a href="mailto:alazharschoolmala@gmail.com" style="word-break: unset;">alazharschoolmala@gmail.com</a>
+                                        <a href="mailto:alazharschool@yahoo.com" style="word-break: unset;">alazharschool@yahoo.com</a>
                                     </div>
 
                                     {{-- Phone --}}
@@ -170,7 +170,7 @@
                                         </div>
                                         <a href="tel:+918943337011">Mob: 894 333 7011</a>
                                         <span class="ct_phones">
-                                            <a href="tel:+914802897605">+91 480 289 7605</a>,
+                                            <a href="tel:+914802897605">+91 480 289 7605</a>,<br/>
                                             <a href="tel:+914802897505">+91 480 289 7505</a>
                                         </span>
                                     </div>
