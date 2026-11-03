@@ -600,7 +600,8 @@ section { overflow-x: clip; }
         background: var(--heading-color, #00539B); color: #fff;
     }
     .home_adm_call span:last-child { color: var(--heading-color, #00539B); font-weight: 600; font-size: 18px; line-height: 1.2; }
-    .home_adm_call small { display: block; font-size: 13px; font-weight: 500; color: #6b7489; }
+    .home_adm_call small { display: block; font-size: 13px; font-weight: 500; color: #6b7489;margin-bottom: 6px;
+    margin-top: 4px; }
 
     @media (max-width: 991px) {
         .home_adm_text { max-width: none; }
