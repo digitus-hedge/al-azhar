@@ -1512,6 +1512,22 @@ section { overflow-x: clip; }
         .home_fev_ribbon { animation: none; }
         .home_fev_circle { animation: homeFevEntry .7s ease forwards; }
     }
+
+
+    .home_adm_call span {
+    line-height: 1.6;
+}
+
+.home_adm_call span small {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.home_adm_call span br {
+    display: block;
+    content: "";
+    margin-top: 4px;
+}
 </style>
 @endif
 <!-- End Floating Upcoming Event Widget -->
