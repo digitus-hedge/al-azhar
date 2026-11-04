@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\CareerController;
 use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\HostelEnquiryController;
 use App\Http\Controllers\Admin\HoldReasonController;
+use App\Http\Controllers\Admin\HomePopupController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Web\HomeController;
 use App\Http\Controllers\Web\DepartmentController as WebDepartmentController;
@@ -122,6 +123,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::get('home/stats', [StatController::class, 'index'])->name('home.stats');
             Route::post('home/stats', [StatController::class, 'store'])->name('home.stats.store');
+
+            Route::get('home/popup', [HomePopupController::class, 'index'])->name('home.popup');
+            Route::post('home/popup', [HomePopupController::class, 'store'])->name('home.popup.store');
 
             Route::get('staff', [StaffController::class, 'index'])->name('staff');
             Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create');

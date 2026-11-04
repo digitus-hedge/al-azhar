@@ -1532,9 +1532,92 @@ section { overflow-x: clip; }
 </style>
 @endif
 <!-- End Floating Upcoming Event Widget -->
+
+<!-- Start Homepage Popup (managed in Admin > Home > Homepage Popup) -->
+@if (!empty($popup))
+<div class="home_popup" id="homePopup" role="dialog" aria-modal="true"
+     aria-label="{{ $popup->title ?: 'Announcement' }}" aria-hidden="true"
+     data-key="home-popup-{{ $popup->id }}-{{ $popup->updated_at?->timestamp }}">
+    <div class="home_popup_bg" data-popup-close></div>
+    <div class="home_popup_box">
+        <button type="button" class="home_popup_x" data-popup-close aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <a href="{{ $popup->target_url }}" class="home_popup_link">
+            <img src="{{ $popup->image_url }}" alt="{{ $popup->title ?: 'Admissions Open - Al Azhar Central School' }}">
+        </a>
+    </div>
+</div>
+
+<style>
+    .home_popup {
+        position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center;
+        padding: 20px; visibility: hidden; opacity: 0; transition: opacity .35s ease, visibility .35s ease;
+    }
+    .home_popup.is-open { visibility: visible; opacity: 1; }
+    .home_popup_bg { position: absolute; inset: 0; background: rgba(0, 0, 18, .72); }
+    .home_popup_box {
+        position: relative; z-index: 1; background: #fff; padding: 12px; border-radius: 10px;
+        max-width: min(560px, 100%); box-shadow: 0 30px 70px -20px rgba(0, 0, 0, .6);
+        transform: translateY(20px) scale(.95); transition: transform .4s cubic-bezier(.34, 1.4, .64, 1);
+    }
+    .home_popup.is-open .home_popup_box { transform: none; }
+    .home_popup_link { display: block; }
+    .home_popup_link img {
+        display: block; width: 100%; height: auto; max-height: calc(100vh - 100px); object-fit: contain; border-radius: 4px;
+    }
+    .home_popup_x {
+        position: absolute; top: -14px; right: -14px; z-index: 2; width: 34px; height: 34px; border: 0; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center; cursor: pointer;
+        background: #fff; color: #00539B; box-shadow: 0 4px 14px rgba(0, 0, 0, .35); transition: background .25s, color .25s, transform .25s;
+    }
+    .home_popup_x:hover { background: #00539B; color: #fff; transform: rotate(90deg); }
+    body.home_popup_lock { overflow: hidden; }
+    @media (max-width: 575px) {
+        .home_popup { padding: 24px 14px; }
+        .home_popup_box { padding: 8px; }
+        .home_popup_x { top: -12px; right: -10px; width: 30px; height: 30px; }
+    }
+</style>
+@endif
+<!-- End Homepage Popup -->
     @endsection
 
 @push('scripts')
+<script>
+/* Homepage popup: opens once per visit; shows again when the admin changes it */
+(function () {
+    var pop = document.getElementById('homePopup');
+    if (!pop) return;
+    var key = pop.dataset.key;
+
+    try { if (sessionStorage.getItem(key)) return; } catch (e) {}
+
+    function close() {
+        pop.classList.remove('is-open');
+        pop.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('home_popup_lock');
+        try { sessionStorage.setItem(key, '1'); } catch (e) {}
+    }
+    function open() {
+        pop.classList.add('is-open');
+        pop.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('home_popup_lock');
+    }
+
+    pop.querySelectorAll('[data-popup-close]').forEach(function (el) { el.addEventListener('click', close); });
+    pop.querySelector('.home_popup_link').addEventListener('click', function () {
+        try { sessionStorage.setItem(key, '1'); } catch (e) {}
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && pop.classList.contains('is-open')) close();
+    });
+
+    var img = pop.querySelector('img');
+    function show() { setTimeout(open, 600); }
+    if (img.complete) show(); else { img.addEventListener('load', show); img.addEventListener('error', function () {}); }
+})();
+</script>
 <script>
 (function () {
     function initHeroCarousel() {

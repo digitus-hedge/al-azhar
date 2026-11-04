@@ -865,6 +865,12 @@
                         <i class="bi bi-bar-chart nav-ico"></i> Quick Stats
                     </a>
                 </li>
+                <li>
+                    <a class="nav-item {{ request()->routeIs('admin.home.popup*') ? 'active' : '' }}"
+                       href="{{ route('admin.home.popup') }}">
+                        <i class="bi bi-window-stack nav-ico"></i> Homepage Popup
+                    </a>
+                </li>
             </ul>
         </div>
 

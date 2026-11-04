@@ -8,6 +8,7 @@ use App\Models\AdmissionEnquiry;
 use App\Models\Banner;
 use App\Models\Event;
 use App\Models\Gallery;
+use App\Models\HomePopup;
 use App\Models\NewsNotice;
 use App\Models\PrincipalDesk;
 use App\Models\Stat;
@@ -27,6 +28,7 @@ class HomeController extends Controller
         return view('web.home', $this->sections() + [
             'banner' => Banner::first(),
             'stats'  => Stat::first()?->items ?? [],
+            'popup'  => HomePopup::current(),
         ]);
     }
 
