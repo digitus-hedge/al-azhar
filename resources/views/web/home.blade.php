@@ -500,10 +500,10 @@ section { overflow-x: clip; }
                             </svg>
                         </span>
                     </a>
-                    <a href="{{ asset('uploads/prospectus/demo_school_prospectus_new.pdf') }}"
+                    <a href="{{ asset('uploads/prospectus/Prospectus.pdf') }}"
                         target="_blank"
                         rel="noopener"
-                        download="Al-Azhar-Central-School-Prospectus.pdf"
+                        download="Prospectus.pdf"
                         class="home_adm_outline home_adm_download">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right:8px;flex-shrink:0;">
                                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
